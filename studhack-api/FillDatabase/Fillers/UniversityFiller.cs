@@ -145,7 +145,7 @@ public class UniversityFiller(ICityRepository cityRepository, IUniversityReposit
                 var city = cities.FirstOrDefault(e => e.Name == university.City);
                 if (city != null)
                     await universityRepository.AddAsync(new University(Guid.NewGuid(),
-                        university.Name.Length > 200 ? university.Name.Substring(0, 200) : university.Name, city.Id));
+                        university.Name.Length > 200 ? university.Name.Substring(0, 200) : university.Name, city));
                 else
                     Console.WriteLine($"Пропускаем '{university.Name}': город '{university.City}' не найден");
             }

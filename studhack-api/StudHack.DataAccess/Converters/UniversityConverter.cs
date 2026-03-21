@@ -7,11 +7,11 @@ public static class UniversityConverter
 {
     public static UniversityDb ToDb(this University domain)
     {
-        return new UniversityDb(domain.Id, domain.Name, domain.CityId);
+        return new UniversityDb(domain.Id, domain.Name, domain.City.Id);
     }
 
     public static University ToDomain(this UniversityDb db)
     {
-        return new University(db.Id, db.Name, db.CityId);
+        return new University(db.Id, db.Name, db.City.ToDomain());
     }
 }

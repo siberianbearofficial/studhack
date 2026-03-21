@@ -7,6 +7,7 @@ using StudHack.DataAccess.Context;
 using StudHack.DataAccess.Repositories;
 using StudHack.Domain.Abstractions;
 using StudHack.Domain.Abstractions.Repositories;
+using StudHack.Domain.Interfaces.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddEnvironmentVariables();
@@ -16,6 +17,11 @@ builder.Services.AddDbContext<StudHackDbContext>(options =>
 });
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ICityRepository, CityRepository>();
+builder.Services.AddScoped<IRegionRepository, RegionRepository>();
+builder.Services.AddScoped<ISkillRepository, SkillRepository>();
+builder.Services.AddScoped<ISpecializationRepository, SpecializationRepository>();
+builder.Services.AddScoped<IUniversityRepository, UniversityRepository>();
 
 builder.Services.AddScoped<IUserService, UserService>();
 

@@ -13,7 +13,8 @@ public class GeneralController(
     ICityRepository cityRepository,
     ISkillRepository skillRepository,
     IRegionRepository regionRepository,
-    ISpecializationRepository specializationRepository) : ControllerBase
+    ISpecializationRepository specializationRepository,
+    IUniversityRepository universityRepository) : ControllerBase
 {
     [HttpGet("dictionaries")]
     [AllowAnonymous]
@@ -25,6 +26,7 @@ public class GeneralController(
             Regions = (await regionRepository.GetAllAsync(ct)).Select(e => e.ToDto()),
             Skills = (await skillRepository.GetAllAsync(ct)).Select(e => e.ToDto()),
             Specializations = (await specializationRepository.GetAllAsync(ct)).Select(e => e.ToDto()),
+            Universities = (await universityRepository.GetAllAsync(ct)).Select(e => e.ToDto()),
         };
         return Ok(new ApiResponseDto<DictionariesDto>(res));
     }

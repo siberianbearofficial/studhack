@@ -31,14 +31,14 @@ var serviceProvider = services.BuildServiceProvider();
 
 using var scope = serviceProvider.CreateScope();
 
-// var citiesFiller = scope.ServiceProvider.GetRequiredService<CitiesFiller>();
-// await citiesFiller.FillAsync();
+var citiesFiller = scope.ServiceProvider.GetRequiredService<CitiesFiller>();
+await citiesFiller.FillAsync();
 
-// var skillsFiller = scope.ServiceProvider.GetRequiredService<SkillsFiller>();
-// await skillsFiller.FillAsync();
+var skillsFiller = scope.ServiceProvider.GetRequiredService<SkillsFiller>();
+await skillsFiller.FillAsync();
 
-// var specializationsFiller = scope.ServiceProvider.GetRequiredService<SpecializationsFiller>();
-// await specializationsFiller.FillAsync();
+var specializationsFiller = scope.ServiceProvider.GetRequiredService<SpecializationsFiller>();
+await specializationsFiller.FillAsync();
 
 var universityFiller = scope.ServiceProvider.GetRequiredService<UniversityFiller>();
 await universityFiller.FillAsync();
