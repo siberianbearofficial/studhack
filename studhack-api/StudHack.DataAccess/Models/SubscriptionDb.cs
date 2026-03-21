@@ -1,0 +1,26 @@
+using System.ComponentModel.DataAnnotations;
+
+namespace Eventity.DataAccess.Models;
+
+public class SubscriptionDb
+{
+    internal SubscriptionDb() { }
+
+    public SubscriptionDb(Guid eventId, Guid userId)
+    {
+        EventId = eventId;
+        UserId = userId;
+    }
+
+    [Required]
+    public Guid EventId { get; set; }
+
+    [Required]
+    public Guid UserId { get; set; }
+
+    [Required]
+    public DateTime CreatedAt { get; set; }
+
+    public virtual EventDb Event { get; set; }
+    public virtual UserDb User { get; set; }
+}
