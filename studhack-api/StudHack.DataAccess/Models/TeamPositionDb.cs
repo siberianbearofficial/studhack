@@ -11,7 +11,7 @@ public class TeamPositionDb
         Guid id,
         Guid teamId,
         bool filledByExternal,
-        TeamPositionType type,
+        TeamPositionTypeDb type,
         Guid? userId,
         Guid? additionalPositionDataId,
         Guid? mandatoryPositionDataId)
@@ -34,7 +34,7 @@ public class TeamPositionDb
     public bool FilledByExternal { get; set; }
 
     [Required]
-    public TeamPositionType Type { get; set; }
+    public TeamPositionTypeDb Type { get; set; }
 
     public Guid? UserId { get; set; }
 

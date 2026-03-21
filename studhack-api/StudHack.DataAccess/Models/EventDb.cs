@@ -13,9 +13,9 @@ public class EventDb
         string description,
         Guid cityId,
         string? address,
-        EventType type,
+        EventTypeDb type,
         string? registrationLink,
-        EventFormat format,
+        EventFormatDb format,
         double latitude,
         double longitude)
     {
@@ -47,13 +47,13 @@ public class EventDb
     public string? Address { get; set; }
 
     [Required]
-    public EventType Type { get; set; }
+    public EventTypeDb Type { get; set; }
 
     [StringLength(500)]
     public string? RegistrationLink { get; set; }
 
     [Required]
-    public EventFormat Format { get; set; }
+    public EventFormatDb Format { get; set; }
 
     [Required]
     public DateTime CreatedAt { get; set; }
