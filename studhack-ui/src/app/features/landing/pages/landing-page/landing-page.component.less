@@ -240,3 +240,21 @@ footer {
   background: #d94f23 !important;
   border-color: #d94f23 !important;
 }
+
+
+/* Меняю скролл карточек */
+.match-hero__cards {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+
+  /* скрыть скролл */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE */
+}
+
+.match-hero__cards::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+
