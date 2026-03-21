@@ -24,9 +24,6 @@ import { LandingStore } from '../../store/landing.store';
     TuiCard,
     TuiHeader,
     TuiTitle,
-
-    TuiCardLarge,
-    
   ],
   providers: [LandingStore],
   templateUrl: './landing-page.component.html',
