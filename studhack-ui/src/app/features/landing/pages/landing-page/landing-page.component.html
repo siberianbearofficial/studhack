@@ -153,109 +153,58 @@
     </section>
   }
 
-  <div tuiPlatform="web">
-    <h4>Desktop</h4>
+  <section class="match-hero">
+  <div class="match-hero__content">
+    <div class="match-hero__left">
+      <h1 class="match-hero__title">
+        Хорошая команда начинается с правильного мэтча
+      </h1>
 
-    <div
-        tuiCardLarge
-        tuiSurface="floating"
-    >
-        <header tuiHeader>
-            <h2 tuiTitle>Header</h2>
-        </header>
+      <p class="match-hero__subtitle">
+        СтудХак помогает студентам находить сильных людей рядом — по навыкам,
+        интересам и целям
+      </p>
 
-        <section>Replace me</section>
+      <div class="match-hero__actions">
+        <button tuiButton appearance="primary" size="l" type="button">
+          Начать бесплатно
+        </button>
 
-        <footer>
-            <button
-                appearance="secondary"
-                size="m"
-                tuiButton
-                type="button"
-            >
-                Label
-            </button>
-        </footer>
+        <button tuiButton appearance="secondary" size="l" type="button">
+          Запросить демо
+        </button>
+      </div>
     </div>
 
-    <div
-        tuiCardLarge
-        tuiSurface="floating"
-        class="tui-space_top-4"
-    >
-        <header tuiHeader>
-            <h2 tuiTitle>Header</h2>
+    <div class="match-hero__right">
+      <div class="match-hero__cards">
+        @for (user of users; track user.id) {
+          <article tuiCardLarge class="user-card">
+            <img
+              class="user-card__photo"
+              [src]="user.photo"
+              [alt]="user.name"
+            />
 
-            <aside tuiAccessories>
-                <tui-badge
-                    appearance="neutral"
-                    iconStart="@tui.heart"
-                    size="xl"
-                >
-                    Like
-                </tui-badge>
-            </aside>
-        </header>
+            <div class="user-card__body">
+              <span class="user-card__status">{{ user.status }}</span>
 
-        <section>Replace me</section>
+              <h3 class="user-card__name">{{ user.name }}</h3>
+
+              <p class="user-card__role">{{ user.role }}</p>
+
+              <div class="user-card__skills">
+                @for (skill of user.skills; track skill) {
+                  <span tuiBadge appearance="neutral">{{ skill }}</span>
+                }
+              </div>
+            </div>
+          </article>
+        }
+      </div>
     </div>
-</div>
-
-<div tuiPlatform="ios">
-    <h4>iOS/Android</h4>
-
-    <div
-        tuiCardLarge
-        tuiSurface="floating"
-    >
-        <header tuiHeader>
-            <h2 tuiTitle>Header</h2>
-
-            <aside tuiAccessories>
-                <a
-                    tuiLink
-                    class="label"
-                >
-                    Label
-                </a>
-            </aside>
-        </header>
-
-        <section>Replace me</section>
-
-        <footer>
-            <button
-                appearance="secondary"
-                size="m"
-                tuiButton
-                type="button"
-            >
-                Label
-            </button>
-        </footer>
-    </div>
-
-    <div
-        tuiCardLarge
-        tuiSurface="floating"
-        class="tui-space_top-4"
-    >
-        <header tuiHeader>
-            <h2 tuiTitle>Header</h2>
-
-            <aside tuiAccessories>
-                <a
-                    tuiLink
-                    class="label"
-                >
-                    Label
-                </a>
-            </aside>
-        </header>
-
-        <section>Replace me</section>
-    </div>
-</div>
+  </div>
+</section>
 
 </section>
 

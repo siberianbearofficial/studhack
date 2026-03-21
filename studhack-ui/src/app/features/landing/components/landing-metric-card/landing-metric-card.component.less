@@ -15,3 +15,114 @@
   color: var(--tui-text-tertiary);
   font: var(--tui-font-text-s);
 }
+
+
+
+.match-hero {
+  padding: 64px 0;
+}
+
+.match-hero__content {
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  gap: 32px;
+  align-items: center;
+}
+
+.match-hero__left {
+  max-width: 560px;
+}
+
+.match-hero__title {
+  margin: 0 0 20px;
+  font-size: 56px;
+  line-height: 1.05;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.match-hero__subtitle {
+  margin: 0 0 28px;
+  font-size: 20px;
+  line-height: 1.5;
+  color: #5f6470;
+  max-width: 520px;
+}
+
+.match-hero__actions {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.match-hero__right {
+  min-width: 0;
+}
+
+.match-hero__cards {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  padding-bottom: 12px;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+}
+
+.match-hero__cards::-webkit-scrollbar {
+  height: 8px;
+}
+
+.match-hero__cards::-webkit-scrollbar-thumb {
+  background: #c8ccd4;
+  border-radius: 999px;
+}
+
+.user-card {
+  flex: 0 0 280px;
+  overflow: hidden;
+  scroll-snap-align: start;
+  border-radius: 24px;
+}
+
+.user-card__photo {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  display: block;
+  border-radius: 18px 18px 0 0;
+}
+
+.user-card__body {
+  padding: 18px;
+}
+
+.user-card__status {
+  display: inline-block;
+  margin-bottom: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #4f46e5;
+  background: #eef2ff;
+  padding: 6px 10px;
+  border-radius: 999px;
+}
+
+.user-card__name {
+  margin: 0 0 6px;
+  font-size: 22px;
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+.user-card__role {
+  margin: 0 0 14px;
+  font-size: 15px;
+  line-height: 1.4;
+  color: #667085;
+}
+
+.user-card__skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
