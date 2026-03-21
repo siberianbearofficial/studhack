@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using StudHack.Core.Abstractions.Repositories;
 using StudHack.DataAccess.Context;
 using StudHack.DataAccess.Models;
-using StudHack.Domain;
 using StudHack.Domain.Models;
 
 namespace StudHack.DataAccess.Repositories;

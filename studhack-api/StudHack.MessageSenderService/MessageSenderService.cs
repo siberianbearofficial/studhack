@@ -3,7 +3,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using StudHack.Domain;
+using StudHack.Core.Abstractions;
+using StudHack.Core.Abstractions.Repositories;
 using StudHack.Domain.Models;
 
 namespace StudHack.MessageSenderService;
