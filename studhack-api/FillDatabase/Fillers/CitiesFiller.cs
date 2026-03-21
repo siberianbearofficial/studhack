@@ -19,9 +19,15 @@ public class CitiesFiller(ICityRepository cityRepository, IRegionRepository regi
 
     public async Task FillAsync()
     {
-        var regions = new Dictionary<string, Region>();
+        var regions = (await regionRepository.GetAllAsync())
+            .ToDictionary(e => e.Name);
+        var existing = (await cityRepository.GetAllAsync())
+            .Select(e => e.Name)
+            .ToHashSet();
         foreach (var city in await LoadCities())
         {
+            if (existing.Contains(city.Name))
+                continue;
             if (!regions.ContainsKey(city.Subject))
             {
                 var region = new Region(Guid.NewGuid(), city.Subject);

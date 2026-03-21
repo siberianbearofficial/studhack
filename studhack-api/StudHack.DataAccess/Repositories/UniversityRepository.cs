@@ -23,7 +23,10 @@ public class UniversityRepository : IUniversityRepository
     {
         try
         {
-            var universityDb = await _context.Universities.AsNoTracking().FirstOrDefaultAsync(u => u.Id == id, ct);
+            var universityDb = await _context.Universities.AsNoTracking()
+                .Where(e => e.Id == id)
+                .Include(e => e.City).ThenInclude(e => e.Region)
+                .FirstOrDefaultAsync(ct);
             return universityDb?.ToDomain();
         }
         catch (Exception ex)
@@ -37,7 +40,10 @@ public class UniversityRepository : IUniversityRepository
     {
         try
         {
-            var universitiesDb = await _context.Universities.AsNoTracking().ToListAsync(ct);
+            var universitiesDb = await _context.Universities
+                .Include(e => e.City).ThenInclude(e => e.Region)
+                .AsNoTracking()
+                .ToListAsync(ct);
             return universitiesDb.Select(u => u.ToDomain());
         }
         catch (Exception ex)

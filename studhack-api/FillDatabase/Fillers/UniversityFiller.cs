@@ -1,11 +1,15 @@
 ﻿using HtmlAgilityPack;
+using Microsoft.Extensions.Logging;
 using StudHack.Domain.Abstractions.Repositories;
 using StudHack.Domain.Interfaces.Repositories;
 using StudHack.Domain.Models;
 
 namespace FillDatabase.Fillers;
 
-public class UniversityFiller(ICityRepository cityRepository, IUniversityRepository universityRepository) : IFiller
+public class UniversityFiller(
+    ICityRepository cityRepository,
+    IUniversityRepository universityRepository,
+    ILogger<UniversityFiller> logger) : IFiller
 {
     private record ParsedUniversity(string Name, string? City);
 
@@ -132,22 +136,25 @@ public class UniversityFiller(ICityRepository cityRepository, IUniversityReposit
     public async Task FillAsync()
     {
         var cities = (await cityRepository.GetAllAsync()).ToList();
+        var existing = (await universityRepository.GetAllAsync())
+            .Select(e => e.Name)
+            .ToHashSet();
 
         for (int page = 1; page <= 107; page++)
         {
             string url =
                 $"https://moeobrazovanie.ru/search.php?operation=show_result&section=vuz&region_id=777&page={page}";
-            Console.WriteLine($"Парсинг страницы {page}...");
+            logger.LogInformation($"Парсинг страницы {page}...");
 
             var universities = await ParseUniversitiesAsync(url);
-            foreach (var university in universities)
+            foreach (var university in universities.Where(e => !existing.Contains(e.Name)))
             {
                 var city = cities.FirstOrDefault(e => e.Name == university.City);
                 if (city != null)
                     await universityRepository.AddAsync(new University(Guid.NewGuid(),
-                        university.Name.Length > 200 ? university.Name.Substring(0, 200) : university.Name, city.Id));
+                        university.Name.Length > 200 ? university.Name.Substring(0, 200) : university.Name, city));
                 else
-                    Console.WriteLine($"Пропускаем '{university.Name}': город '{university.City}' не найден");
+                    logger.LogInformation($"Пропускаем '{university.Name}': город '{university.City}' не найден");
             }
 
             // Небольшая задержка между запросами

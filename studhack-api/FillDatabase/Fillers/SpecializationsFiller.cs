@@ -9,11 +9,14 @@ public class SpecializationsFiller(ISpecializationRepository specializationRepos
 {
     public async Task FillAsync()
     {
+        var existing = (await specializationRepository.GetAllAsync())
+            .Select(e => e.Name)
+            .ToHashSet();
         await using var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("FillDatabase.Data.specializations.json");
         if (stream == null)
             throw new FileNotFoundException();
-        var specializations = await JsonSerializer.DeserializeAsync<string[]>(stream);
-        foreach (var specialization in specializations ?? [])
+        var specializations = await JsonSerializer.DeserializeAsync<string[]>(stream) ?? [];
+        foreach (var specialization in specializations.Where(e => !existing.Contains(e)))
         {
             await specializationRepository.AddAsync(new Specialization(Guid.NewGuid(), specialization));
         }

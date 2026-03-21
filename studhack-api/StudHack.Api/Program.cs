@@ -1,4 +1,5 @@
 using Avalux.Auth.ApiClient;
+using FillDatabase;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -7,6 +8,7 @@ using StudHack.DataAccess.Context;
 using StudHack.DataAccess.Repositories;
 using StudHack.Domain.Abstractions;
 using StudHack.Domain.Abstractions.Repositories;
+using StudHack.Domain.Interfaces.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddEnvironmentVariables();
@@ -16,9 +18,15 @@ builder.Services.AddDbContext<StudHackDbContext>(options =>
 });
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ICityRepository, CityRepository>();
+builder.Services.AddScoped<IRegionRepository, RegionRepository>();
+builder.Services.AddScoped<ISkillRepository, SkillRepository>();
+builder.Services.AddScoped<ISpecializationRepository, SpecializationRepository>();
+builder.Services.AddScoped<IUniversityRepository, UniversityRepository>();
 
 builder.Services.AddScoped<IUserService, UserService>();
 
+builder.Services.AddDatabaseFillers();
 builder.Services.AddAvaluxAuthApiClient(builder.Configuration["Auth.ApiUrl"] ?? "",
     builder.Configuration["Auth.ApiToken"] ?? "");
 

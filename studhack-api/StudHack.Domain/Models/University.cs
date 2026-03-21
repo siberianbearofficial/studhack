@@ -6,11 +6,11 @@ public class University
 {
     internal University() { }
 
-    public University(Guid id, string name, Guid cityId)
+    public University(Guid id, string name, City city)
     {
         Id = id;
         Name = name;
-        CityId = cityId;
+        City = city;
     }
 
     public Guid Id { get; }
@@ -20,5 +20,5 @@ public class University
     public string Name { get; }
 
     [Required]
-    public Guid CityId { get; }
+    public City City { get; }
 }

@@ -17,6 +17,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\FillDatabase\FillDatabase.csproj" />
       <ProjectReference Include="..\StudHack.Application\StudHack.Application.csproj" />
       <ProjectReference Include="..\StudHack.DataAccess\StudHack.DataAccess.csproj" />
       <ProjectReference Include="..\StudHack.Domain\StudHack.Domain.csproj" />
