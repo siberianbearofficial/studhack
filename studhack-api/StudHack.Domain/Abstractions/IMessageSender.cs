@@ -1,4 +1,4 @@
-﻿namespace MessageSenderService;
+﻿namespace StudHack.Core.Abstractions;
 
 public interface IMessageSender
 {
