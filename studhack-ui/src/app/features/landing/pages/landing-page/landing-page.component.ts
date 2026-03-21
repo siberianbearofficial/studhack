@@ -1,10 +1,9 @@
 import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { TuiButton, TuiTitle, TuiSurface } from '@taiga-ui/core';
-import { TuiBadge, TuiAvatar } from '@taiga-ui/kit';
+import { TuiButton, TuiTitle } from '@taiga-ui/core';
+import { TuiBadge } from '@taiga-ui/kit';
 import { TuiCard, TuiHeader, TuiCardLarge } from '@taiga-ui/layout';
-import { TuiPlatform } from '@taiga-ui/cdk';
 import { signal } from '@angular/core';
 
 import { SketchfabEmbedComponent } from '@shared/ui';
@@ -26,10 +25,7 @@ import { LandingStore } from '../../store/landing.store';
     TuiHeader,
     TuiTitle,
 
-    TuiAvatar,
     TuiCardLarge,
-    TuiPlatform,
-    TuiSurface,
     
   ],
   providers: [LandingStore],

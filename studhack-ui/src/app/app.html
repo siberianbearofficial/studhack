@@ -5,5 +5,9 @@
     <main class="shell__content">
       <router-outlet />
     </main>
+
+    @if (showFooter()) {
+      <app-footer class="shell__footer" />
+    }
   </div>
 </tui-root>
