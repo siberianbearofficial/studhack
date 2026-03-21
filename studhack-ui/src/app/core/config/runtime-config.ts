@@ -47,8 +47,8 @@ const DEFAULT_RUNTIME_CONFIG: Omit<
   clientId: '5caecabfac74b7709d102315ca3abc9b',
   // Наш OAuth провайдер пока требует client secret даже для SPA.
   clientSecret: '0f756a3707762ec4d04df5625adcac6a',
-  apiBaseUrl: 'https://studhack-api.nachert.art',
-  apiMode: 'mock',
+  apiBaseUrl: 'http://localhost:5000',
+  apiMode: 'real',
   apiMockLatencyMs: 200,
   disableNonceCheck: false,
   disableOAuth2StateCheck: false,

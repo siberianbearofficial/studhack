@@ -21,6 +21,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution items", "Solution 
 		Dockerfile = Dockerfile
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FillDatabase", "FillDatabase\FillDatabase.csproj", "{8D38A670-56B8-4327-8FE3-ABF4311C30CB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{EDC6C4B5-C9B6-4AE8-A9E5-C02E86ADD204}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EDC6C4B5-C9B6-4AE8-A9E5-C02E86ADD204}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EDC6C4B5-C9B6-4AE8-A9E5-C02E86ADD204}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D38A670-56B8-4327-8FE3-ABF4311C30CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D38A670-56B8-4327-8FE3-ABF4311C30CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D38A670-56B8-4327-8FE3-ABF4311C30CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D38A670-56B8-4327-8FE3-ABF4311C30CB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

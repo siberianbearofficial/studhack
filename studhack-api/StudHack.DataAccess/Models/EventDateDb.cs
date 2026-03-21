@@ -14,11 +14,6 @@ public class EventDateDb
         EndsAt = endsAt;
         Description = description;
     }
-
-    public Guid Id { get; set; }
-    
-    [Required]
-    public Guid Id { get; set; }
     
     [Required]
     public Guid Id { get; set; }

@@ -41,7 +41,7 @@ public static class UserConverter
 
         foreach (var education in domain.Educations)
         {
-            db.Educations.Add(education.ToDb());
+            db.Educations.Add(education.ToDb(domain.Id));
         }
 
         return db;

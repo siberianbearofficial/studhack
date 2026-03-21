@@ -24,6 +24,7 @@ public class EducationDb
     }
 
     public Guid Id { get; set; }
+    public Guid UserId { get; set; }
 
     [Required]
     public Guid UniversityId { get; set; }

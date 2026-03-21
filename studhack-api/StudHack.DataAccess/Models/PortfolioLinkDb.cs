@@ -14,6 +14,8 @@ public class PortfolioLinkDb
     }
 
     public Guid Id { get; set; }
+    
+    public Guid UserId { get; set; }
 
     [StringLength(500)]
     public string? Description { get; set; }

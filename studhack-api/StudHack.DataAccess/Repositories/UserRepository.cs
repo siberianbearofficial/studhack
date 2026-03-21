@@ -3,6 +3,7 @@ using StudHack.DataAccess.Context;
 using StudHack.DataAccess.Converters;
 using StudHack.DataAccess.Models;
 using StudHack.Domain.Abstractions;
+using StudHack.Domain.Abstractions.Repositories;
 using StudHack.Domain.Models;
 
 namespace StudHack.DataAccess.Repositories;
