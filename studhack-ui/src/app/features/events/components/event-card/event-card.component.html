@@ -1,8 +1,7 @@
 <article tuiCardLarge tuiSurface="floating" class="event-card">
   <div class="event-card__cover" [style.background]="coverBackground()">
     <div class="event-card__cover-copy">
-      <span class="event-card__cover-label">{{ coverLabel() }}</span>
-      <strong class="event-card__cover-date">{{ coverDate() }}</strong>
+      <span class="event-card__cover-label">{{ coverDate() }}</span>
     </div>
   </div>
 
@@ -20,14 +19,12 @@
         {{ event().description || 'Описание мероприятия появится после публикации полной карточки.' }}
       </p>
 
-      @if (detailsHref(); as detailsHref) {
+      @if (detailsRoute(); as detailsRoute) {
         <a
           class="event-card__link"
           iconEnd="@tui.arrow-up-right"
           tuiLink
-          [href]="detailsHref"
-          target="_blank"
-          rel="noreferrer"
+          [routerLink]="detailsRoute"
         >
           Подробнее
         </a>
@@ -38,17 +35,23 @@
       <div class="event-card__actions">
         <a
           tuiButton
-          routerLink="/teams/create"
           appearance="accent"
           size="m"
           iconStart="@tui.plus"
+          [routerLink]="['/teams/create']"
+          [queryParams]="{ eventId: event().id }"
         >
           Собрать команду
         </a>
 
-        <button tuiButton type="button" appearance="outline" size="m">
+        <a
+          tuiButton
+          appearance="outline"
+          size="m"
+          [routerLink]="detailsRoute()"
+        >
           Присоединиться к команде
-        </button>
+        </a>
       </div>
 
       <div class="event-card__support">

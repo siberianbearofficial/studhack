@@ -8,7 +8,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TuiButton, TuiTextfield, TuiTitle } from '@taiga-ui/core';
 import { TuiBadge } from '@taiga-ui/kit';
 import { TuiCard, TuiHeader } from '@taiga-ui/layout';
@@ -53,6 +53,7 @@ interface TeamPositionFormModel {
 })
 export class CreateTeamPageComponent {
   private readonly formBuilder = inject(FormBuilder);
+  private readonly route = inject(ActivatedRoute);
   protected readonly store = inject(TeamCreationStore);
   protected readonly form = this.formBuilder.nonNullable.group({
     eventId: ['', Validators.required],
@@ -77,12 +78,17 @@ export class CreateTeamPageComponent {
   constructor() {
     effect(() => {
       const events = this.store.events();
+      const requestedEventId = this.route.snapshot.queryParamMap.get('eventId');
 
       if (!events.length || this.form.controls.eventId.value) {
         return;
       }
 
-      this.form.controls.eventId.setValue(events[0].id);
+      const matchingEvent = requestedEventId
+        ? events.find((event) => event.id === requestedEventId)
+        : null;
+
+      this.form.controls.eventId.setValue(matchingEvent?.id ?? events[0].id);
     });
 
     this.form.controls.eventId.valueChanges

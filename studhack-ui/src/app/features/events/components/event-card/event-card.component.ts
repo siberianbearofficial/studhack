@@ -55,8 +55,8 @@ export class EventCardComponent {
   protected readonly coverLabel = computed(() => getEventTypeLabel(this.event()));
   protected readonly coverDate = computed(() => getEventDateSpanLabel(this.event()));
   protected readonly difficulty = computed(() => getEventDifficulty(this.event()));
-  protected readonly detailsHref = computed(
-    () => this.event().registrationLink ?? null,
+  protected readonly detailsRoute = computed(
+    () => ['/events', this.event().id],
   );
   protected readonly badges = computed<readonly EventCardBadge[]>(() => {
     const event = this.event();

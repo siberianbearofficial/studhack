@@ -7,6 +7,7 @@ import { TuiCard, TuiHeader } from '@taiga-ui/layout';
 
 import { ProfileCardComponent } from '../../components/profile-card/profile-card.component';
 import { ProfilesStore } from '../../store/profiles.store';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-profiles-page',
@@ -25,6 +26,7 @@ import { ProfilesStore } from '../../store/profiles.store';
     TuiSurface,
     TuiLoader,
     TuiLink,
+    RouterLink,
   ],
   providers: [ProfilesStore],
   templateUrl: './profiles-page.component.html',

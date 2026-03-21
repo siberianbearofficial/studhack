@@ -13,6 +13,7 @@ const FOOTER_ROUTES = new Set([
   '/profile',
   '/profiles',
 ]);
+const FOOTER_ROUTE_PREFIXES = ['/events/'];
 
 @Component({
   selector: 'app-root',
@@ -32,7 +33,10 @@ export class App {
     { initialValue: this.router.url },
   );
   protected readonly showFooter = computed(() =>
-    FOOTER_ROUTES.has(this.normalizeUrl(this.currentUrl())),
+    FOOTER_ROUTES.has(this.normalizeUrl(this.currentUrl())) ||
+    FOOTER_ROUTE_PREFIXES.some((prefix) =>
+      this.normalizeUrl(this.currentUrl()).startsWith(prefix),
+    ),
   );
 
   private normalizeUrl(url: string): string {
