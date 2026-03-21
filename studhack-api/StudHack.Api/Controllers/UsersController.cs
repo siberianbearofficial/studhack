@@ -1,4 +1,4 @@
-﻿using Eventity.Domain.Models;
+﻿using StudHack.Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StudHack.Api.Dtos;
@@ -63,7 +63,7 @@ public class UsersController(IUserService userService) : ControllerBase
                 Biography =  dto.Biography,
                 BirthDate = dto.BirthDate,
                 City = dto.City.ToDomain(),
-                PortfolioLinks = dto.PortfolioLinks,
+                PortfolioLinks = dto.PortfolioLinks.Select(PortfolioLinkConverter.ToDomain).ToList(),
                 Skills = dto.Skills.Select(SkillsConverter.ToDomain).ToList(),
                 Specializations = dto.Specializations.Select(SpecializationConverter.ToDomain).ToList(),
                 Educations = dto.Education.Select(EducationConverter.ToDomain).ToList(),

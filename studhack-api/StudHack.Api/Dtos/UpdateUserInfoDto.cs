@@ -12,6 +12,6 @@ public class UpdateUserInfoDto
     public string? Biography { get; init; }
     public SkillDto[] Skills { get; init; } = [];
     public SpecializationDto[] Specializations { get; init; } = [];
-    public string[] PortfolioLinks { get; init; } = [];
+    public PortfolioLinkDto[] PortfolioLinks { get; init; } = [];
     public EducationDto[] Education { get; init; } = [];
 }

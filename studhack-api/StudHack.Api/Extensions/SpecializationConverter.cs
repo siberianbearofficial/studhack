@@ -1,4 +1,4 @@
-﻿using Eventity.Domain.Models;
+﻿using StudHack.Domain.Models;
 using StudHack.Api.Dtos;
 
 namespace StudHack.Api.Extensions;

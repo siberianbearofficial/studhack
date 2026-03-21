@@ -1,5 +1,5 @@
 ﻿using Avalux.Auth.ApiClient;
-using Eventity.Domain.Models;
+using StudHack.Domain.Models;
 using StudHack.Domain.Abstractions;
 
 namespace StudHack.Application.Services;
