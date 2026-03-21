@@ -15,7 +15,6 @@ public class PortfolioLinkConfiguration : IEntityTypeConfiguration<PortfolioLink
 
         builder.HasOne(pl => pl.User)
             .WithMany(u => u.PortfolioLinks)
-            .HasForeignKey(pl => pl.UserId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

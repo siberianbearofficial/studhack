@@ -36,7 +36,6 @@ public class UserConfiguration : IEntityTypeConfiguration<UserDb>
 
         builder.HasMany(e => e.PortfolioLinks)
             .WithOne(pl => pl.User)
-            .HasForeignKey(pl => pl.UserId)
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasMany(e => e.Educations)
