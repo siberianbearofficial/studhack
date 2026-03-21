@@ -23,4 +23,8 @@
       <ProjectReference Include="..\StudHack.Domain\StudHack.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Content Include="Context\.DS_Store" />
+    </ItemGroup>
+
 </Project>
