@@ -15,7 +15,6 @@ public class EducationConfiguration : IEntityTypeConfiguration<EducationDb>
 
         builder.HasOne(e => e.User)
             .WithMany(u => u.Educations)
-            .HasForeignKey(e => e.UserId)
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne(e => e.University)
