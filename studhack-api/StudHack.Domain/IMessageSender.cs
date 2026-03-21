@@ -1,4 +1,4 @@
-﻿namespace MessageSenderService;
+﻿namespace StudHack.Domain;
 
 public interface IMessageSender
 {
