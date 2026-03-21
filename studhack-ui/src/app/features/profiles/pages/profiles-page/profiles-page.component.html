@@ -1,4 +1,28 @@
 <section class="profiles-page">
+  <section class="profiles-page__top">
+    <nav class="profiles-page__links" aria-label="Навигация по каталогу">
+      <button
+        tuiLink
+        type="button"
+        iconStart="@tui.chevron-left"
+        (click)="goBack()"
+      >
+        Назад
+      </button>
+
+      <a tuiLink routerLink="/events" iconEnd="@tui.chevron-right">
+        К поиску мероприятий
+      </a>
+    </nav>
+
+    <div class="profiles-page__heading-container">
+      <header tuiHeader="h1" class="profiles-page__heading">
+        <span tuiTitle>Поиск участников</span>
+      </header>
+      <span class="profiles-page__heading__events-count">Найдено {{ store.filteredUsers().length }}</span>
+    </div>
+  </section>
+
   @if (store.error()) {
     <section tuiCardLarge="compact" class="profiles-page__status">
       <header tuiHeader="h6">
@@ -18,7 +42,7 @@
       <aside class="profiles-page__sidebar">
         <div class="profiles-page__sidebar-header">
           <header tuiHeader="h4">
-            <span tuiTitle>Фильтры по участникам</span>
+            <span tuiTitle>Фильтры</span>
           </header>
 
           @if (store.activeFiltersCount()) {

@@ -1,100 +1,81 @@
-<article tuiCardLarge="compact" class="event-card">
-  <header tuiHeader="h5">
-    <span tuiTitle>{{ event().name }}</span>
-    <div tuiAccessories>
-      <span
-        tuiBadge
-        [appearance]="event().type === 'hackathon' ? 'primary' : 'neutral'"
-      >
-        {{ event().type }}
-      </span>
-    </div>
-    <p tuiSubtitle>
-      @if (event().location.city; as city) {
-        {{ city.name }}
-      } @else {
-        {{ event().location.format === 'online' ? 'Онлайн' : 'Локация уточняется' }}
-      }
-    </p>
-  </header>
-
-  <p class="event-card__description">
-    {{ event().description || 'Описание события будет детализировано позже.' }}
-  </p>
-
-  <div class="event-card__facts">
-    <div class="event-card__fact">
-      <span>Даты</span>
-      <strong>
-        {{ event().startsAt | date: 'd MMM y, HH:mm' }} -
-        {{ event().endsAt | date: 'd MMM y, HH:mm' }}
-      </strong>
-    </div>
-    <div class="event-card__fact">
-      <span>Формат</span>
-      <strong>{{ event().location.format }}</strong>
-    </div>
-    <div class="event-card__fact">
-      <span>Команды</span>
-      <strong>{{ event().teams.length }}</strong>
-    </div>
-    <div class="event-card__fact">
-      <span>Подписки</span>
-      <strong>{{ event().subscription.subscribersCount }}</strong>
+<article tuiCardLarge tuiSurface="floating" class="event-card">
+  <div class="event-card__cover" [style.background]="coverBackground()">
+    <div class="event-card__cover-copy">
+      <span class="event-card__cover-label">{{ coverLabel() }}</span>
+      <strong class="event-card__cover-date">{{ coverDate() }}</strong>
     </div>
   </div>
 
-  @if (event().stages.length) {
-    <div class="event-card__stages">
-      @for (stage of event().stages.slice(0, 3); track stage.id) {
-        <div class="event-card__stage">
-          <strong>{{ stage.title }}</strong>
-          <span>{{ stage.description || 'Этап пока без описания.' }}</span>
-        </div>
+  <div class="event-card__content">
+    <div class="event-card__chips">
+      @for (badge of badges(); track badge.label) {
+        <tui-badge [appearance]="badge.appearance" [iconStart]="badge.icon">{{ badge.label }}</tui-badge>
       }
     </div>
-  }
 
-  <div class="event-card__teams">
-    @if (event().teams.length) {
-      @for (team of event().teams.slice(0, 3); track team.id) {
-        <div class="event-card__team">
-          <strong>{{ team.name }}</strong>
-          <span>
-            {{ team.memberCount }} участников ·
-            {{ team.openPositionsCount }} открытых ролей
-          </span>
-        </div>
+    <div class="event-card__main">
+      <h3 class="event-card__name">{{ event().name }}</h3>
+
+      <p class="event-card__description">
+        {{ event().description || 'Описание мероприятия появится после публикации полной карточки.' }}
+      </p>
+
+      @if (detailsHref(); as detailsHref) {
+        <a
+          class="event-card__link"
+          iconEnd="@tui.arrow-up-right"
+          tuiLink
+          [href]="detailsHref"
+          target="_blank"
+          rel="noreferrer"
+        >
+          Подробнее
+        </a>
       }
-    } @else {
-      <div class="event-card__team">
-        <strong>Команды пока не собраны</strong>
-        <span>Этот слот пригодится для следующей задачи по event details.</span>
+    </div>
+
+    <div class="event-card__footer">
+      <div class="event-card__actions">
+        <a
+          tuiButton
+          routerLink="/teams/create"
+          appearance="accent"
+          size="m"
+          iconStart="@tui.plus"
+        >
+          Собрать команду
+        </a>
+
+        <button tuiButton type="button" appearance="outline" size="m">
+          Присоединиться к команде
+        </button>
       </div>
-    }
-  </div>
 
-  <div class="event-card__actions">
-    <a
-      tuiButton
-      routerLink="/teams/create"
-      appearance="primary"
-      size="m"
-    >
-      Создать команду
-    </a>
+      <div class="event-card__support">
+        <button
+          tuiButton
+          type="button"
+          appearance="outline"
+          size="m"
+          (click)="toggleSubscription()"
+        >
+          {{ isSubscribed() ? 'Вы подписаны' : 'Подписаться' }}
+        </button>
 
-    @if (event().registrationLink; as registrationLink) {
-      <a
-        tuiButton
-        appearance="secondary"
-        size="m"
-        [href]="registrationLink"
-        target="_blank"
-        rel="noreferrer"
-      >
-        Регистрация
-      </a>
-    }
+        <div class="event-card__difficulty">
+          <label tuiProgressLabel>
+            <span class="event-card__difficulty-value">
+              {{ difficulty().label }}
+            </span>
+            <tui-progress-circle
+              size="m"
+              [max]="difficulty().max"
+              [value]="difficulty().value"
+              [color]="difficulty().color"
+            ></tui-progress-circle>
+          </label>
+        </div>
+      </div>
+    </div>
   </div>
 </article>
