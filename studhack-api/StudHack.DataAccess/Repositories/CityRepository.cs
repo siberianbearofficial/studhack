@@ -26,8 +26,10 @@ public class CityRepository : ICityRepository
         try
         {
             var cityDb = await _context.Cities
+                .Where(c => c.Id == id)
+                .Include(e => e.Region)
                 .AsNoTracking()
-                .FirstOrDefaultAsync(c => c.Id == id, ct);
+                .FirstOrDefaultAsync(ct);
 
             return cityDb?.ToDomain();
         }
@@ -44,7 +46,10 @@ public class CityRepository : ICityRepository
 
         try
         {
-            var citiesDb = await _context.Cities.AsNoTracking().ToListAsync(ct);
+            var citiesDb = await _context.Cities
+                .Include(e => e.Region)
+                .AsNoTracking()
+                .ToListAsync(ct);
             return citiesDb.Select(c => c.ToDomain());
         }
         catch (Exception ex)
