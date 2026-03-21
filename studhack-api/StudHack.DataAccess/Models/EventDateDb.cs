@@ -18,6 +18,9 @@ public class EventDateDb
     public Guid Id { get; set; }
     
     [Required]
+    public Guid Id { get; set; }
+    
+    [Required]
     public Guid EventId { get; set; }
 
     public string? Description { get; set; }
