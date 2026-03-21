@@ -69,6 +69,41 @@ export class LandingPageComponent {
 ];
 
 
+protected activeUserIndex = 0;
+
+private wheelLocked = false;
+
+protected setActiveUser(index: number): void {
+  this.activeUserIndex = index;
+}
+
+protected onCarouselWheel(event: WheelEvent): void {
+  event.preventDefault();
+
+  if (this.wheelLocked) {
+    return;
+  }
+
+  this.wheelLocked = true;
+
+  if (event.deltaY > 0 || event.deltaX > 0) {
+    this.activeUserIndex =
+      this.activeUserIndex === this.users.length - 1
+        ? 0
+        : this.activeUserIndex + 1;
+  } else if (event.deltaY < 0 || event.deltaX < 0) {
+    this.activeUserIndex =
+      this.activeUserIndex === 0
+        ? this.users.length - 1
+        : this.activeUserIndex - 1;
+  }
+
+  setTimeout(() => {
+    this.wheelLocked = false;
+  }, 350);
+}
+
+
 
   protected readonly metrics = computed(() => {
     const overview = this.store.overview();

@@ -153,6 +153,8 @@
     </section>
   }
 
+
+
   <section class="match-hero">
   <div class="match-hero__content">
     <div class="match-hero__left">
@@ -166,7 +168,13 @@
       </p>
 
       <div class="match-hero__actions">
-        <button tuiButton appearance="primary" size="l" type="button"  class="btn-primary-custom">
+        <button
+          tuiButton
+          appearance="primary"
+          size="l"
+          type="button"
+          class="btn-primary-custom"
+        >
           Начать бесплатно
         </button>
 
@@ -177,36 +185,43 @@
     </div>
 
     <div class="match-hero__right">
-      <div class="match-hero__cards">
-        @for (user of users; track user.id) {
-          <article tuiCardLarge class="user-card">
-            <img
-              class="user-card__photo"
-              [src]="user.photo"
-              [alt]="user.name"
-            />
+  <div class="match-hero__carousel" (wheel)="onCarouselWheel($event)">
+    @for (user of users; track user.id; let i = $index) {
+      <article
+        tuiCardLarge
+        class="user-card"
+        [class.user-card--active]="i === activeUserIndex"
+        [class.user-card--prev]="i === activeUserIndex - 1"
+        [class.user-card--next]="i === activeUserIndex + 1"
+        [class.user-card--hidden-left]="i < activeUserIndex - 1"
+        [class.user-card--hidden-right]="i > activeUserIndex + 1"
+        (click)="setActiveUser(i)"
+      >
+        <img
+          class="user-card__photo"
+          [src]="user.photo"
+          [alt]="user.name"
+        />
 
-            <div class="user-card__body">
-              <span class="user-card__status">{{ user.status }}</span>
+        <div class="user-card__body">
+          <span class="user-card__status">{{ user.status }}</span>
+          <h3 class="user-card__name">{{ user.name }}</h3>
+          <p class="user-card__role">{{ user.role }}</p>
 
-              <h3 class="user-card__name">{{ user.name }}</h3>
-
-              <p class="user-card__role">{{ user.role }}</p>
-
-              <div class="user-card__skills">
-                @for (skill of user.skills; track skill) {
-                  <span tuiBadge appearance="neutral">{{ skill }}</span>
-                }
-              </div>
-            </div>
-          </article>
-        }
-      </div>
-    </div>
+          <div class="user-card__skills">
+            @for (skill of user.skills; track skill) {
+              <span tuiBadge appearance="neutral">{{ skill }}</span>
+            }
+          </div>
+        </div>
+      </article>
+    }
   </div>
-</section>
+</div>
+</div>
 
-</section>
+
+
 
 <footer>
   <div class="footer-container">
