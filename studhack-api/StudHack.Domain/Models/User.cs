@@ -14,7 +14,17 @@ public class User
         bool available,
         Guid? cityOfResidenceId,
         Guid? mainSpecializationId,
-        Guid authId)
+        Guid authId,
+        string? avatarUrl,
+        string? email,
+        string? biography,
+        DateTime createdAt,
+        DateTime updatedAt,
+        City? city,
+        IEnumerable<Skill>? skills,
+        IEnumerable<Specialization>? specializations,
+        IEnumerable<PortfolioLink>? portfolioLinks,
+        IEnumerable<Education>? educations)
     {
         Id = id;
         UniqueName = uniqueName;
@@ -24,6 +34,16 @@ public class User
         CityOfResidenceId = cityOfResidenceId;
         MainSpecializationId = mainSpecializationId;
         AuthId = authId;
+        AvatarUrl = avatarUrl;
+        Email = email;
+        Biography = biography;
+        CreatedAt = createdAt;
+        UpdatedAt = updatedAt;
+        City = city;
+        Skills = skills ?? Array.Empty<Skill>();
+        Specializations = specializations ?? Array.Empty<Specialization>();
+        PortfolioLinks = portfolioLinks ?? Array.Empty<PortfolioLink>();
+        Educations = educations ?? Array.Empty<Education>();
     }
 
     public Guid Id { get; init;  }
