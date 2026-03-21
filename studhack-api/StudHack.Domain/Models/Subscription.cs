@@ -6,12 +6,16 @@ public class Subscription
 {
     internal Subscription() { }
 
-    public Subscription(Guid eventId, Guid userId, DateTime createdAt)
+    public Subscription(Guid id, Guid eventId, Guid userId, DateTime createdAt)
     {
+        Id = id;
         EventId = eventId;
         UserId = userId;
         CreatedAt = createdAt;
     }
+
+    [Required]
+    public Guid Id { get; init; }
 
     [Required]
     public Guid EventId { get; init; }

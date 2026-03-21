@@ -7,7 +7,7 @@ public static class SubscriptionConverter
 {
     public static SubscriptionDb ToDb(this Subscription domain)
     {
-        return new SubscriptionDb(domain.EventId, domain.UserId)
+        return new SubscriptionDb(domain.Id, domain.EventId, domain.UserId)
         {
             CreatedAt = domain.CreatedAt
         };
@@ -15,6 +15,6 @@ public static class SubscriptionConverter
 
     public static Subscription ToDomain(this SubscriptionDb db)
     {
-        return new Subscription(db.EventId, db.UserId, db.CreatedAt);
+        return new Subscription(db.Id, db.EventId, db.UserId, db.CreatedAt);
     }
 }
