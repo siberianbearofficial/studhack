@@ -19,11 +19,12 @@ public static class EducationConverter
         };
     }
 
-    public static EducationDb ToDb(this Education db)
+    public static EducationDb ToDb(this Education db, Guid userId)
     {
         return new EducationDb
         {
             Id = db.Id,
+            UserId = userId,
             UniversityId = db.UniversityId,
             Degree = (EducationDegreeDb)db.Degree,
             Faculty = db.Faculty,

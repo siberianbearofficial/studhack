@@ -57,6 +57,10 @@ public class EducationRepository : IEducationRepository
             await _context.SaveChangesAsync(ct);
             return education;
         }
+        catch (EducationRepositoryException)
+        {
+            throw;
+        }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to add education: {@Education}", education);
@@ -75,7 +79,6 @@ public class EducationRepository : IEducationRepository
                 throw new EducationRepositoryException($"Education with id {education.Id} not found");
             }
 
-            _context.Entry(educationDb).CurrentValues.SetValues(education.ToDb());
             await _context.SaveChangesAsync(ct);
             return education;
         }
