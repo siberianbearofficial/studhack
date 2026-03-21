@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36603.0 d17.14
+VisualStudioVersion = 17.14.36603.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudHack.Api", "StudHack.Api\StudHack.Api.csproj", "{877CD0DC-703B-4A78-9F7D-8EB8B413681B}"
 EndProject
@@ -11,9 +11,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudHack.Domain", "StudHack
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudHack.Application", "StudHack.Application\StudHack.Application.csproj", "{A3639CB3-F8B5-4A87-BE98-CE24B1F119A4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmailMessageSender", "MessageSender\EmailMessageSender.csproj", "{8FBA15C9-CCD7-4C96-8147-63D4D5D25B00}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudHack.EmailMessageSender", "StudHack.MessageSender\StudHack.EmailMessageSender.csproj", "{F80C0B98-2649-BA03-4DB6-333C4696EBB7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessageSenderService", "MessageSenderService\MessageSenderService.csproj", "{EDC6C4B5-C9B6-4AE8-A9E5-C02E86ADD204}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StudHack.MessageSenderService", "StudHack.MessageSenderService\StudHack.MessageSenderService.csproj", "{258563F2-8D32-0BD4-D8EC-6E57A476D1A9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,14 +37,14 @@ Global
 		{A3639CB3-F8B5-4A87-BE98-CE24B1F119A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A3639CB3-F8B5-4A87-BE98-CE24B1F119A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A3639CB3-F8B5-4A87-BE98-CE24B1F119A4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8FBA15C9-CCD7-4C96-8147-63D4D5D25B00}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8FBA15C9-CCD7-4C96-8147-63D4D5D25B00}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8FBA15C9-CCD7-4C96-8147-63D4D5D25B00}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8FBA15C9-CCD7-4C96-8147-63D4D5D25B00}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EDC6C4B5-C9B6-4AE8-A9E5-C02E86ADD204}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EDC6C4B5-C9B6-4AE8-A9E5-C02E86ADD204}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EDC6C4B5-C9B6-4AE8-A9E5-C02E86ADD204}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EDC6C4B5-C9B6-4AE8-A9E5-C02E86ADD204}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F80C0B98-2649-BA03-4DB6-333C4696EBB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F80C0B98-2649-BA03-4DB6-333C4696EBB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F80C0B98-2649-BA03-4DB6-333C4696EBB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F80C0B98-2649-BA03-4DB6-333C4696EBB7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{258563F2-8D32-0BD4-D8EC-6E57A476D1A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{258563F2-8D32-0BD4-D8EC-6E57A476D1A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{258563F2-8D32-0BD4-D8EC-6E57A476D1A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{258563F2-8D32-0BD4-D8EC-6E57A476D1A9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
