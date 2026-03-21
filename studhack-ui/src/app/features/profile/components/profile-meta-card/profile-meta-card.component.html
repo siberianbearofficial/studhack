@@ -1,0 +1,40 @@
+<article tuiCardLarge="compact" class="profile-meta-card">
+  <header tuiHeader="h6">
+    <span tuiTitle>Профиль в цифрах</span>
+    <p tuiSubtitle>Быстрый снимок текущего состояния аккаунта.</p>
+  </header>
+
+  <div class="profile-meta-card__stats">
+    <div class="profile-meta-card__stat">
+      <strong>{{ profile().skills.length }}</strong>
+      <span>навыков</span>
+    </div>
+    <div class="profile-meta-card__stat">
+      <strong>{{ profile().teams.length }}</strong>
+      <span>команд</span>
+    </div>
+    <div class="profile-meta-card__stat">
+      <strong>{{ profile().portfolioLinks.length }}</strong>
+      <span>ссылок</span>
+    </div>
+    <div class="profile-meta-card__stat">
+      <strong>{{ profile().educations.length }}</strong>
+      <span>образований</span>
+    </div>
+  </div>
+
+  <div class="profile-meta-card__badges">
+    <span tuiBadge appearance="primary">@{{ profile().uniqueName }}</span>
+    <span
+      tuiBadge
+      [appearance]="profile().available ? 'positive' : 'warning'"
+    >
+      {{ profile().available ? 'Готов к поиску команды' : 'Недоступен' }}
+    </span>
+  </div>
+
+  <div class="profile-meta-card__dates">
+    <span>Создан {{ profile().createdAt | date: 'd MMM y' }}</span>
+    <span>Обновлен {{ profile().updatedAt | date: 'd MMM y, HH:mm' }}</span>
+  </div>
+</article>

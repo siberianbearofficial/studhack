@@ -1,0 +1,41 @@
+<div class="sketchfab-embed-shell">
+  @if (shouldRenderFallbackImage() && fallbackImageSrc(); as fallbackImageSrc) {
+    <img
+      class="sketchfab-embed-media"
+      [ngSrc]="fallbackImageSrc"
+      [alt]="fallbackAlt()"
+      width="1280"
+      height="720"
+      priority
+    />
+  } @else if (shouldRenderFallback()) {
+    <div class="sketchfab-embed-fallback" role="status" aria-live="polite">
+      <p class="sketchfab-embed-fallback__title">{{ title() }}</p>
+      <p class="sketchfab-embed-fallback__message">{{ fallbackMessage() }}</p>
+    </div>
+  } @else {
+    <div
+      class="sketchfab-embed-wrapper"
+      [class.sketchfab-embed-wrapper_interactive]="interactive()"
+    >
+      <iframe
+        #frame
+        class="sketchfab-embed-media"
+        [attr.inert]="interactive() ? null : ''"
+        [attr.tabindex]="interactive() ? null : '-1'"
+        [title]="title()"
+        [src]="safeEmbedUrl()"
+        frameborder="0"
+        allowfullscreen
+        mozallowfullscreen="true"
+        webkitallowfullscreen="true"
+        allow="autoplay; fullscreen; xr-spatial-tracking"
+        xr-spatial-tracking
+        execution-while-out-of-viewport
+        execution-while-not-rendered
+        web-share
+        (load)="setIframeElement(frame)"
+      ></iframe>
+    </div>
+  }
+</div>

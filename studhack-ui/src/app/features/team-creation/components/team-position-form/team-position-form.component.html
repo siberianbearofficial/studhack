@@ -1,0 +1,103 @@
+<article [formGroup]="form()" tuiCardLarge="compact" class="team-position-form">
+  <header tuiHeader="h6">
+    <span tuiTitle>Позиция {{ index() + 1 }}</span>
+    <div tuiAccessories>
+      <span
+        tuiBadge
+        [appearance]="mandatoryPosition() ? 'primary' : 'neutral'"
+      >
+        {{ mandatoryPosition() ? 'Обязательная' : 'Дополнительная' }}
+      </span>
+    </div>
+    <p tuiSubtitle>
+      @if (mandatoryPosition(); as mandatoryPosition) {
+        {{ mandatoryPosition.specialization.name }}
+      } @else {
+        Свободная роль для доукомплектования команды.
+      }
+    </p>
+  </header>
+
+  <div class="team-position-form__fields">
+    <label tuiLabel>
+      Название роли
+      <tui-textfield>
+        <input
+          tuiTextfield
+          formControlName="title"
+          placeholder="Frontend Engineer"
+        />
+      </tui-textfield>
+    </label>
+
+    @if (mandatoryPosition(); as mandatoryPosition) {
+      <div class="team-position-form__readonly">
+        <strong>Требуемые навыки</strong>
+        <div class="team-position-form__badges">
+          @for (skill of mandatoryPosition.requiredSkills; track skill.id) {
+            <span tuiBadge appearance="neutral">{{ skill.name }}</span>
+          }
+        </div>
+      </div>
+    } @else {
+      <label tuiLabel>
+        Специализация
+        <tui-textfield>
+          <select tuiTextfield formControlName="specializationId">
+            <option value="">Выбрать специализацию</option>
+
+            @for (specialization of specializations(); track specialization.id) {
+              <option [value]="specialization.id">{{ specialization.name }}</option>
+            }
+          </select>
+        </tui-textfield>
+      </label>
+
+      <label tuiLabel>
+        Ключевой навык
+        <tui-textfield>
+          <select tuiTextfield formControlName="requiredSkillId">
+            <option value="">Выбрать навык</option>
+
+            @for (skill of skills(); track skill.id) {
+              <option [value]="skill.id">{{ skill.name }}</option>
+            }
+          </select>
+        </tui-textfield>
+      </label>
+    }
+  </div>
+
+  <label tuiLabel>
+    Комментарий по роли
+    <textarea
+      formControlName="description"
+      class="team-position-form__textarea"
+      rows="3"
+      placeholder="Что именно должен закрыть участник в команде"
+    ></textarea>
+  </label>
+
+  <div class="team-position-form__footer">
+    <label tuiLabel>
+      <input
+        tuiCheckbox
+        type="checkbox"
+        formControlName="filledByExternal"
+      />
+      Роль уже закрыта внешним участником
+    </label>
+
+    @if (canRemove()) {
+      <button
+        tuiButton
+        type="button"
+        appearance="secondary"
+        size="m"
+        (click)="remove.emit()"
+      >
+        Удалить
+      </button>
+    }
+  </div>
+</article>

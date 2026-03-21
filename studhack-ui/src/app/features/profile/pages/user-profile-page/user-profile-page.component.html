@@ -1,0 +1,186 @@
+<section class="user-profile-page">
+  @if (store.error()) {
+    <section tuiCardLarge class="user-profile-page__status">
+      <header tuiHeader="h5">
+        <span tuiTitle>Профиль недоступен</span>
+        <p tuiSubtitle>{{ store.error() }}</p>
+      </header>
+
+      <a tuiLink routerLink="/profiles">Вернуться в каталог</a>
+    </section>
+  } @else if (store.isLoading()) {
+    <section tuiCardLarge class="user-profile-page__status">
+      <header tuiHeader="h5">
+        <span tuiTitle>Загружаем профиль</span>
+        <p tuiSubtitle>Подтягиваем данные выбранного участника.</p>
+      </header>
+    </section>
+  } @else if (store.user(); as user) {
+    <section tuiCardLarge class="user-profile-page__hero">
+      <a tuiLink routerLink="/profiles" class="user-profile-page__back">
+        К каталогу участников
+      </a>
+
+      <div class="user-profile-page__chips">
+        <tui-chip appearance="primary">{{ primarySpecialization() }}</tui-chip>
+        <tui-chip appearance="outline">
+          {{ user.cityOfResidence?.name || 'Город не указан' }}
+        </tui-chip>
+        <tui-chip appearance="positive">{{ highestExperience() }}</tui-chip>
+      </div>
+
+      <div class="user-profile-page__hero-content">
+        <header tuiHeader="h3">
+          <span tuiTitle>{{ user.displayName }}</span>
+          <div tuiAccessories>
+            <span
+              tuiBadge
+              [appearance]="user.available ? 'positive' : 'warning'"
+            >
+              {{ user.available ? 'Открыт к предложениям' : 'Сейчас занят' }}
+            </span>
+          </div>
+          <p tuiSubtitle>@{{ user.uniqueName }}</p>
+        </header>
+
+        <div class="user-profile-page__grade">
+          @if (grade(); as grade) {
+            <div class="user-profile-page__grade-circle">
+              <tui-progress-circle
+                size="xl"
+                [max]="grade.max"
+                [value]="grade.value"
+              />
+              <span class="user-profile-page__grade-value">
+                {{ grade.label }}
+              </span>
+            </div>
+          }
+        </div>
+      </div>
+
+      <p class="user-profile-page__bio">
+        {{ user.biography || 'Участник пока не добавил описание.' }}
+      </p>
+
+      <div class="user-profile-page__actions">
+        <button tuiButton type="button" appearance="primary" size="m">
+          Пригласить
+        </button>
+        <a
+          tuiButton
+          routerLink="/teams/create"
+          appearance="secondary"
+          size="m"
+        >
+          Собрать команду
+        </a>
+      </div>
+    </section>
+
+    <section class="user-profile-page__layout">
+      <div class="user-profile-page__main">
+        <section tuiCardLarge="compact" class="user-profile-page__section">
+          <header tuiHeader="h5">
+            <span tuiTitle>Навыки</span>
+            <p tuiSubtitle>Текущий стек и уровни владения.</p>
+          </header>
+
+          <div class="user-profile-page__badges">
+            @for (skill of user.skills; track skill.skill.id) {
+              <span tuiBadge appearance="neutral">
+                {{ skill.skill.name }} · {{ skill.experienceLevel }}
+              </span>
+            }
+          </div>
+        </section>
+
+        <section tuiCardLarge="compact" class="user-profile-page__section">
+          <header tuiHeader="h5">
+            <span tuiTitle>Команды</span>
+            <p tuiSubtitle>Где участник уже работал и в какой роли.</p>
+          </header>
+
+          @if (user.teams.length) {
+            <div class="user-profile-page__list">
+              @for (team of user.teams; track team.team.id) {
+                <div class="user-profile-page__list-item">
+                  <strong>{{ team.team.name }}</strong>
+                  <span>
+                    {{ team.event.name }} · {{ team.roleTitle }}
+                    @if (team.isCaptain) {
+                      · Captain
+                    }
+                  </span>
+                </div>
+              }
+            </div>
+          } @else {
+            <p class="user-profile-page__muted">
+              Участник пока не добавлен ни в одну команду.
+            </p>
+          }
+        </section>
+
+        <section tuiCardLarge="compact" class="user-profile-page__section">
+          <header tuiHeader="h5">
+            <span tuiTitle>Портфолио</span>
+            <p tuiSubtitle>Ссылки на проекты и внешние материалы.</p>
+          </header>
+
+          @if (user.portfolioLinks.length) {
+            <div class="user-profile-page__list">
+              @for (link of user.portfolioLinks; track link.id) {
+                <a
+                  tuiLink
+                  [href]="link.url"
+                  target="_blank"
+                  rel="noreferrer"
+                  class="user-profile-page__external-link"
+                >
+                  {{ link.description || link.url }}
+                </a>
+              }
+            </div>
+          } @else {
+            <p class="user-profile-page__muted">
+              Внешние ссылки пока не добавлены.
+            </p>
+          }
+        </section>
+      </div>
+
+      <aside class="user-profile-page__aside">
+        <app-profile-meta-card [profile]="user" />
+
+        <section tuiCardLarge="compact" class="user-profile-page__section">
+          <header tuiHeader="h6">
+            <span tuiTitle>Образование</span>
+            <p tuiSubtitle>Базовый контекст по университетам и программам.</p>
+          </header>
+
+          @if (user.educations.length) {
+            <div class="user-profile-page__list">
+              @for (education of user.educations; track education.id) {
+                <div class="user-profile-page__list-item">
+                  <strong>{{ education.university.name }}</strong>
+                  <span>
+                    {{ education.program || education.degree }}
+                    @if (education.yearStart || education.yearEnd) {
+                      · {{ education.yearStart || '...' }} -
+                      {{ education.yearEnd || '...' }}
+                    }
+                  </span>
+                </div>
+              }
+            </div>
+          } @else {
+            <p class="user-profile-page__muted">
+              Данные об образовании пока не добавлены.
+            </p>
+          }
+        </section>
+      </aside>
+    </section>
+  }
+</section>

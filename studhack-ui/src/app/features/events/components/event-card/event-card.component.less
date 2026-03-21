@@ -1,0 +1,41 @@
+.event-card {
+  display: grid;
+  gap: 1rem;
+}
+
+.event-card__description {
+  margin: 0;
+  color: var(--tui-text-secondary);
+}
+
+.event-card__facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.event-card__fact,
+.event-card__stage,
+.event-card__team {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.event-card__fact span,
+.event-card__stage span,
+.event-card__team span {
+  color: var(--tui-text-secondary);
+  font: var(--tui-font-text-s);
+}
+
+.event-card__stages,
+.event-card__teams {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.event-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}

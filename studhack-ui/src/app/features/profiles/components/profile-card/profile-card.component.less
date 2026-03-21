@@ -1,0 +1,71 @@
+.profile-card__chips,
+.profile-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.profile-card__main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.profile-card__name,
+.profile-card__bio {
+  margin: 0;
+}
+
+.profile-card__name {
+  font: var(--tui-font-heading-5);
+}
+
+.profile-card__bio {
+  color: var(--tui-text-secondary);
+  font: var(--tui-font-text-m);
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+
+.profile-card__link {
+  font: var(--tui-font-text-s);
+}
+
+.profile-card__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1rem;
+}
+
+tui-progress-circle {
+  --tui-thickness: 0.5rem;
+}
+
+.profile-card__grade {
+  margin-inline-start: auto;
+  display: grid;
+  justify-items: center;
+  gap: 0.5rem;
+}
+
+.profile-card__grade-value {
+  color: var(--tui-text-primary);
+  font: var(--tui-font-text-s);
+  font-weight: bold;
+}
+
+@media (max-width: 640px) {
+  .profile-card__footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .profile-card__grade {
+    margin-inline-start: 0;
+    justify-items: start;
+  }
+}

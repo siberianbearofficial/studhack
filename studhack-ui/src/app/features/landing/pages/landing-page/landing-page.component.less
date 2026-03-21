@@ -1,0 +1,73 @@
+.landing {
+  display: grid;
+  gap: 1rem;
+}
+
+.landing__hero {
+  display: grid;
+  gap: 1rem;
+  align-items: center;
+}
+
+.landing__hero-copy {
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.landing__actions,
+.landing__context,
+.landing__event-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.landing__metrics,
+.landing__grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.landing__panel,
+.landing__status {
+  min-height: 100%;
+}
+
+.landing__event {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.landing__event-main {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.landing__checklist {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.landing__checklist-item {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.landing__muted {
+  color: var(--tui-text-secondary);
+}
+
+@media (min-width: 900px) {
+  .landing__hero {
+    grid-template-columns: minmax(0, 1.2fr) minmax(320px, 420px);
+  }
+
+  .landing__metrics {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .landing__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

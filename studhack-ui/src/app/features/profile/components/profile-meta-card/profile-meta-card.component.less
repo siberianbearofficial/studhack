@@ -1,0 +1,28 @@
+.profile-meta-card {
+  display: grid;
+  gap: 1rem;
+}
+
+.profile-meta-card__stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.profile-meta-card__stat {
+  display: grid;
+  gap: 0.125rem;
+}
+
+.profile-meta-card__stat span,
+.profile-meta-card__dates {
+  color: var(--tui-text-secondary);
+  font: var(--tui-font-text-s);
+}
+
+.profile-meta-card__badges,
+.profile-meta-card__dates {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
