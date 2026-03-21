@@ -14,4 +14,9 @@ public static class PortfolioLinkConverter
     {
         return new PortfolioLink(db.Id, db.Link, db.Description);
     }
+
+    public static PortfolioLinkDb ToDb(this PortfolioLink db, Guid userId)
+    {
+        return new PortfolioLinkDb(db.Id, userId, db.Link, db.Description);
+    }
 }

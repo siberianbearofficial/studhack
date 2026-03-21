@@ -14,6 +14,20 @@ export const routes: Routes = [
       import('@features/profile').then((module) => module.UserProfilePageComponent),
   },
   {
+    path: 'login',
+    title: 'Вход',
+    loadComponent: () =>
+      import('@features/login').then((module) => module.LoginPageComponent),
+  },
+  {
+    path: 'notifications',
+    title: 'Уведомления',
+    loadComponent: () =>
+      import('@features/notifications').then(
+        (module) => module.NotificationsPageComponent,
+      ),
+  },
+  {
     path: 'profiles',
     title: 'Профили',
     loadComponent: () =>

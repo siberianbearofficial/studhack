@@ -7,7 +7,7 @@ public class UserInfoDto
     public string? DisplayName { get; init; }
     public DateTime? BirthDate { get; init; }
     public bool Available { get; init; }
-    public CityDto? City { get; init; }
+    public CityDto? CityOfResidence { get; init; }
     public string? AvatarUrl { get; init; }
     public string? Email { get; init; }
     public string? Biography { get; init; }

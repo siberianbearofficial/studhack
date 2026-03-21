@@ -40,7 +40,7 @@ public class UserService(IUserRepository userRepository, IAuthClient authClient)
 
     public async Task<Guid> SaveUserInfoAsync(Guid authId, User userInfo, CancellationToken ct = default)
     {
-        return await userRepository.SaveUserInfoAsync(authId, userInfo, ct);
+        return await userRepository.SaveUserAsync(authId, userInfo, ct);
     }
 
     private static UserAuthInfo FromAuthApi(Avalux.Auth.ApiClient.Models.UserInfo userInfo)
