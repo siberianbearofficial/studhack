@@ -1,6 +1,9 @@
 # СтудХак
 
-[![status-badge](https://woodpecker.dev.nachert.art/api/badges/12/status.svg)](https://woodpecker.dev.nachert.art/repos/12)
+[![status-badge](https://woodpecker.dev.nachert.art/api/badges/13/status.svg)](https://woodpecker.dev.nachert.art/repos/13)
 
-Frontend: Angular
+https://студхак.рф \
+https://studhack.nachert.art
+
+Frontend: Angular \
 Backend: ASP.NET
