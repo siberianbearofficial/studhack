@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "@taiga-ui/cdk": "^4.75.0",
+    "@taiga-ui/core": "^4.75.0",
+    "@taiga-ui/kit": "^4.75.0",
+    "@taiga-ui/layout": "^4.75.0"
+  }
+}
