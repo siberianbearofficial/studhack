@@ -17,15 +17,15 @@ public class UsersController(IUserService userService) : ControllerBase
     {
         var user = await userService.GetUserByAuthAsync(User.GetUserId(), ct);
         if (user != null)
-            return Ok(user.ToDto());
+            return Ok(new ApiResponseDto<UserInfoDto>(user.ToDto()));
         var authInfo = await userService.LoadUserInfoAsync(User.GetUserId(), ct);
-        return Ok(new UserInfoDto
+        return Ok(new ApiResponseDto<UserInfoDto>(new UserInfoDto
         {
             UniqueName = authInfo?.UniqueName,
             DisplayName = authInfo?.DisplayName,
             Email = authInfo?.Email,
             AvatarUrl = authInfo?.AvatarUrl,
-        });
+        }));
     }
 
     [HttpGet("{userId:guid}")]
@@ -35,7 +35,7 @@ public class UsersController(IUserService userService) : ControllerBase
         var user = await userService.GetUserByIdAsync(userId, ct);
         if (user == null)
             return NotFound("User not found");
-        return Ok(user.ToDto());
+        return Ok(new ApiResponseDto<UserInfoDto>(user.ToDto()));
     }
 
     [HttpGet]
@@ -44,7 +44,7 @@ public class UsersController(IUserService userService) : ControllerBase
         CancellationToken ct)
     {
         var users = await userService.GetUsersAsync(ct);
-        return Ok(users.Select(UserConverter.ToDto));
+        return Ok(new ApiResponseDto<IEnumerable<UserInfoDto>>(users.Select(UserConverter.ToDto)));
     }
 
     [HttpPut("me")]
@@ -70,6 +70,6 @@ public class UsersController(IUserService userService) : ControllerBase
                 Specializations = dto.Specializations.Select(SpecializationConverter.ToDomain).ToList(),
                 Educations = dto.Education.Select(EducationConverter.ToDomain).ToList(),
             }, ct);
-        return Ok(id);
+        return Ok(new ApiResponseDto<Guid>(id));
     }
 }

@@ -6,11 +6,11 @@ public class City
 {
     internal City() { }
 
-    public City(Guid id, string name, Guid regionId)
+    public City(Guid id, string name, Region region)
     {
         Id = id;
         Name = name;
-        RegionId = regionId;
+        Region = region;
     }
 
     public Guid Id { get; }
@@ -20,5 +20,5 @@ public class City
     public string Name { get; }
 
     [Required]
-    public Guid RegionId { get; }
+    public Region Region { get; }
 }
