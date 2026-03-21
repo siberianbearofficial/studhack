@@ -24,6 +24,12 @@ import { LandingStore } from '../../store/landing.store';
     TuiCard,
     TuiHeader,
     TuiTitle,
+<<<<<<< HEAD
+=======
+
+    TuiCardLarge,
+    
+>>>>>>> 439482de (fix footer padding)
   ],
   providers: [LandingStore],
   templateUrl: './landing-page.component.html',

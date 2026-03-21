@@ -7,9 +7,26 @@ import {
   signal,
 } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+<<<<<<< HEAD
 import { TuiButton, TuiDataList, TuiDropdown } from '@taiga-ui/core';
 import { TuiAvatar, TuiBadgeNotification, TuiBadgedContent, TuiProgressBar, TuiProgressSegmented } from '@taiga-ui/kit';
 import { catchError, finalize, of, switchMap, tap } from 'rxjs';
+=======
+import {
+  TuiButton,
+  TuiDataList,
+  TuiDropdown,
+} from '@taiga-ui/core';
+import {
+  TuiAvatar,
+  TuiBadgeNotification,
+  TuiBadgedContent,
+  TuiProgressBar,
+  TuiProgressSegmented,
+} from '@taiga-ui/kit';
+import { TuiCard } from '@taiga-ui/layout';
+import { catchError, forkJoin, of } from 'rxjs';
+>>>>>>> 439482de (fix footer padding)
 
 import { injectStudhackApiClient, type MyProfileDto } from '@core/api';
 import { AuthService } from '@core/auth';
