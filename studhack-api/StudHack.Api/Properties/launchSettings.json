@@ -16,7 +16,10 @@
       "launchUrl": "swagger",
       "applicationUrl": "http://localhost:5059",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "Auth.ApiUrl": "https://auth.nachert.art",
+        "Auth.Issuer": "https://auth.nachert.art/api/v1",
+        "Auth.Audience": "5caecabfac74b7709d102315ca3abc9b"
       }
     },
     "https": {
