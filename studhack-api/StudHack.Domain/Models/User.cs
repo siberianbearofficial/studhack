@@ -26,69 +26,55 @@ public class User
         AuthId = authId;
     }
 
-    public Guid Id { get; }
+    public Guid Id { get; init;  }
 
     [Required]
     [StringLength(100)]
-    public string UniqueName { get; }
+    public string UniqueName { get; init;  }
 
     [Required]
     [StringLength(100)]
-    public string DisplayedName { get; }
+    public string DisplayedName { get; init;  }
 
     [Required]
-    public DateTime BirthDate { get; }
+    public DateTime BirthDate { get; init;  }
 
     [Required]
-    public bool Available { get; }
+    public bool Available { get; init; }
 
-    public Guid? CityOfResidenceId { get; }
+    public Guid? CityOfResidenceId { get; init; }
 
-    public Guid? MainSpecializationId { get; }
+    public Guid? MainSpecializationId { get; init; }
 
     [StringLength(500)]
-    public string? AvatarUrl { get; }
+    public string? AvatarUrl { get; init; }
 
     [Required]
-    public Guid AuthId { get; }
+    public Guid AuthId { get; init; }
 
     [EmailAddress]
     [StringLength(255)]
-    public string? Email { get; }
+    public string? Email { get; init; }
 
-    public string? Biography { get; }
-
-    [Required]
-    public DateTime CreatedAt { get; }
+    public string? Biography { get; init; }
 
     [Required]
-    public DateTime UpdatedAt { get; }
+    public DateTime CreatedAt { get; init; }
+
+    [Required]
+    public DateTime UpdatedAt { get; init; }
     
     public City? City { get; init; }
 
     [Required]
-    public IEnumerable<UserSkill> UserSkills { get; init; }
+    public IEnumerable<Skill> Skills { get; init; }
     
     [Required]
-    public IEnumerable<UserSpecialization> UserSpecializations { get; init; }
+    public IEnumerable<Specialization> Specializations { get; init; }
     
     [Required]
     public IEnumerable<PortfolioLink> PortfolioLinks { get; init; }
     
     [Required]
     public IEnumerable<Education> Educations { get; init; }
-
-    [Required] public IEnumerable<Subscription> Subscriptions { get; init; }
-
-    [Required]
-    public IEnumerable<TeamRequest> TeamRequests { get; init; }
-    
-    [Required]
-    public IEnumerable<Team> CaptainTeams { get; init; }
-    
-    [Required]
-    public IEnumerable<Team> CreatedTeams { get; init; }
-    
-    [Required]
-    public IEnumerable<TeamPosition> TeamPositions { get; init; }
 }
