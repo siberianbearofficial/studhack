@@ -7,7 +7,7 @@ public class UserSkillDb
 {
     internal UserSkillDb() { }
 
-    public UserSkillDb(Guid userId, Guid skillId, ExperienceLevel experienceLevel)
+    public UserSkillDb(Guid userId, Guid skillId, ExperienceLevelDb experienceLevel)
     {
         UserId = userId;
         SkillId = skillId;
@@ -21,7 +21,7 @@ public class UserSkillDb
     public Guid SkillId { get; set; }
 
     [Required]
-    public ExperienceLevel ExperienceLevel { get; set; }
+    public ExperienceLevelDb ExperienceLevel { get; set; }
 
     public virtual UserDb User { get; set; }
     public virtual SkillDb Skill { get; set; }

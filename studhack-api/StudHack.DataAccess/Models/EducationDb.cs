@@ -11,7 +11,7 @@ public class EducationDb
         Guid id,
         Guid userId,
         Guid universityId,
-        EducationDegree degree,
+        EducationDegreeDb degree,
         string? faculty,
         int yearStart,
         int yearEnd)
@@ -34,7 +34,7 @@ public class EducationDb
     public Guid UniversityId { get; set; }
 
     [Required]
-    public EducationDegree Degree { get; set; }
+    public EducationDegreeDb Degree { get; set; }
 
     [StringLength(200)]
     public string? Faculty { get; set; }

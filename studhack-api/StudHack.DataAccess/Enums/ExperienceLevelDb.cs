@@ -1,6 +1,6 @@
 namespace StudHack.DataAccess;
 
-public enum ExperienceLevel
+public enum ExperienceLevelDb
 {
     Junior,
     Middle,

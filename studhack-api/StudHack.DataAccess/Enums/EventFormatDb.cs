@@ -1,6 +1,6 @@
 namespace StudHack.DataAccess;
 
-public enum EventFormat
+public enum EventFormatDb
 {
     Online,
     Offline

@@ -1,6 +1,6 @@
 namespace StudHack.DataAccess;
 
-public enum TeamRequestType
+public enum TeamRequestTypeDb
 {
     Invitation,
     Application

@@ -1,6 +1,6 @@
 namespace StudHack.DataAccess;
 
-public enum EventType
+public enum EventTypeDb
 {
     Hackaton,
     Other
