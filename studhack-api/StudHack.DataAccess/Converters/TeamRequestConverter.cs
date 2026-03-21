@@ -6,6 +6,21 @@ namespace StudHack.DataAccess.Converters;
 
 public static class TeamRequestConverter
 {
+    public static TeamRequestDb ToDb(this TeamRequest domain)
+    {
+        return new TeamRequestDb(
+            domain.Id,
+            domain.TeamPositionId,
+            domain.UserId,
+            (TeamRequestTypeDb)domain.Type,
+            (TeamRequestStatusDb)domain.Status,
+            domain.Message)
+        {
+            CreatedAt = domain.CreatedAt,
+            ResolvedAt = domain.ResolvedAt
+        };
+    }
+
     public static TeamRequest ToDomain(this TeamRequestDb db)
     {
         return new TeamRequest(

@@ -12,10 +12,9 @@ public class UserDb
         Guid id,
         string uniqueName,
         string displayedName,
-        DateTime birthDate,
+        DateTime? birthDate,
         bool available,
         Guid? cityOfResidenceId,
-        Guid? mainSpecializationId,
         Guid authId)
     {
         Id = id;
@@ -24,7 +23,6 @@ public class UserDb
         BirthDate = birthDate;
         Available = available;
         CityOfResidenceId = cityOfResidenceId;
-        MainSpecializationId = mainSpecializationId;
         AuthId = authId;
     }
 
@@ -38,15 +36,12 @@ public class UserDb
     [StringLength(100)]
     public string DisplayedName { get; set; }
 
-    [Required]
-    public DateTime BirthDate { get; set; }
+    public DateTime? BirthDate { get; set; }
 
     [Required]
     public bool Available { get; set; }
 
     public Guid? CityOfResidenceId { get; set; }
-
-    public Guid? MainSpecializationId { get; set; }
 
     [StringLength(500)]
     public string? AvatarUrl { get; set; }

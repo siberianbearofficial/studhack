@@ -6,6 +6,18 @@ namespace StudHack.DataAccess.Converters;
 
 public static class TeamPositionConverter
 {
+    public static TeamPositionDb ToDb(this TeamPosition domain)
+    {
+        return new TeamPositionDb(
+            domain.Id,
+            domain.TeamId,
+            domain.FilledByExternal,
+            (TeamPositionTypeDb)domain.Type,
+            domain.UserId,
+            domain.AddPositionData?.Id,
+            domain.MandPositionData?.Id);
+    }
+
     public static TeamPosition ToDomain(this TeamPositionDb db)
     {
         return new TeamPosition(

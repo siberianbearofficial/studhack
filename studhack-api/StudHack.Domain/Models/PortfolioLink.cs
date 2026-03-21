@@ -6,14 +6,17 @@ public class PortfolioLink
 {
     internal PortfolioLink() { }
 
-    public PortfolioLink(Guid id, string link, string? description)
+    public PortfolioLink(Guid id, Guid userId, string link, string? description)
     {
         Id = id;
+        UserId = userId;
         Link = link;
         Description = description;
     }
 
     public Guid Id { get; init; }
+    
+    public Guid UserId { get; init; }
 
     [StringLength(500)]
     public string? Description { get; init; }
