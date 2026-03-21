@@ -1,12 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace StudHack.DataAccess.Models
+namespace StudHack.DataAccess.Models;
+
+public class SentMessageDb
 {
-    internal class SentMessagesDb
+    internal SentMessageDb() { }
+
+    public SentMessageDb(Guid idEventDate, Guid idSubscription)
     {
+        IdEventDate = idEventDate;
+        IdSubscription = idSubscription;
     }
+
+    public Guid IdEventDate { get; set; }
+    public Guid IdSubscription { get; set; }
 }
