@@ -1,67 +1,122 @@
 .profile-page {
+  --profile-accent: #ff8a3d;
+  --profile-accent-soft: color-mix(in srgb, var(--profile-accent) 16%, transparent);
+  --profile-teal-soft: color-mix(in srgb, #1b9f8a 16%, transparent);
   display: grid;
   gap: 1rem;
 }
 
-.profile-page__hero,
-.profile-page__form,
-.profile-page__teams,
-.profile-page__panel,
+.profile-page__nav {
+  display: flex;
+}
+
+.profile-page__page-header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.profile-page__hero-editor {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.profile-page__hero-editor__names {
+  width: 100%;
+  display: flex;
+  gap: 1rem;
+
+  label {
+    flex: 1 1 auto;
+  }
+}
+
+.profile-page__editor-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.profile-page__content,
+.profile-page__toolbar,
+.profile-page__toolbar-actions,
+.profile-page__hero-main,
+.profile-page__hero-copy,
+.profile-page__hero-metrics,
+.profile-page__experience-summary,
+.profile-page__stack,
+.profile-page__stack-section,
+.profile-page__editor-head,
+.profile-page__editor-list,
+.profile-page__editor-row,
+.profile-page__section,
+.profile-page__fields,
+.profile-page__facts-grid,
+.profile-page__quick-card,
+.profile-page__quick-stats,
+.profile-page__pulse-card,
+.profile-page__pulse-list,
+.profile-page__tab-content,
+.profile-page__cards-grid,
+.profile-page__mini-card,
+.profile-page__mini-card-copy,
+.profile-page__hackathon-card,
+.profile-page__hackathon-body,
+.profile-page__hackathon-stats,
+.profile-page__achievement-card,
 .profile-page__status {
   display: grid;
   gap: 1rem;
 }
 
-.profile-page__hero-badges,
-.profile-page__badges {
+.profile-page__page-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.profile-page__page-header {
+  gap: 0.375rem;
+}
+
+.profile-page__title {
+  margin: 0;
+  font: var(--tui-font-heading-1);
+}
+
+.profile-page__lead {
+  font: var(--tui-font-text-xl);
+}
+
+.profile-page__lead,
+.profile-page__muted,
+.profile-page__mini-card-note,
+.profile-page__achievement-head p {
+  margin: 0;
+  color: var(--tui-text-secondary);
+}
+
+.profile-page__content {
+  gap: 1.25rem;
+}
+
+.profile-page__toolbar {
+  align-items: center;
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--tui-background-neutral-1) 80%, white) 0%,
+    var(--tui-background-base) 100%
+  );
+}
+
+.profile-page__toolbar-copy {
+  min-width: 0;
+}
+
+.profile-page__toolbar-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
-}
-
-.profile-page__layout,
-.profile-page__main,
-.profile-page__aside {
-  display: grid;
-  gap: 1rem;
-}
-
-.profile-page__fields {
-  display: grid;
-  gap: 1rem;
-}
-
-.profile-page__availability {
-  align-self: end;
-}
-
-.profile-page__textarea {
-  width: 100%;
-  resize: vertical;
-  min-height: 7rem;
-  box-sizing: border-box;
-  padding: 0.875rem 1rem;
-  border: 1px solid var(--tui-border-normal);
-  border-radius: var(--tui-radius-l);
-  background: var(--tui-background-base);
-  color: var(--tui-text-primary);
-  font: inherit;
-}
-
-.profile-page__textarea:focus {
-  outline: 2px solid var(--tui-border-focus);
-  outline-offset: 1px;
-}
-
-.profile-page__specializations {
-  display: grid;
-  gap: 1rem;
-}
-
-.profile-page__specializations-grid,
-.profile-page__teams-list,
-.profile-page__links {
-  display: grid;
   gap: 0.75rem;
 }
 
@@ -81,28 +136,464 @@
   color: var(--tui-status-positive);
 }
 
-.profile-page__team-item {
-  display: grid;
-  gap: 0.25rem;
+.profile-page__hero {
+  display: flex;
+  flex-direction: row !important;
+  position: relative;
+  overflow: hidden;
+  gap: 1.25rem;
+  background: var(--tui-background-base);
 }
 
-.profile-page__team-item span,
-.profile-page__muted,
-.profile-page__links a {
+.profile-page__hero-summary {
+  display: grid;
+  gap: 1rem;
+  align-items: start;
+}
+
+.profile-page__hero-avatar {
+  box-shadow: 0 1rem 2rem color-mix(in srgb, var(--profile-accent) 18%, transparent);
+}
+
+.profile-page__hero-copy {
+  min-width: 0;
+}
+
+.profile-page__hero-badges,
+.profile-page__badges,
+.profile-page__links,
+.profile-page__role-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.625rem;
+}
+
+.profile-page__hero-heading,
+.profile-page__mini-card-head,
+.profile-page__achievement-head {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.profile-page__hero-metrics,
+.profile-page__experience-summary,
+.profile-page__quick-stats,
+.profile-page__facts-grid,
+.profile-page__hackathon-stats {
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+}
+
+.profile-page__hero-metric,
+.profile-page__experience-metric,
+.profile-page__fact,
+.profile-page__quick-stat {
+  display: grid;
+  gap: 0.375rem;
+  padding: 0.875rem 1rem;
+  border-radius: var(--tui-radius-l);
+  background: color-mix(in srgb, var(--tui-background-base) 78%, white);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--tui-border-normal) 70%, transparent);
+}
+
+.profile-page__hero-metric span,
+.profile-page__experience-metric span,
+.profile-page__fact span,
+.profile-page__quick-stat span,
+.profile-page__subheading,
+.profile-page__participants-caption,
+.profile-page__mini-card-caption {
+  color: var(--tui-text-secondary);
+  font: var(--tui-font-text-s);
+}
+
+.profile-page__hero-metric strong,
+.profile-page__experience-metric strong,
+.profile-page__fact strong,
+.profile-page__quick-stat strong {
+  color: var(--tui-text-primary);
+  font: var(--tui-font-text-l);
+}
+
+.profile-page__experience-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  position: relative;
+  padding: 1.125rem;
+  border-radius: calc(var(--tui-radius-l) * 1.05);
+  background: color-mix(in srgb, var(--tui-background-base) 84%, white);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--tui-border-normal) 78%, transparent);
+}
+
+.profile-page__stack {
+  gap: 1.125rem;
+}
+
+.profile-page__editor-head {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: flex-end;
+}
+
+.profile-page__editor-head strong {
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.profile-page__editor-head span {
+  color: var(--tui-text-secondary);
+  font: var(--tui-font-text-s);
+}
+
+.profile-page__editor-row {
+  padding: 0.875rem;
+  border-radius: var(--tui-radius-l);
+  background: color-mix(in srgb, var(--tui-background-neutral-1) 72%, white);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--tui-border-normal) 65%, transparent);
+}
+
+.profile-page__editor-row_links {
+  align-items: end;
+}
+
+.profile-page__fields .profile-page__availability {
+  grid-column: 1 / -1;
+}
+
+.profile-page__textarea {
+  width: 100%;
+  min-height: 7rem;
+  resize: vertical;
+  box-sizing: border-box;
+  padding: 0.875rem 1rem;
+  border: 1px solid var(--tui-border-normal);
+  border-radius: var(--tui-radius-l);
+  background: var(--tui-background-base);
+  color: var(--tui-text-primary);
+  font: inherit;
+}
+
+.profile-page__textarea:focus {
+  outline: 2px solid var(--tui-border-focus);
+  outline-offset: 1px;
+}
+
+.profile-page__specializations-grid {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.profile-page__specialization {
+}
+
+.profile-page__progress-card,
+.profile-page__pulse-card {
+  background: color-mix(in srgb, var(--tui-background-neutral-1) 78%, transparent);
+}
+
+.profile-page__progress-subheading {
+  color: var(--tui-text-secondary);
+  font: var(--tui-font-text-xs);
+}
+
+.profile-page__progress-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  font: var(--tui-font-heading-5);
+}
+
+.profile-page__progress-caption {
+  color: var(--tui-text-secondary);
+  font: var(--tui-font-text-s);
+}
+
+.profile-page__quick-stats {
+  gap: 0.75rem;
+}
+
+.profile-page__quick-stat {
+  gap: 0.125rem;
+  padding: 0.75rem 0.875rem;
+}
+
+.profile-page__pulse-list {
+  gap: 0.75rem;
+}
+
+.profile-page__pulse-item,
+.profile-page__participants,
+.profile-page__chart-block,
+.profile-page__achievement-metric {
+  display: grid;
+  gap: 0.375rem;
+}
+
+.profile-page__pulse-item {
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--tui-border-normal) 72%, transparent);
+}
+
+.profile-page__pulse-item:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.profile-page__pulse-item span {
   color: var(--tui-text-secondary);
 }
 
-@media (min-width: 900px) {
-  .profile-page__layout {
-    grid-template-columns: minmax(0, 1.5fr) minmax(320px, 420px);
-    align-items: start;
+.profile-page__pulse-item strong {
+  font: var(--tui-font-heading-5);
+}
+
+.profile-page__tabs {
+  overflow: auto;
+}
+
+.profile-page__tab-count {
+  margin-left: 0.5rem;
+  color: var(--tui-text-secondary);
+  font: var(--tui-font-text-s);
+}
+
+.profile-page__teams-table {
+  display: grid;
+  gap: 0.875rem;
+}
+
+.profile-page__table-head,
+.profile-page__table-row {
+  display: grid;
+  gap: 1rem;
+}
+
+.profile-page__table-head {
+  padding: 0 1rem;
+  color: var(--tui-text-secondary);
+  font: var(--tui-font-text-s);
+}
+
+.profile-page__table-row {
+  padding: 1rem;
+  border-top: 1px solid var(--tui-border-normal);
+}
+
+.profile-page__table-cell {
+  display: grid;
+  gap: 0.625rem;
+  align-content: start;
+}
+
+.profile-page__team-name {
+  font: var(--tui-font-heading-5);
+}
+
+.profile-page__team-meta,
+.profile-page__mini-card-user,
+.profile-page__mini-card-meta,
+.profile-page__chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.625rem;
+}
+
+.profile-page__team-meta,
+.profile-page__mini-card-meta {
+  color: var(--tui-text-secondary);
+  font: var(--tui-font-text-s);
+}
+
+.profile-page__event-link {
+  color: var(--tui-text-secondary);
+  font: var(--tui-font-text-m);
+  text-decoration: none;
+}
+
+.profile-page__chart-block {
+  align-items: start;
+}
+
+.profile-page__chart-legend {
+  gap: 0.5rem 0.875rem;
+  color: var(--tui-text-secondary);
+  font: var(--tui-font-text-s);
+}
+
+.profile-page__legend-dot {
+  display: inline-block;
+  width: 0.625rem;
+  height: 0.625rem;
+  margin-right: 0.375rem;
+  border-radius: 999px;
+}
+
+.profile-page__legend-dot_positive {
+  background: var(--tui-status-positive);
+}
+
+.profile-page__legend-dot_warning {
+  background: var(--tui-status-warning);
+}
+
+.profile-page__legend-dot_negative {
+  background: var(--tui-status-negative);
+}
+
+.profile-page__cards-grid {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.profile-page__mini-card {
+  gap: 0.875rem;
+}
+
+.profile-page__mini-card-head {
+  gap: 0.875rem;
+}
+
+.profile-page__mini-card-user {
+  align-items: center;
+}
+
+.profile-page__mini-card-copy strong {
+  display: block;
+}
+
+.profile-page__mini-card-caption {
+  display: inline-block;
+}
+
+.profile-page__hackathon-card {
+  overflow: hidden;
+  gap: 0;
+}
+
+.profile-page__hackathon-cover {
+  display: grid;
+  gap: 0.5rem;
+  padding: 1rem 1.125rem;
+  color: white;
+}
+
+.profile-page__hackathon-date {
+  font: var(--tui-font-text-s);
+  opacity: 0.92;
+}
+
+.profile-page__hackathon-body {
+  padding: 1.125rem;
+}
+
+.profile-page__achievement-head {
+  align-items: start;
+}
+
+.profile-page__achievement-metric strong {
+  color: var(--tui-text-primary);
+  font: var(--tui-font-heading-5);
+}
+
+.profile-page__achievement-metric span {
+  color: var(--tui-text-secondary);
+  font: var(--tui-font-text-s);
+}
+
+.profile-page__links a {
+  text-decoration: none;
+}
+
+.profile-page__bottom-edit-buttons {
+  display: flex;
+  gap: 1rem;
+  padding-inline: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+progress[tuiProgressBar] {
+  width: 100%;
+}
+
+@media (min-width: 720px) {
+  .profile-page__hero-summary {
+    grid-template-columns: auto minmax(0, 1fr);
   }
 
   .profile-page__fields {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .profile-page__editor-row {
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr) auto;
+    align-items: flex-start;
+  }
+
   .profile-page__specializations-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 960px) {
+  .profile-page__toolbar {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+  }
+
+  .profile-page__hero-side {
+    min-width: 25rem;
+    display: grid;
+    gap: 1rem;
+  }
+
+  .profile-page__table-head,
+  .profile-page__table-row {
+    grid-template-columns:
+      minmax(180px, 1.15fr)
+      minmax(150px, 0.82fr)
+      minmax(160px, 0.9fr)
+      minmax(260px, 1.7fr)
+      minmax(200px, 0.92fr);
+  }
+}
+
+@media (max-width: 959px) {
+  .profile-page__table-head {
+    display: none;
+  }
+
+  .profile-page__table-cell {
+    padding-top: 0.25rem;
+    border-top: 1px solid color-mix(in srgb, var(--tui-border-normal) 68%, transparent);
+  }
+
+  .profile-page__table-cell:first-child {
+    padding-top: 0;
+    border-top: 0;
+  }
+
+  .profile-page__table-cell::before {
+    content: attr(data-label);
+    color: var(--tui-text-secondary);
+    font: var(--tui-font-text-s);
+  }
+}
+
+@media (max-width: 719px) {
+  .profile-page__toolbar-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .profile-page__hero-metrics,
+  .profile-page__experience-summary,
+  .profile-page__facts-grid,
+  .profile-page__hackathon-stats,
+  .profile-page__quick-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-page__specializations-grid,
+  .profile-page__editor-row {
+    grid-template-columns: 1fr;
   }
 }

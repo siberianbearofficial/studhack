@@ -1,4 +1,50 @@
 <section class="profile-page">
+  <nav class="profile-page__nav" aria-label="Назад к предыдущему экрану">
+    <button tuiLink type="button" iconStart="@tui.chevron-left" (click)="goBack()">Назад</button>
+  </nav>
+
+  <header class="profile-page__page-header">
+    <div class="profile-page__page-copy">
+      <h1 tuiTitle class="profile-page__title">Мой профиль</h1>
+      <p class="profile-page__lead">
+        Вся информация по командам, хакатонам, личным данным и состоянию профиля
+      </p>
+    </div>
+
+    <div class="profile-page__toolbar-actions">
+      @if (editMode()) {
+        <button
+          tuiIconButton
+          type="button"
+          appearance="outline"
+          size="m"
+          iconStart="@tui.undo-2"
+          (click)="cancelEditing()"
+        ></button>
+
+        <button
+          tuiIconButton
+          type="button"
+          appearance="primary"
+          size="m"
+          iconStart="@tui.save"
+          [disabled]="form.invalid || store.isSaving()"
+          [loading]="store.isSaving()"
+          (click)="submit()"
+        ></button>
+      } @else {
+        <button
+          tuiIconButton
+          type="button"
+          appearance="outline"
+          iconStart="@tui.pencil"
+          size="m"
+          (click)="startEditing()"
+        ></button>
+      }
+    </div>
+  </header>
+
   @if (store.error() && !store.me()) {
     <section tuiCardLarge class="profile-page__status">
       <header tuiHeader="h5">
@@ -10,87 +56,409 @@
     <section tuiCardLarge class="profile-page__status">
       <header tuiHeader="h5">
         <span tuiTitle>Загружаем профиль</span>
-        <p tuiSubtitle>
-          Подтягиваем текущего пользователя и словари для формы редактирования.
-        </p>
+        <p tuiSubtitle>Подтягиваем команды, хакатоны, запросы и редактируемые поля.</p>
       </header>
+
+      <tui-loader></tui-loader>
     </section>
   } @else if (store.me(); as me) {
-    <section tuiCardLarge class="profile-page__hero">
-      <header tuiHeader="h3">
-        <span tuiTitle>Мой профиль</span>
-        <p tuiSubtitle>
-          Здесь уже можно отредактировать базовые поля и сохранить их через
-          `upsertMe`, не переписывая предметную модель.
-        </p>
-      </header>
+    <form [formGroup]="form" (ngSubmit)="submit()" class="profile-page__content">
+      @if (store.error()) {
+        <section class="profile-page__message profile-page__message_error">
+          {{ store.error() }}
+        </section>
+      }
 
-      <div class="profile-page__hero-badges">
-        <span tuiBadge appearance="primary">@{{ me.uniqueName }}</span>
-        <span
-          tuiBadge
-          [appearance]="me.available ? 'positive' : 'warning'"
-        >
-          {{ me.available ? 'Можно предлагать в команду' : 'Пока скрыт' }}
-        </span>
-      </div>
-    </section>
+      @if (store.success()) {
+        <section class="profile-page__message profile-page__message_success">
+          {{ store.success() }}
+        </section>
+      }
 
-    <section class="profile-page__layout">
-      <div class="profile-page__main">
-        <form
-          [formGroup]="form"
-          (ngSubmit)="submit()"
-          tuiCardLarge
-          class="profile-page__form"
-        >
-          <header tuiHeader="h4">
-            <span tuiTitle>Редактирование</span>
-            <p tuiSubtitle>
-              Пока редактируем только ключевые поля, остальной профиль берется из
-              текущих данных пользователя.
-            </p>
-          </header>
+      <section tuiCardLarge tuiSurface="floating" class="profile-page__hero">
+        <div class="profile-page__hero-main">
+          <div class="profile-page__hero-summary">
+            <tui-avatar
+              size="xl"
+              [round]="true"
+              [src]="me.avatarUrl ?? null"
+              class="profile-page__hero-avatar"
+            >
+              {{ avatarInitials() }}
+            </tui-avatar>
 
-          @if (store.error()) {
-            <div class="profile-page__message profile-page__message_error">
-              {{ store.error() }}
+            <div class="profile-page__hero-copy">
+              <div class="profile-page__hero-badges">
+                <span tuiBadge appearance="primary">@{{ me.uniqueName }}</span>
+                <span tuiBadge [appearance]="me.available ? 'positive' : 'warning'">
+                  {{ me.available ? 'Открыт к предложениям' : 'Сейчас не в подборе' }}
+                </span>
+                <span tuiBadge appearance="info">{{ primarySpecialization() }}</span>
+              </div>
+
+              @if (editMode()) {
+                <div class="profile-page__hero-editor">
+                  <div class="profile-page__hero-editor__names">
+                    <label tuiLabel>
+                      Имя
+                      <tui-textfield>
+                        <input
+                          tuiTextfield
+                          formControlName="displayName"
+                          placeholder="Егор Смирнов"
+                        />
+                      </tui-textfield>
+                    </label>
+
+                    <label tuiLabel>
+                      Username
+                      <tui-textfield>
+                        <input
+                          tuiTextfield
+                          formControlName="uniqueName"
+                          placeholder="egor.smirnov"
+                        />
+                      </tui-textfield>
+                    </label>
+                  </div>
+
+                  <tui-textfield>
+                    <label tuiLabel>Био</label>
+                    <textarea
+                      placeholder="Опишите, как вы работаете и в каких ролях можете быть полезны"
+                      tuiTextarea
+                      formControlName="biography"
+                      [limit]="300"
+                      [max]="6"
+                      [min]="3"
+                    ></textarea>
+                  </tui-textfield>
+                </div>
+              } @else {
+                <header tuiHeader="h2" class="profile-page__hero-heading">
+                  <span tuiTitle>{{ me.displayName }}</span>
+                  <p tuiSubtitle>
+                    {{
+                      me.biography ||
+                        'Пока без био. Добавьте короткое описание, чтобы быстрее находить подходящие команды.'
+                    }}
+                  </p>
+                </header>
+
+                <div class="profile-page__hero-metrics">
+                  <div class="profile-page__hero-metric">
+                    <span>Опыт</span>
+                    <strong>{{ highestExperience() }}</strong>
+                  </div>
+
+                  <div class="profile-page__hero-metric">
+                    <span>Формат участия</span>
+                    <strong>{{ participationLabel() }}</strong>
+                  </div>
+
+                  <div class="profile-page__hero-metric">
+                    <span>Город</span>
+                    <strong>{{ me.cityOfResidence?.name || 'Не указан' }}</strong>
+                  </div>
+                </div>
+              }
             </div>
-          }
+          </div>
 
-          @if (store.success()) {
-            <div class="profile-page__message profile-page__message_success">
-              {{ store.success() }}
-            </div>
-          }
+          <section class="profile-page__experience-card">
+            <header tuiHeader="h5">
+              <span tuiTitle>Компетенции</span>
+            </header>
 
+            @if (editMode()) {
+              <section class="profile-page__editor-block">
+                <div class="profile-page__editor-head">
+                  <span class="profile-page__subheading">Специализации</span>
+                </div>
+
+                <div formArrayName="specializations" class="profile-page__specializations-grid">
+                  @for (
+                    specialization of store.specializations();
+                    track specialization.id;
+                    let index = $index
+                  ) {
+                    <label tuiLabel class="profile-page__specialization">
+                      <input tuiCheckbox type="checkbox" [formControlName]="index" />
+                      {{ specialization.name }}
+                    </label>
+                  }
+                </div>
+              </section>
+
+              <section class="profile-page__editor-block">
+                <div class="profile-page__editor-head">
+                  <div>
+                    <span class="profile-page__subheading">Навыки</span>
+                  </div>
+
+                  <button
+                    tuiButton
+                    type="button"
+                    appearance="secondary"
+                    size="xs"
+                    (click)="addSkill()"
+                  >
+                    Добавить навык
+                  </button>
+                </div>
+
+                @if (skillsControls.length) {
+                  <div formArrayName="skills" class="profile-page__editor-list">
+                    @for (control of skillsControls; track $index) {
+                      <div [formGroupName]="$index" class="profile-page__editor-row">
+                        <label tuiLabel>
+                          Навык
+                          <tui-textfield
+                            tuiChevron
+                            [stringify]="stringifySkill"
+                            [identityMatcher]="matchSkill"
+                          >
+                            <input tuiComboBox formControlName="skill" />
+
+                            <tui-data-list-wrapper
+                              *tuiTextfieldDropdown
+                              new
+                              [items]="store.skills() | tuiFilterByInput"
+                            />
+                          </tui-textfield>
+                        </label>
+
+                        <label tuiLabel>
+                          Уровень
+                          <tui-textfield
+                            tuiChevron
+                            [stringify]="stringifySkillLevel"
+                            [identityMatcher]="matchSkillLevel"
+                          >
+                            <input tuiComboBox formControlName="experienceLevel" />
+
+                            <tui-data-list-wrapper
+                              *tuiTextfieldDropdown
+                              new
+                              [items]="skillLevelOptions | tuiFilterByInput"
+                            />
+                          </tui-textfield>
+                        </label>
+
+                        <button
+                          tuiIconButton
+                          type="button"
+                          appearance="secondary-destructive"
+                          size="xs"
+                          iconStart="@tui.x"
+                          (click)="removeSkill($index)"
+                        >
+                        </button>
+                      </div>
+                    }
+                  </div>
+                } @else {
+                  <p class="profile-page__muted">
+                    Пока навыков нет. Добавьте хотя бы несколько ключевых технологий.
+                  </p>
+                }
+              </section>
+
+              <section class="profile-page__editor-block">
+                <div class="profile-page__editor-head">
+                  <div>
+                    <span class="profile-page__subheading">Портфолио</span>
+                  </div>
+
+                  <button
+                    tuiButton
+                    type="button"
+                    appearance="secondary"
+                    size="xs"
+                    (click)="addPortfolioLink()"
+                  >
+                    Добавить ссылку
+                  </button>
+                </div>
+
+                @if (portfolioLinkControls.length) {
+                  <div formArrayName="portfolioLinks" class="profile-page__editor-list">
+                    @for (control of portfolioLinkControls; track $index) {
+                      <div
+                        [formGroupName]="$index"
+                        class="profile-page__editor-row profile-page__editor-row_links"
+                      >
+                        <label tuiLabel>
+                          URL
+                          <tui-textfield>
+                            <input tuiTextfield formControlName="url" placeholder="https://..." />
+                          </tui-textfield>
+                        </label>
+
+                        <label tuiLabel>
+                          Подпись
+                          <tui-textfield>
+                            <input
+                              tuiTextfield
+                              formControlName="description"
+                              placeholder="Коротко: что за кейс"
+                            />
+                          </tui-textfield>
+                        </label>
+
+                        <button
+                          tuiIconButton
+                          type="button"
+                          appearance="secondary-destructive"
+                          size="xs"
+                          iconStart="@tui.x"
+                          (click)="removePortfolioLink($index)"
+                        >
+                        </button>
+                      </div>
+                    }
+                  </div>
+                } @else {
+                  <p class="profile-page__muted">
+                    Пока нет кейсов. Добавьте хотя бы один сильный пример работы.
+                  </p>
+                }
+              </section>
+            } @else {
+              <div class="profile-page__stack">
+                <div class="profile-page__stack-section">
+                  <span class="profile-page__subheading">Специализации</span>
+
+                  <div class="profile-page__badges">
+                    @for (specialization of me.specializations; track specialization.id) {
+                      <span tuiBadge appearance="primary">
+                        {{ specialization.name }}
+                      </span>
+                    }
+                  </div>
+                </div>
+
+                <div class="profile-page__stack-section">
+                  <span class="profile-page__subheading">Навыки</span>
+
+                  <div class="profile-page__badges">
+                    @for (skill of me.skills; track skill.skill.id) {
+                      <span tuiBadge appearance="neutral">
+                        {{ skill.skill.name }} · {{ getExperienceLabel(skill.experienceLevel) }}
+                      </span>
+                    }
+                  </div>
+                </div>
+
+                <div class="profile-page__stack-section">
+                  <span class="profile-page__subheading">Портфолио</span>
+
+                  @if (me.portfolioLinks.length) {
+                    <div class="profile-page__links">
+                      @for (link of me.portfolioLinks; track link.id) {
+                        <a
+                          tuiLink
+                          [href]="link.url"
+                          target="_blank"
+                          rel="noreferrer"
+                          iconEnd="@tui.arrow-up-right"
+                        >
+                          {{ link.description || link.url }}
+                        </a>
+                      }
+                    </div>
+                  } @else {
+                    <p class="profile-page__muted">Кейсы пока не добавлены.</p>
+                  }
+                </div>
+              </div>
+            }
+          </section>
+        </div>
+
+        @if (!editMode()) {
+          <aside class="profile-page__hero-side">
+            @if (grade(); as grade) {
+              <section tuiCardLarge="compact" class="profile-page__progress-card">
+                <div class="profile-page__progress-subheading">Прогресс</div>
+
+                <div class="profile-page__progress-head">
+                  <span>Уровень {{ grade.level }}</span>
+                  <span>{{ progressPercent() }}%</span>
+                </div>
+
+                <progress
+                  tuiProgressBar
+                  size="s"
+                  [segments]="8"
+                  [max]="grade.max"
+                  [value]="grade.value"
+                  color="var(--tui-status-positive)"
+                  aria-label="Прогресс текущего уровня"
+                ></progress>
+
+                <span class="profile-page__progress-caption">
+                  {{ grade.value }} / {{ grade.max }} очков
+                </span>
+              </section>
+            }
+
+            <section tuiCardLarge="compact" class="profile-page__quick-card">
+              <header tuiHeader="h6">
+                <span tuiTitle>Активность</span>
+              </header>
+
+              <div class="profile-page__quick-stats">
+                @for (stat of hubStats(); track stat.label) {
+                  <div class="profile-page__quick-stat">
+                    <strong>{{ stat.value }}</strong>
+                    <span>{{ stat.label }}</span>
+                  </div>
+                }
+              </div>
+            </section>
+
+            <section tuiCardLarge="compact" class="profile-page__pulse-card">
+              <header tuiHeader="h6">
+                <span tuiTitle>Требует внимания</span>
+              </header>
+
+              <div class="profile-page__pulse-list">
+                <div class="profile-page__pulse-item">
+                  <span>Входящие приглашения</span>
+                  <strong>{{ pendingInvitesCount() }}</strong>
+                </div>
+
+                <div class="profile-page__pulse-item">
+                  <span>Исходящие заявки</span>
+                  <strong>{{ pendingOutgoingCount() }}</strong>
+                </div>
+
+                <div class="profile-page__pulse-item">
+                  <span>Запросы в моих командах</span>
+                  <strong>{{ pendingManagedCount() }}</strong>
+                </div>
+              </div>
+            </section>
+          </aside>
+        }
+      </section>
+
+      <section tuiCardLarge="compact" class="profile-page__section">
+        <header tuiHeader="h5">
+          <span tuiTitle>Личные данные</span>
+        </header>
+
+        @if (editMode()) {
           <div class="profile-page__fields">
-            <label tuiLabel>
-              Username
-              <tui-textfield>
-                <input
-                  tuiTextfield
-                  formControlName="uniqueName"
-                  placeholder="egor-smirnov"
-                />
-              </tui-textfield>
-            </label>
-
-            <label tuiLabel>
-              Отображаемое имя
-              <tui-textfield>
-                <input
-                  tuiTextfield
-                  formControlName="displayName"
-                  placeholder="Егор Смирнов"
-                />
-              </tui-textfield>
-            </label>
-
             <label tuiLabel>
               Дата рождения
               <tui-textfield>
-                <input tuiTextfield type="date" formControlName="birthDate" />
+                <input
+                    tuiInputDate
+                    formControlName="birthDate"
+                />
+                <tui-calendar *tuiTextfieldDropdown />
               </tui-textfield>
             </label>
 
@@ -120,140 +488,343 @@
             </label>
 
             <label tuiLabel class="profile-page__availability">
-              <input
-                tuiCheckbox
-                type="checkbox"
-                formControlName="available"
-              />
-              Готов показываться в подборе команд
+              <input tuiCheckbox type="checkbox" formControlName="available" />
+              Показывать мой профиль в подборе команд
             </label>
           </div>
-
-          <label tuiLabel>
-            О себе
-            <textarea
-              formControlName="biography"
-              class="profile-page__textarea"
-              rows="5"
-              placeholder="Коротко опишите свой опыт, интересы и формат участия"
-            ></textarea>
-          </label>
-
-          <section tuiCardLarge="compact" class="profile-page__specializations">
-            <header tuiHeader="h6">
-              <span tuiTitle>Специализации</span>
-              <p tuiSubtitle>
-                Здесь пока достаточно базового мультивыбора через чекбоксы.
-              </p>
-            </header>
-
-            <div class="profile-page__specializations-grid">
-              @for (specialization of store.specializations(); track specialization.id) {
-                <label tuiLabel class="profile-page__specialization">
-                  <input
-                    tuiCheckbox
-                    type="checkbox"
-                    [ngModel]="isSpecializationSelected(specialization.id)"
-                    [ngModelOptions]="{ standalone: true }"
-                    (ngModelChange)="toggleSpecialization(specialization.id, $event)"
-                  />
-                  {{ specialization.name }}
-                </label>
-              }
+        } @else {
+          <div class="profile-page__facts-grid">
+            <div class="profile-page__fact">
+              <span>Дата рождения</span>
+              <strong>
+                {{ me.birthDate ? (me.birthDate | date: 'd MMMM y') : 'Не указана' }}
+              </strong>
             </div>
-          </section>
+
+            <div class="profile-page__fact">
+              <span>Email</span>
+              <strong>{{ me.email || 'Не указан' }}</strong>
+            </div>
+
+            <div class="profile-page__fact">
+              <span>Доступность</span>
+              <strong>
+                {{ me.available ? 'Профиль виден командам' : 'Профиль скрыт из подбора' }}
+              </strong>
+            </div>
+
+            <div class="profile-page__fact">
+              <span>Последнее обновление профиля</span>
+              <strong>{{ me.updatedAt | date: 'd MMM y, HH:mm' }}</strong>
+            </div>
+          </div>
+        }
+      </section>
+
+      @if (editMode()) {
+        <div class="profile-page__bottom-edit-buttons">
+          <button
+            tuiButton
+            type="button"
+            appearance="primary"
+            size="m"
+            iconStart="@tui.save"
+            [disabled]="form.invalid || store.isSaving()"
+            [loading]="store.isSaving()"
+            (click)="submit()"
+          >Сохранить изменения</button>
 
           <button
             tuiButton
-            type="submit"
-            appearance="primary"
-            size="l"
-            [disabled]="form.invalid || store.isSaving()"
-          >
-            {{ store.isSaving() ? 'Сохраняем...' : 'Сохранить профиль' }}
-          </button>
-        </form>
-
-        <section tuiCardLarge="compact" class="profile-page__teams">
+            type="button"
+            appearance="outline"
+            size="m"
+            (click)="cancelEditing()"
+          >Отмена</button>
+        </div>
+      }
+      @else {
+        <section tuiCardLarge class="profile-page__section">
           <header tuiHeader="h5">
-            <span tuiTitle>Команды и роли</span>
-            <p tuiSubtitle>
-              Блок нужен как заготовка под будущий экран с деталями участия.
-            </p>
+            <span tuiTitle>Активность</span>
           </header>
 
-          @if (me.teams.length) {
-            <div class="profile-page__teams-list">
-              @for (team of me.teams; track team.team.id) {
-                <div class="profile-page__team-item">
-                  <strong>{{ team.team.name }}</strong>
-                  <span>
-                    {{ team.event.name }} · {{ team.roleTitle }}
-                    @if (team.isCaptain) {
-                      · Captain
+          <nav
+            tuiTabs
+            size="m"
+            underline="var(--tui-background-accent-1)"
+            class="profile-page__tabs"
+            [activeItemIndex]="activeTabIndex()"
+            (activeItemIndexChange)="activeTabIndex.set($event)"
+          >
+            @for (tab of tabs(); track tab.id) {
+              <button tuiTab type="button">
+                {{ tab.label }}
+                <span class="profile-page__tab-count">{{ tab.count }}</span>
+              </button>
+            }
+          </nav>
+
+          <div class="profile-page__tab-content">
+            @switch (activeTab()) {
+              @case ('teams') {
+                @if (teamRows().length) {
+                  <div class="profile-page__teams-table">
+                    <div class="profile-page__table-head">
+                      <span>Название</span>
+                      <span>Участники</span>
+                      <span>Хакатон</span>
+                      <span>Роли</span>
+                      <span>Прогресс сбора</span>
+                    </div>
+
+                    @for (team of teamRows(); track team.id) {
+                      <article class="profile-page__table-row">
+                        <div class="profile-page__table-cell" data-label="Название">
+                          <strong class="profile-page__team-name">{{ team.name }}</strong>
+                        </div>
+
+                        <div class="profile-page__table-cell" data-label="Участники">
+                          <div class="profile-page__participants">
+                            <tui-avatar-stack>
+                              @for (member of team.visibleMembers; track member.id) {
+                                <tui-avatar size="s" [round]="true" [src]="member.avatarUrl ?? null">
+                                  {{ getInitials(member) }}
+                                </tui-avatar>
+                              }
+
+                              @if (team.overflowMembers) {
+                                <tui-avatar size="s" [round]="true">
+                                  +{{ team.overflowMembers }}
+                                </tui-avatar>
+                              }
+                            </tui-avatar-stack>
+                          </div>
+                        </div>
+
+                        <div class="profile-page__table-cell" data-label="Хакатон">
+                          <a
+                            tuiLink
+                            [routerLink]="['/events', team.eventId]"
+                            class="profile-page__event-link"
+                          >
+                            {{ team.eventName }}
+                          </a>
+                        </div>
+
+                        <div class="profile-page__table-cell" data-label="Роли">
+                          <div class="profile-page__role-badges">
+                            @for (role of team.roleBadges; track role.id) {
+                              <span tuiBadge [appearance]="role.appearance">
+                                {{ role.label }}
+                              </span>
+                            }
+                          </div>
+                        </div>
+
+                        <div
+                          class="profile-page__table-cell profile-page__table-cell_chart"
+                          data-label="Прогресс сбора"
+                        >
+                          <div class="profile-page__chart-block">
+                            <tui-ring-chart
+                              size="s"
+                              [value]="team.chartValue"
+                              [style.--tui-chart-categorical-00]="teamChartColors.filled"
+                              [style.--tui-chart-categorical-01]="teamChartColors.pending"
+                              [style.--tui-chart-categorical-02]="teamChartColors.open"
+                            >
+                            </tui-ring-chart>
+                          </div>
+                        </div>
+                      </article>
                     }
-                  </span>
+                  </div>
+                } @else {
+                  <p class="profile-page__muted">Пока нет команд</p>
+                }
+              }
+
+              @case ('favorites') {
+                @if (favoriteUsers().length) {
+                  <div class="profile-page__cards-grid profile-page__cards-grid_favorites">
+                    @for (user of favoriteUsers(); track user.id) {
+                      <article tuiCardLarge="compact" class="profile-page__mini-card">
+                        <div class="profile-page__mini-card-head">
+                          <div class="profile-page__mini-card-user">
+                            <tui-avatar size="l" [round]="true" [src]="user.avatarUrl">
+                              {{ getInitials(user) }}
+                            </tui-avatar>
+
+                            <div class="profile-page__mini-card-copy">
+                              <strong>{{ user.displayName }}</strong>
+                              <a tuiLink [routerLink]="['/profiles', user.id]">
+                                @{{ user.uniqueName }}
+                              </a>
+                            </div>
+                          </div>
+
+                          <span tuiBadge [appearance]="user.available ? 'positive' : 'warning'">
+                            {{ user.available ? 'Открыт к предложениям' : 'Сейчас занят' }}
+                          </span>
+                        </div>
+
+                        <div class="profile-page__mini-card-meta">
+                          <span>{{ user.primarySpecialization }}</span>
+                          <span>{{ user.highestExperience }}</span>
+                          <span>{{ user.cityLabel }}</span>
+                        </div>
+
+                        <div class="profile-page__role-badges">
+                          @for (badge of user.reasonBadges; track badge.label) {
+                            <span tuiBadge [appearance]="badge.appearance">
+                              {{ badge.label }}
+                            </span>
+                          }
+                        </div>
+
+                        <p class="profile-page__mini-card-note">{{ user.note }}</p>
+
+                        <div class="profile-page__badges">
+                          @for (skill of user.sharedSkills; track skill) {
+                            <span tuiBadge appearance="neutral">{{ skill }}</span>
+                          }
+                        </div>
+
+                        @if (user.sharedEventsCount) {
+                          <span class="profile-page__mini-card-caption">
+                            {{ user.sharedEventsCount }} общих хакатона в воронке
+                          </span>
+                        }
+                      </article>
+                    }
+                  </div>
+                } @else {
+                  <p class="profile-page__muted">
+                    Пока не удалось выделить подходящих пользователей. Добавьте больше навыков или
+                    активностей.
+                  </p>
+                }
+              }
+
+              @case ('hackathons') {
+                @if (myHackathons().length) {
+                  <div class="profile-page__cards-grid profile-page__cards-grid_hackathons">
+                    @for (hackathon of myHackathons(); track hackathon.id) {
+                      <article tuiCardLarge class="profile-page__hackathon-card">
+                        <div
+                          class="profile-page__hackathon-cover"
+                          [style.background]="hackathon.coverBackground"
+                        >
+                          <span class="profile-page__hackathon-date">
+                            {{ hackathon.dateLabel }}
+                          </span>
+                          <strong>{{ hackathon.typeLabel }}</strong>
+                        </div>
+
+                        <div class="profile-page__hackathon-body">
+                          <header tuiHeader="h6">
+                            <span tuiTitle>{{ hackathon.name }}</span>
+                            <p tuiSubtitle>{{ hackathon.locationLabel }}</p>
+                          </header>
+
+                          <div class="profile-page__role-badges">
+                            @for (badge of hackathon.badges; track badge.label) {
+                              <span tuiBadge [appearance]="badge.appearance">
+                                {{ badge.label }}
+                              </span>
+                            }
+                          </div>
+
+                          <div class="profile-page__hackathon-stats">
+                            <div class="profile-page__fact">
+                              <span>Старт</span>
+                              <strong>{{ hackathon.startsAtLabel }}</strong>
+                            </div>
+
+                            <div class="profile-page__fact">
+                              <span>Мои команды</span>
+                              <strong>{{ hackathon.teamNamesLabel }}</strong>
+                            </div>
+
+                            <div class="profile-page__fact">
+                              <span>Открытые роли</span>
+                              <strong>{{ hackathon.openRolesCount }}</strong>
+                            </div>
+
+                            <div class="profile-page__fact">
+                              <span>Подписчиков</span>
+                              <strong>{{ hackathon.subscribersCount }}</strong>
+                            </div>
+                          </div>
+
+                          <a
+                            tuiButton
+                            [routerLink]="['/events', hackathon.id]"
+                            appearance="secondary"
+                            size="m"
+                          >
+                            Открыть мероприятие
+                          </a>
+                        </div>
+                      </article>
+                    }
+                  </div>
+                } @else {
+                  <p class="profile-page__muted">
+                    Пока нет хакатонов в подборке. Подписывайтесь на события или вступайте в команды.
+                  </p>
+                }
+              }
+
+              @case ('achievements') {
+                <div class="profile-page__cards-grid profile-page__cards-grid_achievements">
+                  @for (achievement of achievements(); track achievement.id) {
+                    <article tuiCardLarge="compact" class="profile-page__achievement-card">
+                      <div class="profile-page__achievement-head">
+                        <div>
+                          <strong>{{ achievement.title }}</strong>
+                          <p>{{ achievement.description }}</p>
+                        </div>
+
+                        <span tuiBadge [appearance]="achievement.appearance">
+                          {{ achievement.badge }}
+                        </span>
+                      </div>
+
+                      <div class="profile-page__achievement-metric">
+                        <strong>{{ achievement.metric }}</strong>
+                        <span>{{ achievement.progressLabel }}</span>
+                      </div>
+
+                      <progress
+                        tuiProgressBar
+                        size="s"
+                        [max]="achievement.max"
+                        [value]="achievement.value"
+                        [color]="achievement.progressColor"
+                        aria-label="Прогресс достижения"
+                      ></progress>
+                    </article>
+                  }
                 </div>
               }
-            </div>
-          } @else {
-            <p class="profile-page__muted">
-              У пользователя пока нет участия в командах.
-            </p>
-          }
-        </section>
-      </div>
-
-      <aside class="profile-page__aside">
-        <app-profile-meta-card [profile]="me" />
-
-        <section tuiCardLarge="compact" class="profile-page__panel">
-          <header tuiHeader="h6">
-            <span tuiTitle>Навыки и ссылки</span>
-            <p tuiSubtitle>
-              Пока это read-only секция, чтобы не раздувать задачу по форме.
-            </p>
-          </header>
-
-          <div class="profile-page__badges">
-            @for (skill of me.skills; track skill.skill.id) {
-              <span tuiBadge appearance="neutral">
-                {{ skill.skill.name }} · {{ skill.experienceLevel }}
-              </span>
-            }
-          </div>
-
-          <div class="profile-page__links">
-            @for (link of me.portfolioLinks; track link.id) {
-              <a [href]="link.url" target="_blank" rel="noreferrer">
-                {{ link.description || link.url }}
-              </a>
             }
           </div>
         </section>
-
-        <a
-          tuiButton
-          routerLink="/teams/create"
-          appearance="secondary"
-          size="l"
-        >
-          Перейти к созданию команды
-        </a>
-      </aside>
-    </section>
+      }
+    </form>
   } @else {
     <section tuiCardLarge class="profile-page__status">
       <header tuiHeader="h5">
         <span tuiTitle>Нет данных по текущему пользователю</span>
         <p tuiSubtitle>
-          Для реального режима здесь потребуется авторизация, а в mock-режиме
-          проверьте bootstrap endpoint.
+          Вероятно, сервер сейчас недоступен. Повторите попытку позже или обратитесь в поддержку.
         </p>
       </header>
 
       <a tuiButton routerLink="/profiles" appearance="secondary" size="l">
-        Открыть список профилей
+        Перейти на страницу поиска участников
       </a>
     </section>
   }
