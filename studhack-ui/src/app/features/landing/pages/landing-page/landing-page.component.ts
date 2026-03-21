@@ -1,9 +1,11 @@
 import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { TuiButton, TuiTitle } from '@taiga-ui/core';
-import { TuiBadge } from '@taiga-ui/kit';
-import { TuiCard, TuiHeader } from '@taiga-ui/layout';
+import { TuiButton, TuiTitle, TuiSurface } from '@taiga-ui/core';
+import { TuiBadge, TuiAvatar } from '@taiga-ui/kit';
+import { TuiCard, TuiHeader, TuiCardLarge } from '@taiga-ui/layout';
+import { TuiPlatform } from '@taiga-ui/cdk';
+import { signal } from '@angular/core';
 
 import { SketchfabEmbedComponent } from '@shared/ui';
 
@@ -23,6 +25,12 @@ import { LandingStore } from '../../store/landing.store';
     TuiCard,
     TuiHeader,
     TuiTitle,
+
+    TuiAvatar,
+    TuiCardLarge,
+    TuiPlatform,
+    TuiSurface,
+    
   ],
   providers: [LandingStore],
   templateUrl: './landing-page.component.html',
@@ -30,12 +38,78 @@ import { LandingStore } from '../../store/landing.store';
 })
 export class LandingPageComponent {
   protected readonly store = inject(LandingStore);
+
+
+  protected readonly users = [
+  {
+    id: 1,
+    photo: 'assets/Picture.png',
+    status: 'Ищу команду',
+    name: 'Анна Смирнова',
+    role: 'Frontend Developer',
+    skills: ['Angular', 'TypeScript', 'UI/UX'],
+  },
+  {
+    id: 2,
+    photo: 'assets/Picture.png',
+    status: 'Открыт к мэтчу',
+    name: 'Максим Волков',
+    role: 'Backend Developer',
+    skills: ['Node.js', 'NestJS', 'PostgreSQL'],
+  },
+  {
+    id: 3,
+    photo: 'assets/Picture.png',
+    status: 'Собираю команду',
+    name: 'Елизавета Орлова',
+    role: 'Product Designer',
+    skills: ['Figma', 'UX', 'Research'],
+  },
+];
+
+protected activeUserIndex = 0;
+
+private wheelLocked = false;
+
+protected setActiveUser(index: number): void {
+  this.activeUserIndex = index;
+}
+
+protected onCarouselWheel(event: WheelEvent): void {
+  event.preventDefault();
+
+  if (this.wheelLocked) {
+    return;
+  }
+
+  this.wheelLocked = true;
+
+  if (event.deltaY > 0 || event.deltaX > 0) {
+    this.activeUserIndex =
+      this.activeUserIndex === this.users.length - 1
+        ? 0
+        : this.activeUserIndex + 1;
+  } else if (event.deltaY < 0 || event.deltaX < 0) {
+    this.activeUserIndex =
+      this.activeUserIndex === 0
+        ? this.users.length - 1
+        : this.activeUserIndex - 1;
+  }
+
+  setTimeout(() => {
+    this.wheelLocked = false;
+  }, 350);
+}
+
+
   protected readonly metrics = computed(() => {
     const overview = this.store.overview();
 
     if (!overview) {
       return [];
     }
+
+    
 
     return [
       {
@@ -64,4 +138,6 @@ export class LandingPageComponent {
       },
     ];
   });
+
+  
 }
