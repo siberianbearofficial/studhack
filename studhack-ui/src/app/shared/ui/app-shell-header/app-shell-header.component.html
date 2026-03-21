@@ -1,0 +1,126 @@
+<header class="app-shell-header">
+  <div class="app-shell-header__content">
+    <app-logo class="app-shell-header__brand" />
+
+    <div class="app-shell-header__right">
+      <nav class="app-shell-header__nav" aria-label="Основная навигация">
+        @for (item of navItems; track item.path) {
+          <a
+            routerLinkActive="app-shell-header__nav-link_active"
+            [routerLinkActiveOptions]="{ exact: item.exact }"
+            [routerLink]="item.path"
+            class="app-shell-header__nav-link"
+          >
+            {{ item.label }}
+          </a>
+        }
+      </nav>
+
+      <div class="app-shell-header__actions">
+        @if (isAuthenticated()) {
+          <tui-badged-content
+            [tuiDropdown]="userMenu"
+            [tuiDropdownOpen]="menuOpen()"
+            tuiDropdownAlign="right"
+            tuiDropdownDirection="bottom"
+            (tuiDropdownOpenChange)="menuOpen.set($event)"
+          >
+            <tui-avatar
+              size="m"
+              [round]="true"
+              [src]="me()?.avatarUrl ?? null"
+            >
+              {{ avatarInitials() }}
+            </tui-avatar>
+
+            @if (notificationCount()) {
+              <tui-badge-notification size="s" tuiSlot="top">
+                {{ notificationBadge() }}
+              </tui-badge-notification>
+            }
+          </tui-badged-content>
+        } @else {
+          <a
+            tuiButton
+            appearance="secondary"
+            size="s"
+            routerLink="/login"
+          >
+            Войти
+          </a>
+        }
+      </div>
+    </div>
+  </div>
+</header>
+
+<ng-template #userMenu>
+  <tui-data-list size="m" class="app-shell-header__menu">
+    <button
+      tuiOption
+      new
+      type="button"
+      iconStart="@tui.user"
+      class="icon-size-s"
+      (click)="openProfile()"
+    >
+      Мой профиль
+    </button>
+
+    <button
+      tuiOption
+      new
+      type="button"
+      iconStart="@tui.bell"
+      class="icon-size-s"
+      (click)="openNotifications()"
+    >
+      <div class="app-shell-header__menu-option_notifications">
+        Уведомления
+
+        @if (notificationCount()) {
+          <tui-badge-notification size="m" tuiSlot="top">
+            {{ notificationBadge() }}
+          </tui-badge-notification>
+        }
+      </div>
+    </button>
+
+    <button
+      tuiOption
+      new
+      type="button"
+      iconStart="@tui.log-out"
+      class="icon-size-s"
+      (click)="logout()"
+    >
+      Выйти
+    </button>
+
+    @if (profileGrade(); as grade) {
+      <div class="app-shell-header__divider"></div>
+
+      <div class="app-shell-header__level-card">
+        <div class="app-shell-header__level-subheading">Прогресс</div>
+        <div class="app-shell-header__level-head">
+          <span>Уровень {{ grade.level }}</span>
+          <span>{{ grade.value / grade.max * 100 }}%</span>
+        </div>
+
+        <progress
+          tuiProgressBar
+          size="s"
+          [segments]="8"
+          [max]="grade.max"
+          [value]="grade.value"
+          color="var(--tui-status-positive)"
+          aria-label="Прогресс текущего уровня"
+        ></progress>
+
+        <span class="app-shell-header__level-caption">
+          {{ grade.value }} / {{ grade.max }} очков
+        </span>
+      </div>
+    }
+  </tui-data-list>
+</ng-template>

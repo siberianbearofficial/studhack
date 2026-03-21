@@ -1,0 +1,31 @@
+:host {
+  display: block;
+}
+
+.app-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: inherit;
+  text-decoration: none;
+}
+
+.app-logo__image {
+  display: block;
+  flex-shrink: 0;
+}
+
+.app-logo__title {
+  white-space: nowrap;
+  font: var(--tui-font-heading-6);
+  letter-spacing: -0.03em;
+}
+
+.app-logo:hover .app-logo__title,
+.app-logo:focus-visible .app-logo__title {
+  color: var(--tui-primary);
+}
+
+.app-logo_icon-only {
+  gap: 0;
+}

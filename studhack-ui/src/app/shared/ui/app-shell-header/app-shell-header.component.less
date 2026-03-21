@@ -1,0 +1,143 @@
+:host {
+  top: 0;
+  position: sticky;
+  z-index: 2;
+  display: block;
+}
+
+.app-shell-header__content {
+  width: min(1200px, 100%);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0.875rem 1rem;
+  border: 1px solid color-mix(in srgb, var(--tui-background-base-alt) 18%, transparent);
+  border-radius: 0 0 1rem 1rem;
+  background: color-mix(in srgb, var(--tui-background-base) 78%, transparent);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  box-shadow: var(--tui-shadow);
+}
+
+.app-shell-header__brand {
+  flex-shrink: 0;
+}
+
+.app-shell-header__right {
+  min-width: 0;
+  margin-left: auto;
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1.5rem;
+}
+
+.app-shell-header__nav {
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 1.25rem;
+}
+
+.app-shell-header__nav-link {
+  position: relative;
+  padding: 0.35rem 0;
+  color: var(--tui-text-secondary);
+  text-decoration: none;
+  transition:
+    color 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.app-shell-header__nav-link::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  border-radius: 999px;
+  transform: scaleX(0);
+  transform-origin: center;
+  background: linear-gradient(90deg, var(--tui-primary) 0%, #ff8a3d 100%);
+  transition: transform 0.2s ease;
+}
+
+.app-shell-header__nav-link:hover,
+.app-shell-header__nav-link:focus-visible,
+.app-shell-header__nav-link_active {
+  color: var(--tui-text-primary);
+}
+
+.app-shell-header__nav-link:hover::after,
+.app-shell-header__nav-link:focus-visible::after,
+.app-shell-header__nav-link_active::after {
+  transform: scaleX(1);
+}
+
+.app-shell-header__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-shrink: 0;
+}
+
+tui-avatar {
+  cursor: pointer;
+}
+
+.app-shell-header__menu {
+  width: min(20rem, calc(100vw - 2rem));
+  padding: 0.375rem;
+}
+
+.app-shell-header__menu-option_notifications {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.app-shell-header__divider {
+  width: 100%;
+  height: 1px;
+  background: var(--tui-border-normal);
+}
+
+.app-shell-header__level-card {
+  display: grid;
+  gap: 0.625rem;
+  padding: 0.375rem;
+}
+
+.app-shell-header__level-subheading {
+  font: var(--tui-font-text-xs);
+  color: var(--tui-text-secondary);
+}
+
+.app-shell-header__level-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font: var(--tui-font-heading-5);
+  color: var(--tui-text-primary);
+}
+
+.app-shell-header__level-caption {
+  font: var(--tui-font-text-s);
+  color: var(--tui-text-secondary);
+}
+
+progress[tuiProgressBar] {
+  width: 100%;
+}
+
+.icon-size-s::before {
+  width: 1rem;
+  height: 1rem;
+}
