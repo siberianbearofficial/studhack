@@ -44,7 +44,7 @@ export class LandingPageComponent {
   protected readonly users = [
   {
     id: 1,
-    photo: 'src/assets/Picture.png',
+    photo: 'assets/Picture.png',
     status: 'Ищу команду',
     name: 'Анна Смирнова',
     role: 'Frontend Developer',
@@ -52,7 +52,7 @@ export class LandingPageComponent {
   },
   {
     id: 2,
-    photo: 'src/assets/Picture.png',
+    photo: 'assets/Picture.png',
     status: 'Открыт к мэтчу',
     name: 'Максим Волков',
     role: 'Backend Developer',
@@ -60,7 +60,7 @@ export class LandingPageComponent {
   },
   {
     id: 3,
-    photo: 'src/assets/Picture.png',
+    photo: 'assets/Picture.png',
     status: 'Собираю команду',
     name: 'Елизавета Орлова',
     role: 'Product Designer',
