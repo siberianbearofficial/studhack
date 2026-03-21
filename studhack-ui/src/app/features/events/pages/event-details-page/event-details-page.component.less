@@ -1,0 +1,362 @@
+.event-details-page {
+  display: grid;
+  gap: 1rem;
+}
+
+.event-details-page__hero-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.event-details-page__nav,
+.event-details-page__hero-badges,
+.event-details-page__hero-actions,
+.event-details-page__team-badges,
+.event-details-page__skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.event-details-page__status,
+.event-details-page__message,
+.event-details-page__section,
+.event-details-page__hero-main,
+.event-details-page__hero-side,
+.event-details-page__metric,
+.event-details-page__timeline,
+.event-details-page__mandatory-head,
+.event-details-page__team-top,
+.event-details-page__team-header,
+.event-details-page__team-column,
+.event-details-page__position-card,
+.event-details-page__position-head,
+.event-details-page__facts,
+.event-details-page__fact,
+.event-details-page__role-list,
+.event-details-page__role-item,
+.event-details-page__team-actions {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.event-details-page__summary-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.event-details-page__message_error {
+  border: 1px solid color-mix(in srgb, var(--tui-status-negative) 35%, transparent);
+  background: color-mix(in srgb, var(--tui-status-negative-pale) 85%, white);
+  color: var(--tui-status-negative);
+}
+
+.event-details-page__message_success {
+  border: 1px solid color-mix(in srgb, var(--tui-status-positive) 35%, transparent);
+  background: color-mix(in srgb, var(--tui-status-positive-pale) 88%, white);
+  color: var(--tui-status-positive);
+}
+
+.event-details-page__hero {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  gap: 1rem;
+  background:
+    radial-gradient(circle at top right, rgb(255 176 94 / 0.25), transparent 26rem),
+    linear-gradient(180deg, rgb(246 249 252), rgb(255 255 255));
+}
+
+.event-details-page__hero::after {
+  content: '';
+  position: absolute;
+  inset: auto -4rem -5rem auto;
+  inline-size: 14rem;
+  block-size: 14rem;
+  border-radius: 999rem;
+  background: rgb(255 166 111 / 0.14);
+  pointer-events: none;
+}
+
+.event-details-page__hero-header,
+.event-details-page__mandatory-grid,
+.event-details-page__teams,
+.event-details-page__member-list,
+.event-details-page__open-positions,
+.event-details-page__summary-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.event-details-page__hero-metrics {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+}
+
+.event-details-page__metric {
+  border: 1px solid color-mix(in srgb, var(--tui-border-normal) 88%, white);
+  background: rgb(255 255 255 / 0.85);
+}
+
+.event-details-page__metric strong {
+  font: var(--tui-font-heading-6);
+}
+
+.event-details-page__metric-value {
+  font: var(--tui-font-heading-3);
+  line-height: 1;
+}
+
+.event-details-page__metric-caption,
+.event-details-page__description,
+.event-details-page__timeline-date,
+.event-details-page__timeline-body p,
+.event-details-page__team-header span,
+.event-details-page__team-description,
+.event-details-page__position-specialization,
+.event-details-page__position-description,
+.event-details-page__muted,
+.event-details-page__fact span,
+.event-details-page__role-item span,
+.event-details-page__summary-item span,
+.event-details-page__difficulty-label,
+.event-details-page__difficulty-caption {
+  color: var(--tui-text-secondary);
+}
+
+.event-details-page__description,
+.event-details-page__team-description,
+.event-details-page__position-description,
+.event-details-page__timeline-body p {
+  margin: 0;
+}
+
+.event-details-page__external-link {
+  inline-size: fit-content;
+}
+
+.event-details-page__poster {
+  position: relative;
+  min-block-size: 22rem;
+  padding: 1.5rem;
+  border-radius: calc(var(--tui-radius-l) + 0.5rem);
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+}
+
+.event-details-page__poster::before,
+.event-details-page__poster::after {
+  content: '';
+  position: absolute;
+  border-radius: 999rem;
+  background: rgb(255 255 255 / 0.18);
+  pointer-events: none;
+}
+
+.event-details-page__poster::before {
+  inset: -4rem -2rem auto auto;
+  inline-size: 13rem;
+  block-size: 13rem;
+}
+
+.event-details-page__poster::after {
+  inset: auto auto -3rem -1rem;
+  inline-size: 9rem;
+  block-size: 9rem;
+}
+
+.event-details-page__poster-copy {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 0.625rem;
+  color: rgb(255 255 255);
+}
+
+.event-details-page__poster-label {
+  display: inline-flex;
+  inline-size: fit-content;
+  padding: 0.375rem 0.625rem;
+  border-radius: 999rem;
+  background: rgb(255 255 255 / 0.18);
+  font: var(--tui-font-text-s);
+}
+
+.event-details-page__poster-date {
+  font: var(--tui-font-heading-3);
+  line-height: 1.05;
+}
+
+.event-details-page__difficulty-card,
+.event-details-page__team-card,
+.event-details-page__mandatory-card {
+  border: 1px solid color-mix(in srgb, var(--tui-border-normal) 88%, white);
+}
+
+.event-details-page__team-card,
+.event-details-page__mandatory-card {
+  display: grid;
+  gap: 1rem;
+}
+
+.event-details-page__difficulty-card {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+}
+
+.event-details-page__difficulty-copy {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.event-details-page__difficulty-value {
+  font: var(--tui-font-heading-4);
+}
+
+.event-details-page__difficulty-progress {
+  justify-items: center;
+}
+
+.event-details-page__team-columns {
+  display: grid;
+  gap: 1rem;
+}
+
+.event-details-page__layout {
+  margin-top: 1rem;
+}
+
+.event-details-page__summary-grid {
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+}
+
+.event-details-page__summary-item,
+.event-details-page__fact {
+  padding: 0.875rem 1rem;
+  border-radius: var(--tui-radius-l);
+  background: color-mix(in srgb, var(--tui-background-base-alt) 62%, white);
+}
+
+.event-details-page__timeline-item {
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: auto minmax(0, 1fr);
+}
+
+.event-details-page__timeline-marker {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  inline-size: 2rem;
+  block-size: 2rem;
+  color: var(--tui-background-accent-2);
+  font: var(--tui-font-heading-6);
+}
+
+.event-details-page__timeline-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--tui-border-normal);
+}
+
+.event-details-page__timeline-item:last-child .event-details-page__timeline-body {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.event-details-page__mandatory-grid {
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+}
+
+.event-details-page__mandatory-card,
+.event-details-page__position-card {
+  background: color-mix(in srgb, var(--tui-background-base-alt) 52%, white);
+}
+
+.event-details-page__team-card {
+  gap: 1rem;
+}
+
+.event-details-page__team-header strong {
+  font: var(--tui-font-heading-5);
+}
+
+.event-details-page__member-list {
+  gap: 0.625rem;
+}
+
+.event-details-page__member-link {
+  inline-size: fit-content;
+}
+
+.event-details-page__open-positions {
+  gap: 0.75rem;
+}
+
+.event-details-page__position-head {
+  align-items: start;
+}
+
+.event-details-page__facts,
+.event-details-page__role-list {
+  gap: 0.75rem;
+}
+
+.event-details-page__fact strong,
+.event-details-page__role-item strong {
+  color: var(--tui-text-primary);
+}
+
+.event-details-page__role-item {
+  padding: 0.875rem 1rem;
+  border: 1px solid var(--tui-border-normal);
+  border-radius: var(--tui-radius-l);
+  background: color-mix(in srgb, var(--tui-background-base-alt) 62%, white);
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.event-details-page__role-item:hover {
+  border-color: color-mix(in srgb, var(--tui-primary) 42%, var(--tui-border-normal));
+  transform: translateY(-1px);
+}
+
+.event-details-page__role-item:focus-visible {
+  outline: 2px solid var(--tui-border-focus);
+  outline-offset: 2px;
+}
+
+.event-details-page__muted {
+  margin: 0;
+}
+
+.event-details-page__section {
+  margin-bottom: 1rem;
+}
+
+@media (min-width: 960px) {
+  .event-details-page__hero {
+    grid-template-columns: minmax(0, 1.15fr) minmax(21rem, 0.85fr);
+    align-items: start;
+  }
+
+  .event-details-page__team-columns {
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  }
+
+  .event-details-page__section_sticky {
+    position: sticky;
+    inset-block-start: 1rem;
+  }
+}

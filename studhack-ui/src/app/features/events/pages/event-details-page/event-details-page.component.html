@@ -1,0 +1,394 @@
+<section class="event-details-page">
+  <nav class="event-details-page__nav" aria-label="Навигация по мероприятию">
+    <button
+      tuiLink
+      type="button"
+      iconStart="@tui.chevron-left"
+      (click)="goBack()"
+    >
+      Назад
+    </button>
+
+    <a tuiLink routerLink="/events" iconEnd="@tui.chevron-right">
+      Все мероприятия
+    </a>
+  </nav>
+
+  @if (store.error()) {
+    <section tuiCardLarge="compact" class="event-details-page__status">
+      <header tuiHeader="h5">
+        <span tuiTitle>Мероприятие недоступно</span>
+        <p tuiSubtitle>{{ store.error() }}</p>
+      </header>
+    </section>
+  } @else if (store.isLoading()) {
+    <section tuiCardLarge="compact" class="event-details-page__status">
+      <header tuiHeader="h5">
+        <span tuiTitle>Загружаем карточку мероприятия</span>
+        <p tuiSubtitle>Подтягиваем описание, команды и открытые роли.</p>
+      </header>
+
+      <tui-loader></tui-loader>
+    </section>
+  } @else if (event(); as event) {
+    @if (store.actionError()) {
+      <section
+        tuiCardLarge="compact"
+        class="event-details-page__message event-details-page__message_error"
+      >
+        {{ store.actionError() }}
+      </section>
+    }
+
+    @if (store.actionSuccess()) {
+      <section
+        tuiCardLarge="compact"
+        class="event-details-page__message event-details-page__message_success"
+      >
+        {{ store.actionSuccess() }}
+      </section>
+    }
+
+    <section tuiCardLarge tuiSurface="floating" class="event-details-page__hero">
+      <div class="event-details-page__hero-main">
+        <div class="event-details-page__hero-top">
+          <div class="event-details-page__hero-badges">
+            @for (badge of heroBadges(); track badge.label) {
+              <tui-badge [appearance]="badge.appearance" [iconStart]="badge.icon">
+                {{ badge.label }}
+              </tui-badge>
+            }
+          </div>
+          <button
+            tuiIconButton
+            type="button"
+            appearance="outline"
+            size="m"
+            [iconStart]="event.subscription.isSubscribed ? '@tui.bell-off' : '@tui.bell'"
+            [disabled]="store.isSubscriptionPending()"
+            [loading]="store.isSubscriptionPending()"
+            (click)="toggleSubscription()"
+          >
+          </button>
+        </div>
+
+        <header tuiHeader="h2" class="event-details-page__hero-header">
+          <span tuiTitle>{{ event.name }}</span>
+          <p tuiSubtitle>
+            {{
+              event.description ||
+                'Описание мероприятия появится после публикации полной программы.'
+            }}
+          </p>
+        </header>
+
+        <div class="event-details-page__hero-metrics">
+          @for (metric of heroMetrics(); track metric.label) {
+            <section tuiCardLarge="compact" class="event-details-page__metric">
+              <span class="event-details-page__metric-value">{{ metric.value }}</span>
+              <strong>{{ metric.label }}</strong>
+              <span class="event-details-page__metric-caption">{{ metric.caption }}</span>
+            </section>
+          }
+        </div>
+
+        <div class="event-details-page__hero-actions">
+          <a
+            tuiButton
+            appearance="accent"
+            size="l"
+            iconStart="@tui.plus"
+            [routerLink]="['/teams/create']"
+            [queryParams]="{ eventId: event.id }"
+          >
+            Собрать команду
+          </a>
+
+          <button
+            tuiButton
+            type="button"
+            appearance="outline"
+            size="l"
+            iconStart="@tui.users"
+            (click)="scrollToTeams()"
+          >
+            Присоединиться к команде
+          </button>
+        </div>
+
+        @if (registrationLink(); as registrationLink) {
+          <a
+            tuiLink
+            class="event-details-page__external-link"
+            [href]="registrationLink"
+            target="_blank"
+            rel="noreferrer"
+            iconEnd="@tui.arrow-up-right"
+          >
+            Открыть сайт мероприятия
+          </a>
+        }
+      </div>
+
+      <div class="event-details-page__hero-side">
+        <div class="event-details-page__poster" [style.background]="coverBackground()">
+          <div class="event-details-page__poster-copy">
+            <strong class="event-details-page__poster-date">{{ coverDate() }}</strong>
+            <span class="event-details-page__poster-venue">{{ venueLabel() }}</span>
+          </div>
+        </div>
+
+        @if (difficulty(); as difficulty) {
+          <section tuiCardLarge="compact" class="event-details-page__difficulty-card">
+            <div class="event-details-page__difficulty-copy">
+              <span class="event-details-page__difficulty-label">Уровень мероприятия</span>
+              <strong class="event-details-page__difficulty-value">
+                {{ difficulty.label }}
+              </strong>
+            </div>
+
+            <label tuiProgressLabel class="event-details-page__difficulty-progress">
+              <tui-progress-circle
+                size="l"
+                [max]="difficulty.max"
+                [value]="difficulty.value"
+                [color]="difficulty.color"
+              ></tui-progress-circle>
+            </label>
+          </section>
+        }
+      </div>
+    </section>
+
+    <section class="event-details-page__layout">
+      <div class="event-details-page__main">
+        <section class="event-details-page__section">
+          <header tuiHeader="h5">
+            <span tuiTitle>О мероприятии</span>
+          </header>
+
+          <p class="event-details-page__description">
+            {{
+              event.description ||
+                'Организатор пока не добавил подробное описание, но дата, формат и команды уже доступны.'
+            }}
+          </p>
+
+          <div class="event-details-page__summary-grid">
+            <div class="event-details-page__summary-item">
+              <span>Где</span>
+              <strong>{{ locationDetailsLabel() }}</strong>
+            </div>
+
+            <div class="event-details-page__summary-item">
+              <span>Когда</span>
+              <strong>{{ scheduleLabel() }}</strong>
+            </div>
+
+            <div class="event-details-page__summary-item">
+              <span>Формат команды</span>
+              <strong>
+                {{ event.hackathon ? teamSizeLabel() : 'Без ограничений' }}
+              </strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="event-details-page__section">
+          <header tuiHeader="h5">
+            <span tuiTitle>Этапы</span>
+          </header>
+
+          <div class="event-details-page__timeline">
+            @for (stage of event.stages; track stage.id) {
+              <article class="event-details-page__timeline-item">
+                <div class="event-details-page__timeline-marker">{{ $index + 1 }}</div>
+
+                <div class="event-details-page__timeline-body">
+                  <strong>{{ stage.title }}</strong>
+                  <span class="event-details-page__timeline-date">
+                    {{ getStageScheduleLabel(stage) }}
+                  </span>
+
+                  @if (stage.description) {
+                    <p>{{ stage.description }}</p>
+                  }
+                </div>
+              </article>
+            }
+          </div>
+        </section>
+
+        <section class="event-details-page__section">
+          <header tuiHeader="h5">
+            <span tuiTitle>Формат команды</span>
+          </header>
+
+          @if (mandatoryPositions().length) {
+            <div class="event-details-page__mandatory-grid">
+              @for (position of mandatoryPositions(); track position.id) {
+                <article tuiCardLarge="compact" class="event-details-page__mandatory-card">
+                  <div class="event-details-page__mandatory-head">
+                    <strong>{{ position.title }}</strong>
+                    <span>{{ position.specialization.name }}</span>
+                  </div>
+
+                  <div class="event-details-page__skills">
+                    @for (skill of position.requiredSkills; track skill.id) {
+                      <span tuiBadge appearance="neutral">{{ skill.name }}</span>
+                    }
+                  </div>
+                </article>
+              }
+            </div>
+          } @else {
+            <p class="event-details-page__muted">
+              Для этого мероприятия нет обязательных ролей. Команду можно собрать в свободном формате.
+            </p>
+          }
+        </section>
+
+        <section
+          id="event-teams"
+          class="event-details-page__section event-details-page__section_teams"
+        >
+          <header tuiHeader="h5">
+            <span tuiTitle>Команды-участники</span>
+          </header>
+
+          @if (store.teams().length) {
+            <div class="event-details-page__teams">
+              @for (team of store.teams(); track team.id) {
+                @let primaryOpenPosition = getPrimaryOpenPosition(team);
+
+                <article
+                  tuiCardLarge="compact"
+                  tuiSurface="floating"
+                  class="event-details-page__team-card"
+                >
+                  <div class="event-details-page__team-top">
+                    <div class="event-details-page__team-badges">
+                      <span tuiBadge appearance="primary">
+                        {{ team.memberCount }} участников
+                      </span>
+                      <span
+                        tuiBadge
+                        [appearance]="team.openPositionsCount ? 'warning' : 'positive'"
+                      >
+                        {{ team.openPositionsCount }} открытых ролей
+                      </span>
+                      <span tuiBadge appearance="neutral">
+                        {{ team.mandatoryCoverage.filled }}/{{ team.mandatoryCoverage.total }}
+                        обязательных ролей
+                      </span>
+                    </div>
+
+                    <header class="event-details-page__team-header">
+                      <strong>{{ team.name }}</strong>
+                      <span>
+                        Капитан:
+                        {{ team.captain?.displayName || team.creator.displayName }}
+                      </span>
+                    </header>
+                  </div>
+
+                  <p class="event-details-page__team-description">
+                    {{ team.description || 'Команда пока не добавила описание своего решения.' }}
+                  </p>
+
+                  <div class="event-details-page__team-columns">
+                    <div class="event-details-page__team-column">
+                      <strong>Участники</strong>
+
+                      <div class="event-details-page__member-list">
+                        @for (member of team.members; track member.positionId) {
+                          <a
+                            tuiLink
+                            [routerLink]="['/profiles', member.user.id]"
+                            class="event-details-page__member-link"
+                          >
+                            {{ member.user.displayName }} · {{ member.title }}
+                          </a>
+                        }
+                      </div>
+                    </div>
+
+                    <div class="event-details-page__team-column">
+                      <strong>Открытые роли</strong>
+
+                      @if (team.openPositionsCount) {
+                        <div class="event-details-page__open-positions">
+                          @for (position of team.positions; track position.id) {
+                            @if (!position.user && !position.filledByExternal) {
+                              <div class="event-details-page__position-card">
+                                <div class="event-details-page__position-head">
+                                  <strong>{{ position.title }}</strong>
+                                  @if (position.isMandatory) {
+                                    <span tuiBadge appearance="warning">Обязательная</span>
+                                  }
+                                </div>
+
+                                <span class="event-details-page__position-specialization">
+                                  {{ position.specialization.name }}
+                                </span>
+
+                                <div class="event-details-page__skills">
+                                  @for (skill of position.requiredSkills; track skill.id) {
+                                    <span tuiBadge appearance="neutral">{{ skill.name }}</span>
+                                  }
+                                </div>
+
+                                @if (position.description) {
+                                  <p class="event-details-page__position-description">
+                                    {{ position.description }}
+                                  </p>
+                                }
+                              </div>
+                            }
+                          }
+                        </div>
+                      } @else {
+                        <p class="event-details-page__muted">
+                          Команда уже укомплектована.
+                        </p>
+                      }
+                    </div>
+                  </div>
+
+                  <div class="event-details-page__team-actions">
+                    <button
+                      tuiButton
+                      type="button"
+                      appearance="outline"
+                      size="m"
+                      [disabled]="
+                        !primaryOpenPosition ||
+                        hasRequestedPosition(primaryOpenPosition.id) ||
+                        store.joiningTeamId() === team.id
+                      "
+                      (click)="applyToTeam(team.id)"
+                    >
+                      {{
+                        store.joiningTeamId() === team.id
+                          ? 'Отправляем запрос...'
+                          : primaryOpenPosition
+                            ? hasRequestedPosition(primaryOpenPosition.id)
+                              ? 'Запрос отправлен'
+                              : 'Откликнуться на ' + primaryOpenPosition.title
+                            : 'Команда укомплектована'
+                      }}
+                    </button>
+                  </div>
+                </article>
+              }
+            </div>
+          } @else {
+            <p class="event-details-page__muted">
+              Пока ни одна команда не зарегистрировалась. Ваша может стать первой!
+            </p>
+          }
+        </section>
+      </div>
+    </section>
+  }
+</section>

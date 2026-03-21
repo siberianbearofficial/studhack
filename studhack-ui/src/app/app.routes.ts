@@ -34,6 +34,12 @@ export const routes: Routes = [
       import('@features/profiles').then((module) => module.ProfilesPageComponent),
   },
   {
+    path: 'events/:eventId',
+    title: 'Мероприятие',
+    loadComponent: () =>
+      import('@features/events').then((module) => module.EventDetailsPageComponent),
+  },
+  {
     path: 'events',
     title: 'События',
     loadComponent: () =>

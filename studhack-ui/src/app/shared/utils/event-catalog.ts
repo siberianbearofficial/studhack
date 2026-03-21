@@ -1,4 +1,4 @@
-import { type EventFormat, type EventFullDto } from '@core/api';
+import { type EventFormat, type EventFullDto, type EventStageDto } from '@core/api';
 
 export const EVENT_TEAM_SIZE_MIN = 2;
 export const EVENT_TEAM_SIZE_MAX = 9;
@@ -39,6 +39,12 @@ const COVER_DATE_FORMATTER = new Intl.DateTimeFormat('ru-RU', {
   day: 'numeric',
   month: 'short',
 });
+const LONG_DATE_TIME_FORMATTER = new Intl.DateTimeFormat('ru-RU', {
+  day: 'numeric',
+  month: 'long',
+  hour: '2-digit',
+  minute: '2-digit',
+});
 
 export function getEventTypeLabel(event: EventFullDto): string {
   return event.type === 'hackathon' ? 'Хакатон' : 'Мероприятие';
@@ -57,6 +63,10 @@ export function getEventDateSpanLabel(event: EventFullDto): string {
   const end = normalizeDateLabel(COVER_DATE_FORMATTER.format(new Date(event.endsAt)));
 
   return start === end ? start : `${start} - ${end}`;
+}
+
+export function getEventScheduleLabel(event: EventFullDto): string {
+  return formatDateTimeRange(event.startsAt, event.endsAt);
 }
 
 export function getEventCoverBackground(event: EventFullDto): string {
@@ -135,6 +145,39 @@ export function formatEventTeamSizeRange(
   return `${start}-${end} участников`;
 }
 
+export function getEventVenueLabel(event: EventFullDto): string {
+  return (
+    event.location.venueName ??
+    event.location.addressText ??
+    event.location.city?.name ??
+    getEventFormatLabel(event.location.format)
+  );
+}
+
+export function getEventLocationDetailsLabel(event: EventFullDto): string {
+  const details = [
+    event.location.venueName,
+    event.location.addressText,
+    event.location.city?.name,
+  ].filter((value): value is string => Boolean(value));
+
+  return details.length ? details.join(' · ') : getEventFormatLabel(event.location.format);
+}
+
+export function getEventStageScheduleLabel(stage: EventStageDto): string {
+  if (!stage.startsAt && !stage.endsAt) {
+    return 'Время уточняется';
+  }
+
+  return formatDateTimeRange(stage.startsAt ?? null, stage.endsAt ?? null);
+}
+
+export function formatEventDateTimeLabel(
+  value: string | null | undefined,
+): string {
+  return value ? normalizeDateLabel(LONG_DATE_TIME_FORMATTER.format(new Date(value))) : 'Время уточняется';
+}
+
 export function hasRealCasesTag(event: EventFullDto): boolean {
   return event.type === 'hackathon';
 }
@@ -184,6 +227,16 @@ function formatCompactNumber(value: number): string {
   }
 
   return `${value}`;
+}
+
+function formatDateTimeRange(
+  startValue: string | null | undefined,
+  endValue: string | null | undefined,
+): string {
+  const start = formatEventDateTimeLabel(startValue);
+  const end = formatEventDateTimeLabel(endValue);
+
+  return start === end ? start : `${start} - ${end}`;
 }
 
 function normalizeDateLabel(label: string): string {
