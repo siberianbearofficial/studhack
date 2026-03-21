@@ -1,0 +1,45 @@
+<footer class="app-footer" aria-label="Подвал сайта">
+  <div class="app-footer__container">
+    <div class="app-footer__brand">
+      <app-logo class="app-footer__logo" />
+      <p class="app-footer__copy">© СтудХак, 2026</p>
+    </div>
+
+    <section class="app-footer__section" aria-labelledby="app-footer-navigation">
+      <h2 id="app-footer-navigation" class="app-footer__title">Навигация</h2>
+
+      <ul class="app-footer__list">
+        @for (item of navigationItems; track item.label) {
+          <li>
+            <a class="app-footer__link" [routerLink]="item.link">
+              {{ item.label }}
+            </a>
+          </li>
+        }
+      </ul>
+    </section>
+
+    <section class="app-footer__section" aria-labelledby="app-footer-shortcuts">
+      <h2 id="app-footer-shortcuts" class="app-footer__title">Быстрые переходы</h2>
+
+      <ul class="app-footer__list">
+        @for (item of quickLinkItems; track item.label) {
+          <li>
+            <a class="app-footer__link" [routerLink]="item.link">
+              {{ item.label }}
+            </a>
+          </li>
+        }
+      </ul>
+    </section>
+
+    <section class="app-footer__section" aria-labelledby="app-footer-documents">
+      <h2 id="app-footer-documents" class="app-footer__title">Документы</h2>
+
+      <ul class="app-footer__list">
+        <li class="app-footer__text">Политика конфиденциальности</li>
+        <li class="app-footer__text">Пользовательское соглашение</li>
+      </ul>
+    </section>
+  </div>
+</footer>

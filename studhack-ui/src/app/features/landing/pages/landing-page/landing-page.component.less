@@ -71,3 +71,189 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+.match-hero {
+  padding-block: 5rem;
+}
+
+.match-hero__content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+}
+
+.match-hero__left {
+  flex: 0 0 48%;
+  max-width: 560px;
+}
+
+.match-hero__right {
+  flex: 0 0 48%;
+  min-width: 0;
+}
+
+.match-hero__title {
+  margin: 0 0 16px;
+  font-size: 48px;
+  line-height: 1.05;
+  font-weight: 800;
+}
+
+.match-hero__subtitle {
+  margin: 0 0 24px;
+  font-size: 20px;
+  line-height: 1.5;
+  color: #666;
+}
+
+.match-hero__actions {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.match-hero__cards {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.user-card {
+  flex: 0 0 280px;
+  overflow: hidden;
+  border-radius: 24px;
+}
+
+.user-card__photo {
+  display: block;
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+}
+
+.user-card__body {
+  padding: 16px;
+}
+
+.user-card__status {
+  display: inline-block;
+  margin-bottom: 10px;
+}
+
+.user-card__name {
+  margin: 0 0 8px;
+}
+
+.user-card__role {
+  margin: 0 0 12px;
+  color: #666;
+}
+
+.user-card__skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Меняю цвет кнопки */
+.btn-primary-custom {
+  background: #ED5A2B !important;
+  border-color: #ED5A2B !important;
+  color: white !important;
+}
+
+.btn-primary-custom:hover {
+  background: #d94f23 !important;
+  border-color: #d94f23 !important;
+}
+
+/* Меняю скролл карточек */
+.match-hero__cards {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+
+  /* скрыть скролл */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE */
+}
+
+.match-hero__cards::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+
+/* Перекрытие скролл */
+.match-hero__carousel {
+  position: relative;
+  width: 100%;
+  height: 470px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: grab;
+  user-select: none;
+}
+
+.match-hero__carousel:active {
+  cursor: grabbing;
+}
+
+.user-card {
+  position: absolute;
+  width: 280px;
+  min-height: 400px;
+  overflow: hidden;
+  border-radius: 24px;
+  transition:
+    transform 0.45s ease,
+    opacity 0.45s ease,
+    box-shadow 0.45s ease,
+    filter 0.45s ease;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.user-card--active {
+  transform: translateX(0) scale(1);
+  opacity: 1;
+  z-index: 3;
+  pointer-events: auto;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.18);
+}
+
+.user-card--prev {
+  transform: translateX(-90px) scale(0.9) rotate(-4deg);
+  opacity: 0.72;
+  z-index: 2;
+  pointer-events: auto;
+  filter: brightness(0.92);
+}
+
+.user-card--next {
+  transform: translateX(90px) scale(0.9) rotate(4deg);
+  opacity: 0.72;
+  z-index: 2;
+  pointer-events: auto;
+  filter: brightness(0.92);
+}
+
+.user-card--hidden-left {
+  transform: translateX(-160px) scale(0.82);
+  opacity: 0;
+  z-index: 1;
+}
+
+.user-card--hidden-right {
+  transform: translateX(160px) scale(0.82);
+  opacity: 0;
+  z-index: 1;
+}
+
+/* Color primary */
+.text-primary {
+  color: #526ED3;
+}

@@ -1,0 +1,76 @@
+:host {
+  display: block;
+}
+
+.app-footer {
+  border-radius: 1.5rem;
+  border: 1px solid var(--tui-border-normal);
+  background: color-mix(in srgb, var(--tui-background-base) 94%, #e9eef2);
+  padding: 2rem clamp(1rem, 3vw, 2.5rem);
+}
+
+.app-footer__container {
+  display: grid;
+  gap: 1.5rem 2rem;
+}
+
+.app-footer__brand,
+.app-footer__section {
+  min-width: 0;
+}
+
+.app-footer__brand {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.app-footer__logo {
+  width: fit-content;
+}
+
+.app-footer__copy {
+  margin: 0;
+  color: var(--tui-text-secondary);
+  font: var(--tui-font-text-s);
+}
+
+.app-footer__section {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.app-footer__title {
+  margin: 0;
+  font: var(--tui-font-heading-6);
+}
+
+.app-footer__list {
+  display: grid;
+  gap: 0.5rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.app-footer__link,
+.app-footer__text {
+  color: var(--tui-text-secondary);
+  font: var(--tui-font-text-m);
+}
+
+.app-footer__link {
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.app-footer__link:hover,
+.app-footer__link:focus-visible {
+  color: var(--tui-primary);
+}
+
+@media (min-width: 900px) {
+  .app-footer__container {
+    grid-template-columns: minmax(220px, 1.3fr) repeat(3, minmax(0, 1fr));
+    align-items: start;
+  }
+}
