@@ -29,6 +29,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         options.RefreshInterval = TimeSpan.FromMinutes(30);
         options.RefreshOnIssuerKeyNotFound = true;
     });
+builder.Services.AddAuthorizationBuilder()
+    .AddDefaultPolicy("User", policy => policy.RequireClaim("UserId"));
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
