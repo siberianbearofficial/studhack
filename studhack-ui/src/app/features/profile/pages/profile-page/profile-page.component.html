@@ -1,0 +1,260 @@
+<section class="profile-page">
+  @if (store.error() && !store.me()) {
+    <section tuiCardLarge class="profile-page__status">
+      <header tuiHeader="h5">
+        <span tuiTitle>Профиль недоступен</span>
+        <p tuiSubtitle>{{ store.error() }}</p>
+      </header>
+    </section>
+  } @else if (store.isLoading()) {
+    <section tuiCardLarge class="profile-page__status">
+      <header tuiHeader="h5">
+        <span tuiTitle>Загружаем профиль</span>
+        <p tuiSubtitle>
+          Подтягиваем текущего пользователя и словари для формы редактирования.
+        </p>
+      </header>
+    </section>
+  } @else if (store.me(); as me) {
+    <section tuiCardLarge class="profile-page__hero">
+      <header tuiHeader="h3">
+        <span tuiTitle>Мой профиль</span>
+        <p tuiSubtitle>
+          Здесь уже можно отредактировать базовые поля и сохранить их через
+          `upsertMe`, не переписывая предметную модель.
+        </p>
+      </header>
+
+      <div class="profile-page__hero-badges">
+        <span tuiBadge appearance="primary">@{{ me.uniqueName }}</span>
+        <span
+          tuiBadge
+          [appearance]="me.available ? 'positive' : 'warning'"
+        >
+          {{ me.available ? 'Можно предлагать в команду' : 'Пока скрыт' }}
+        </span>
+      </div>
+    </section>
+
+    <section class="profile-page__layout">
+      <div class="profile-page__main">
+        <form
+          [formGroup]="form"
+          (ngSubmit)="submit()"
+          tuiCardLarge
+          class="profile-page__form"
+        >
+          <header tuiHeader="h4">
+            <span tuiTitle>Редактирование</span>
+            <p tuiSubtitle>
+              Пока редактируем только ключевые поля, остальной профиль берется из
+              текущих данных пользователя.
+            </p>
+          </header>
+
+          @if (store.error()) {
+            <div class="profile-page__message profile-page__message_error">
+              {{ store.error() }}
+            </div>
+          }
+
+          @if (store.success()) {
+            <div class="profile-page__message profile-page__message_success">
+              {{ store.success() }}
+            </div>
+          }
+
+          <div class="profile-page__fields">
+            <label tuiLabel>
+              Username
+              <tui-textfield>
+                <input
+                  tuiTextfield
+                  formControlName="uniqueName"
+                  placeholder="egor-smirnov"
+                />
+              </tui-textfield>
+            </label>
+
+            <label tuiLabel>
+              Отображаемое имя
+              <tui-textfield>
+                <input
+                  tuiTextfield
+                  formControlName="displayName"
+                  placeholder="Егор Смирнов"
+                />
+              </tui-textfield>
+            </label>
+
+            <label tuiLabel>
+              Дата рождения
+              <tui-textfield>
+                <input tuiTextfield type="date" formControlName="birthDate" />
+              </tui-textfield>
+            </label>
+
+            <label tuiLabel>
+              Email
+              <tui-textfield>
+                <input
+                  tuiTextfield
+                  type="email"
+                  formControlName="email"
+                  placeholder="name@example.com"
+                />
+              </tui-textfield>
+            </label>
+
+            <label tuiLabel>
+              Город
+              <tui-textfield>
+                <select tuiTextfield formControlName="cityOfResidenceId">
+                  <option value="">Не выбран</option>
+
+                  @for (city of store.cities(); track city.id) {
+                    <option [value]="city.id">{{ city.name }}</option>
+                  }
+                </select>
+              </tui-textfield>
+            </label>
+
+            <label tuiLabel class="profile-page__availability">
+              <input
+                tuiCheckbox
+                type="checkbox"
+                formControlName="available"
+              />
+              Готов показываться в подборе команд
+            </label>
+          </div>
+
+          <label tuiLabel>
+            О себе
+            <textarea
+              formControlName="biography"
+              class="profile-page__textarea"
+              rows="5"
+              placeholder="Коротко опишите свой опыт, интересы и формат участия"
+            ></textarea>
+          </label>
+
+          <section tuiCardLarge="compact" class="profile-page__specializations">
+            <header tuiHeader="h6">
+              <span tuiTitle>Специализации</span>
+              <p tuiSubtitle>
+                Здесь пока достаточно базового мультивыбора через чекбоксы.
+              </p>
+            </header>
+
+            <div class="profile-page__specializations-grid">
+              @for (specialization of store.specializations(); track specialization.id) {
+                <label tuiLabel class="profile-page__specialization">
+                  <input
+                    tuiCheckbox
+                    type="checkbox"
+                    [ngModel]="isSpecializationSelected(specialization.id)"
+                    [ngModelOptions]="{ standalone: true }"
+                    (ngModelChange)="toggleSpecialization(specialization.id, $event)"
+                  />
+                  {{ specialization.name }}
+                </label>
+              }
+            </div>
+          </section>
+
+          <button
+            tuiButton
+            type="submit"
+            appearance="primary"
+            size="l"
+            [disabled]="form.invalid || store.isSaving()"
+          >
+            {{ store.isSaving() ? 'Сохраняем...' : 'Сохранить профиль' }}
+          </button>
+        </form>
+
+        <section tuiCardLarge="compact" class="profile-page__teams">
+          <header tuiHeader="h5">
+            <span tuiTitle>Команды и роли</span>
+            <p tuiSubtitle>
+              Блок нужен как заготовка под будущий экран с деталями участия.
+            </p>
+          </header>
+
+          @if (me.teams.length) {
+            <div class="profile-page__teams-list">
+              @for (team of me.teams; track team.team.id) {
+                <div class="profile-page__team-item">
+                  <strong>{{ team.team.name }}</strong>
+                  <span>
+                    {{ team.event.name }} · {{ team.roleTitle }}
+                    @if (team.isCaptain) {
+                      · Captain
+                    }
+                  </span>
+                </div>
+              }
+            </div>
+          } @else {
+            <p class="profile-page__muted">
+              У пользователя пока нет участия в командах.
+            </p>
+          }
+        </section>
+      </div>
+
+      <aside class="profile-page__aside">
+        <app-profile-meta-card [profile]="me" />
+
+        <section tuiCardLarge="compact" class="profile-page__panel">
+          <header tuiHeader="h6">
+            <span tuiTitle>Навыки и ссылки</span>
+            <p tuiSubtitle>
+              Пока это read-only секция, чтобы не раздувать задачу по форме.
+            </p>
+          </header>
+
+          <div class="profile-page__badges">
+            @for (skill of me.skills; track skill.skill.id) {
+              <span tuiBadge appearance="neutral">
+                {{ skill.skill.name }} · {{ skill.experienceLevel }}
+              </span>
+            }
+          </div>
+
+          <div class="profile-page__links">
+            @for (link of me.portfolioLinks; track link.id) {
+              <a [href]="link.url" target="_blank" rel="noreferrer">
+                {{ link.description || link.url }}
+              </a>
+            }
+          </div>
+        </section>
+
+        <a
+          tuiButton
+          routerLink="/teams/create"
+          appearance="secondary"
+          size="l"
+        >
+          Перейти к созданию команды
+        </a>
+      </aside>
+    </section>
+  } @else {
+    <section tuiCardLarge class="profile-page__status">
+      <header tuiHeader="h5">
+        <span tuiTitle>Нет данных по текущему пользователю</span>
+        <p tuiSubtitle>
+          Для реального режима здесь потребуется авторизация, а в mock-режиме
+          проверьте bootstrap endpoint.
+        </p>
+      </header>
+
+      <a tuiButton routerLink="/profiles" appearance="secondary" size="l">
+        Открыть список профилей
+      </a>
+    </section>
+  }
+</section>

@@ -1,0 +1,175 @@
+<section class="profiles-page">
+  @if (store.error()) {
+    <section tuiCardLarge="compact" class="profiles-page__status">
+      <header tuiHeader="h6">
+        <span tuiTitle>Не удалось загрузить профили</span>
+        <p tuiSubtitle>{{ store.error() }}</p>
+      </header>
+    </section>
+  } @else if (store.isLoading()) {
+    <section tuiCardLarge="compact" class="profiles-page__status">
+      <header tuiHeader="h6">
+        <span tuiTitle>Загрузка профилей</span>
+        <tui-loader></tui-loader>
+      </header>
+    </section>
+  } @else {
+    <section class="profiles-page__catalog">
+      <aside class="profiles-page__sidebar">
+        <div class="profiles-page__sidebar-header">
+          <header tuiHeader="h4">
+            <span tuiTitle>Фильтры по участникам</span>
+          </header>
+
+          @if (store.activeFiltersCount()) {
+            <button
+              tuiButton
+              type="button"
+              appearance="secondary"
+              size="m"
+              (click)="store.clearFilters()"
+            >
+              Сбросить
+            </button>
+          }
+        </div>
+
+        <tui-textfield>
+          <input
+            tuiTextfield
+            [value]="store.query()"
+            placeholder="Поиск по имени и bio"
+            (input)="store.setQuery($any($event.target).value)"
+          />
+        </tui-textfield>
+
+        <div tuiCardLarge="compact" tuiSurface="floating">
+        <section class="profiles-page__filter-group">
+          <h3 class="profiles-page__filter-title">Роль</h3>
+
+          <div class="profiles-page__filter-list">
+            @for (option of store.specializationOptions(); track option.value) {
+              <label tuiLabel class="profiles-page__filter-option">
+                <span class="profiles-page__filter-option-copy">
+                  <input
+                    tuiCheckbox
+                    type="checkbox"
+                    [ngModel]="store.selectedSpecializationIds().includes(option.value)"
+                    [ngModelOptions]="{ standalone: true }"
+                    (ngModelChange)="store.toggleSpecialization(option.value, $event)"
+                  />
+                  <span>{{ option.label }}</span>
+                </span>
+
+                <span class="profiles-page__filter-count">{{ option.count }}</span>
+              </label>
+            }
+          </div>
+        </section>
+
+        <section class="profiles-page__filter-group">
+          <h3 class="profiles-page__filter-title">Скиллы</h3>
+
+          <div class="profiles-page__filter-list profiles-page__filter-list_scroll">
+            @for (option of store.skillOptions(); track option.value) {
+              <label tuiLabel class="profiles-page__filter-option">
+                <span class="profiles-page__filter-option-copy">
+                  <input
+                    tuiCheckbox
+                    type="checkbox"
+                    [ngModel]="store.selectedSkillIds().includes(option.value)"
+                    [ngModelOptions]="{ standalone: true }"
+                    (ngModelChange)="store.toggleSkill(option.value, $event)"
+                  />
+                  <span>{{ option.label }}</span>
+                </span>
+
+                <span class="profiles-page__filter-count">{{ option.count }}</span>
+              </label>
+            }
+          </div>
+        </section>
+
+        <section class="profiles-page__filter-group">
+          <h3 class="profiles-page__filter-title">Формат участия</h3>
+
+          <div class="profiles-page__filter-list">
+            @for (option of store.formatOptions(); track option.value) {
+              <label tuiLabel class="profiles-page__filter-option">
+                <span class="profiles-page__filter-option-copy">
+                  <input
+                    tuiCheckbox
+                    type="checkbox"
+                    [ngModel]="store.selectedFormats().includes(option.value)"
+                    [ngModelOptions]="{ standalone: true }"
+                    (ngModelChange)="store.toggleFormat(option.value, $event)"
+                  />
+                  <span>{{ option.label }}</span>
+                </span>
+
+                <span class="profiles-page__filter-count">{{ option.count }}</span>
+              </label>
+            }
+          </div>
+        </section>
+
+        <section class="profiles-page__filter-group">
+          <h3 class="profiles-page__filter-title">Опыт</h3>
+
+          <div class="profiles-page__filter-list">
+            @for (option of store.experienceOptions(); track option.value) {
+              <label tuiLabel class="profiles-page__filter-option">
+                <span class="profiles-page__filter-option-copy">
+                  <input
+                    tuiCheckbox
+                    type="checkbox"
+                    [ngModel]="store.selectedExperienceLevels().includes(option.value)"
+                    [ngModelOptions]="{ standalone: true }"
+                    (ngModelChange)="store.toggleExperienceLevel(option.value, $event)"
+                  />
+                  <span>{{ option.label }}</span>
+                </span>
+
+                <span class="profiles-page__filter-count">{{ option.count }}</span>
+              </label>
+            }
+          </div>
+        </section>
+      </div>
+      </aside>
+
+      <section class="profiles-page__results">
+        @if (store.filteredUsers().length) {
+          <section class="profiles-page__grid">
+            @for (user of store.pagedUsers(); track user.id) {
+              <app-profile-card
+                [user]="user"
+                [isFavorite]="store.isFavorite(user.id)"
+                (favoriteToggled)="store.toggleFavorite(user.id)"
+              />
+            }
+          </section>
+
+          @if (store.pageCount() > 1) {
+            <footer class="profiles-page__pagination">
+              <tui-pagination
+                [index]="store.currentPage()"
+                [length]="store.pageCount()"
+                (indexChange)="store.setCurrentPage($event)"
+              />
+            </footer>
+          }
+        } @else {
+          <section tuiCardLarge="compact" class="profiles-page__status">
+            <header tuiHeader="h6">
+              <span tuiTitle>Ничего не найдено</span>
+              <p tuiSubtitle>
+                Снимите часть чекбоксов или измените поисковый запрос.
+              </p>
+            </header>
+          </section>
+        }
+      </section>
+    </section>
+  }
+</section>

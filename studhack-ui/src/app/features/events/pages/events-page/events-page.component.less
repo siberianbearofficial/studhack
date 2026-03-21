@@ -1,0 +1,37 @@
+.events-page {
+  display: grid;
+  gap: 1rem;
+}
+
+.events-page__hero,
+.events-page__filters,
+.events-page__status {
+  display: grid;
+  gap: 1rem;
+}
+
+.events-page__summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.events-page__grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.events-page__checkbox {
+  align-self: start;
+}
+
+@media (min-width: 900px) {
+  .events-page__filters {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+  }
+
+  .events-page__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

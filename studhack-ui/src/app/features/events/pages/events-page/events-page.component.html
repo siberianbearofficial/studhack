@@ -1,0 +1,82 @@
+<section class="events-page">
+  <section tuiCardLarge class="events-page__hero">
+    <header tuiHeader="h3">
+      <span tuiTitle>События</span>
+      <p tuiSubtitle>
+        Здесь уже есть базовая витрина хакатонов и других мероприятий, на которую
+        потом можно навешивать подробные event screens.
+      </p>
+    </header>
+
+    <div class="events-page__summary">
+      <span tuiBadge appearance="primary">
+        {{ store.events().length }} событий
+      </span>
+      <span tuiBadge appearance="warning">
+        {{
+          store.events().filter((event) => event.type === 'hackathon').length
+        }}
+        хакатонов
+      </span>
+      <span tuiBadge appearance="neutral">
+        {{ store.filteredEvents().length }} после фильтрации
+      </span>
+    </div>
+  </section>
+
+  <section tuiCardLarge="compact" class="events-page__filters">
+    <label tuiLabel>
+      Поиск
+      <tui-textfield>
+        <input
+          tuiTextfield
+          [value]="store.query()"
+          placeholder="Название, описание, город или формат"
+          (input)="store.setQuery($any($event.target).value)"
+        />
+      </tui-textfield>
+    </label>
+
+    <label tuiLabel class="events-page__checkbox">
+      <input
+        tuiCheckbox
+        type="checkbox"
+        [ngModel]="store.hackathonsOnly()"
+        [ngModelOptions]="{ standalone: true }"
+        (ngModelChange)="store.setHackathonsOnly($event)"
+      />
+      Только хакатоны
+    </label>
+  </section>
+
+  @if (store.error()) {
+    <section tuiCardLarge="compact" class="events-page__status">
+      <header tuiHeader="h6">
+        <span tuiTitle>Не удалось загрузить события</span>
+        <p tuiSubtitle>{{ store.error() }}</p>
+      </header>
+    </section>
+  } @else if (store.isLoading()) {
+    <section tuiCardLarge="compact" class="events-page__status">
+      <header tuiHeader="h6">
+        <span tuiTitle>Загрузка событий</span>
+        <p tuiSubtitle>Подтягиваем витрину событий из API или mock-клиента.</p>
+      </header>
+    </section>
+  } @else if (store.filteredEvents().length) {
+    <section class="events-page__grid">
+      @for (event of store.filteredEvents(); track event.id) {
+        <app-event-card [event]="event" />
+      }
+    </section>
+  } @else {
+    <section tuiCardLarge="compact" class="events-page__status">
+      <header tuiHeader="h6">
+        <span tuiTitle>События не найдены</span>
+        <p tuiSubtitle>
+          Попробуйте изменить поисковый запрос или вернуть все типы событий.
+        </p>
+      </header>
+    </section>
+  }
+</section>

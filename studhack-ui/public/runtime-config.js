@@ -1,0 +1,1 @@
+window.__STUDHACK_RUNTIME_CONFIG__ = {};

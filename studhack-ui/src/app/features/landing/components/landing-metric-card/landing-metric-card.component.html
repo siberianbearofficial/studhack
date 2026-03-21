@@ -1,0 +1,12 @@
+<article tuiCardLarge="compact" class="metric-card">
+  @if (badge()) {
+    <span tuiBadge appearance="neutral">{{ badge() }}</span>
+  }
+
+  <div class="metric-card__value">{{ value() }}</div>
+  <div class="metric-card__label">{{ label() }}</div>
+
+  @if (detail()) {
+    <div class="metric-card__detail">{{ detail() }}</div>
+  }
+</article>

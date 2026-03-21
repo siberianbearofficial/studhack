@@ -1,0 +1,58 @@
+<article tuiCardLarge tuiSurface="floating" class="profile-card">
+  <div class="profile-card__chips">
+    <tui-badge appearance="info" iconStart="@tui.chart-no-axes-column">{{ primarySpecialization() }}</tui-badge>
+    <tui-badge appearance="info" iconStart="@tui.map-pin">{{ cityLabel() }}</tui-badge>
+    <tui-badge appearance="info" iconStart="@tui.code">{{ highestExperience() }}</tui-badge>
+  </div>
+
+  <div class="profile-card__main">
+    <h3 class="profile-card__name">{{ user().displayName }}</h3>
+
+    <p class="profile-card__bio">
+      {{ user().biography || 'Краткое описание пока не заполнено.' }}
+    </p>
+
+    <a
+      class="profile-card__link"
+      iconEnd="@tui.arrow-up-right"
+      tuiLink
+      [routerLink]="profileLink()"
+    >
+      Подробнее
+    </a>
+  </div>
+
+  <div class="profile-card__footer">
+    <div class="profile-card__actions">
+      <button tuiButton type="button" appearance="accent" size="m">
+        Пригласить
+      </button>
+
+      <button
+        tuiIconButton
+        type="button"
+        size="m"
+        [iconStart]="isFavorite() ? '@tui.star-off' : '@tui.star'"
+        appearance="outline"
+        [attr.aria-label]="
+          isFavorite() ? 'Убрать из избранного' : 'Добавить в избранное'
+        "
+        (click)="toggleFavorite()"
+      ></button>
+    </div>
+
+    <div class="profile-card__grade">
+      <div class="profile-card__grade-circle">
+        <label tuiProgressLabel>
+          <span class="profile-card__grade-value">{{ grade().label }}</span>
+          <tui-progress-circle
+            size="m"
+            color="var(--tui-status-positive)"
+            [max]="grade().max"
+            [value]="grade().value"
+          ></tui-progress-circle>
+        </label>
+      </div>
+    </div>
+  </div>
+</article>
