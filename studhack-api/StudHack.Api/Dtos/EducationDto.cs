@@ -1,13 +1,14 @@
-using System.ComponentModel.DataAnnotations;
-using StudHack.Domain.Enums;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Formats.Asn1;
+using StudHack.Api.Enums;
 
-namespace Eventity.Domain.Models;
+namespace StudHack.Api.Dtos;
 
-public class Education
+public class EducationDto
 {
     public Guid Id { get; set; }
     public required Guid UniversityId { get; set; }
-    public EducationDegree Degree { get; set; }
+    public EducationDegreeDto Degree { get; set; }
     [StringLength(200)] public string? Faculty { get; set; }
     public required int YearStart { get; set; }
     public required int YearEnd { get; set; }

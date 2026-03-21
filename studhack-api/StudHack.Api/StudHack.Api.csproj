@@ -12,10 +12,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Controllers\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\StudHack.Application\StudHack.Application.csproj" />
       <ProjectReference Include="..\StudHack.DataAccess\StudHack.DataAccess.csproj" />
       <ProjectReference Include="..\StudHack.Domain\StudHack.Domain.csproj" />

@@ -4,7 +4,7 @@ namespace Eventity.Domain.Models;
 
 public class User
 {
-    internal User() { }
+    public User() { }
 
     public User(
         Guid id,
@@ -13,7 +13,6 @@ public class User
         DateTime birthDate,
         bool available,
         Guid? cityOfResidenceId,
-        Guid? mainSpecializationId,
         Guid authId)
     {
         Id = id;
@@ -22,7 +21,6 @@ public class User
         BirthDate = birthDate;
         Available = available;
         CityOfResidenceId = cityOfResidenceId;
-        MainSpecializationId = mainSpecializationId;
         AuthId = authId;
     }
 
@@ -36,15 +34,12 @@ public class User
     [StringLength(100)]
     public string DisplayedName { get; init;  }
 
-    [Required]
-    public DateTime BirthDate { get; init;  }
+    public DateTime? BirthDate { get; init;  }
 
     [Required]
     public bool Available { get; init; }
 
     public Guid? CityOfResidenceId { get; init; }
-
-    public Guid? MainSpecializationId { get; init; }
 
     [StringLength(500)]
     public string? AvatarUrl { get; init; }
