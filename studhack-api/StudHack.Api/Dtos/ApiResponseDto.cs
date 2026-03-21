@@ -1,12 +1,16 @@
-﻿namespace StudHack.Api.Dtos;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace StudHack.Api.Dtos;
 
 public class ApiResponseDto<T>
 {
+    [SetsRequiredMembers]
     public ApiResponseDto(T data)
     {
         Data = data;
     }
 
+    [SetsRequiredMembers]
     public ApiResponseDto(T data, int total)
     {
         Data = data;
