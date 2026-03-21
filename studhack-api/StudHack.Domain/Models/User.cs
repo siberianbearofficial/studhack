@@ -14,17 +14,7 @@ public class User
         bool available,
         Guid? cityOfResidenceId,
         Guid? mainSpecializationId,
-        Guid authId,
-        string? avatarUrl,
-        string? email,
-        string? biography,
-        DateTime createdAt,
-        DateTime updatedAt,
-        City? city,
-        IEnumerable<Skill>? skills,
-        IEnumerable<Specialization>? specializations,
-        IEnumerable<PortfolioLink>? portfolioLinks,
-        IEnumerable<Education>? educations)
+        Guid authId)
     {
         Id = id;
         UniqueName = uniqueName;
@@ -34,67 +24,71 @@ public class User
         CityOfResidenceId = cityOfResidenceId;
         MainSpecializationId = mainSpecializationId;
         AuthId = authId;
-        AvatarUrl = avatarUrl;
-        Email = email;
-        Biography = biography;
-        CreatedAt = createdAt;
-        UpdatedAt = updatedAt;
-        City = city;
-        Skills = skills ?? Array.Empty<Skill>();
-        Specializations = specializations ?? Array.Empty<Specialization>();
-        PortfolioLinks = portfolioLinks ?? Array.Empty<PortfolioLink>();
-        Educations = educations ?? Array.Empty<Education>();
     }
 
-    public Guid Id { get; init;  }
+    public Guid Id { get; }
 
     [Required]
     [StringLength(100)]
-    public string UniqueName { get; init;  }
+    public string UniqueName { get; }
 
     [Required]
     [StringLength(100)]
-    public string DisplayedName { get; init;  }
+    public string DisplayedName { get; }
 
     [Required]
-    public DateTime BirthDate { get; init;  }
+    public DateTime BirthDate { get; }
 
     [Required]
-    public bool Available { get; init; }
+    public bool Available { get; }
 
-    public Guid? CityOfResidenceId { get; init; }
+    public Guid? CityOfResidenceId { get; }
 
-    public Guid? MainSpecializationId { get; init; }
+    public Guid? MainSpecializationId { get; }
 
     [StringLength(500)]
-    public string? AvatarUrl { get; init; }
+    public string? AvatarUrl { get; }
 
     [Required]
-    public Guid AuthId { get; init; }
+    public Guid AuthId { get; }
 
     [EmailAddress]
     [StringLength(255)]
-    public string? Email { get; init; }
+    public string? Email { get; }
 
-    public string? Biography { get; init; }
-
-    [Required]
-    public DateTime CreatedAt { get; init; }
+    public string? Biography { get; }
 
     [Required]
-    public DateTime UpdatedAt { get; init; }
+    public DateTime CreatedAt { get; }
+
+    [Required]
+    public DateTime UpdatedAt { get; }
     
     public City? City { get; init; }
 
     [Required]
-    public IEnumerable<Skill> Skills { get; init; }
+    public IEnumerable<UserSkill> UserSkills { get; init; }
     
     [Required]
-    public IEnumerable<Specialization> Specializations { get; init; }
+    public IEnumerable<UserSpecialization> UserSpecializations { get; init; }
     
     [Required]
     public IEnumerable<PortfolioLink> PortfolioLinks { get; init; }
     
     [Required]
     public IEnumerable<Education> Educations { get; init; }
+
+    [Required] public IEnumerable<Subscription> Subscriptions { get; init; }
+
+    [Required]
+    public IEnumerable<TeamRequest> TeamRequests { get; init; }
+    
+    [Required]
+    public IEnumerable<Team> CaptainTeams { get; init; }
+    
+    [Required]
+    public IEnumerable<Team> CreatedTeams { get; init; }
+    
+    [Required]
+    public IEnumerable<TeamPosition> TeamPositions { get; init; }
 }
