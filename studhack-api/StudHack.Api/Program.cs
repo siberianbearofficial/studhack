@@ -27,7 +27,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
     {
         options.MetadataAddress =
-            $"{builder.Configuration["Auth.Issuer"]}/.well-known/openid-configuration";
+            $"{builder.Configuration["Auth.ApiUrl"]}/api/v1/.well-known/openid-configuration";
         options.Authority = builder.Configuration["Auth.ApiUrl"];
         options.RequireHttpsMetadata = false;
 
