@@ -3,7 +3,7 @@ using System.Net;
 using System.Net.Mail;
 using StudHack.Domain;
 
-namespace MessageSender;
+namespace Studhack.MessageSender;
 
 public class EmailMessageSender(IConfiguration config) : IMessageSender
 {
