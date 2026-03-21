@@ -1,6 +1,6 @@
 ﻿using StudHack.Domain.Models;
 
-namespace StudHack.Domain.Abstractions;
+namespace StudHack.Domain.Abstractions.Repositories;
 
 public interface IUserRepository
 {
