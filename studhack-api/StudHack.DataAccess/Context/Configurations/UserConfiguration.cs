@@ -38,10 +38,6 @@ public class UserConfiguration : IEntityTypeConfiguration<UserDb>
             .WithOne(pl => pl.User)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasMany(e => e.Educations)
-            .WithOne(ed => ed.User)
-            .OnDelete(DeleteBehavior.Cascade);
-
         builder.HasMany(e => e.Subscriptions)
             .WithOne(s => s.User)
             .HasForeignKey(s => s.UserId)

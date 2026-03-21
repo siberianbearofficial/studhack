@@ -13,10 +13,6 @@ public class EducationConfiguration : IEntityTypeConfiguration<EducationDb>
         builder.Property(e => e.Id)
             .ValueGeneratedNever();
 
-        builder.HasOne(e => e.User)
-            .WithMany(u => u.Educations)
-            .OnDelete(DeleteBehavior.Cascade);
-
         builder.HasOne(e => e.University)
             .WithMany(u => u.Educations)
             .HasForeignKey(e => e.UniversityId)

@@ -40,6 +40,5 @@ public class EducationDb
     [Required]
     public int YearEnd { get; set; }
 
-    public virtual UserDb User { get; set; }
     public virtual UniversityDb University { get; set; }
 }

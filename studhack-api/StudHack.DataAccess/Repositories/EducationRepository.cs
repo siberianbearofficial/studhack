@@ -49,7 +49,7 @@ public class EducationRepository : IEducationRepository
 
     public async Task<Education> AddAsync(Education education, CancellationToken ct = default)
     {
-        _logger.LogDebug("Adding education: {@EventDate}", education);
+        _logger.LogDebug("Adding education: {@Education}", education);
 
         try
         {
@@ -59,8 +59,8 @@ public class EducationRepository : IEducationRepository
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to add event date: {@EventDate}", education);
-            throw new EventDateRepositoryException("Failed to add event date", ex);
+            _logger.LogError(ex, "Failed to add education: {@Education}", education);
+            throw new EducationRepositoryException("Failed to add education", ex);
         }
     }
 
