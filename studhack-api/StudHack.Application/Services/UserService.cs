@@ -2,6 +2,7 @@
 using Avalux.Auth.ApiClient;
 using StudHack.Domain.Models;
 using StudHack.Domain.Abstractions;
+using StudHack.Domain.Abstractions.Repositories;
 
 namespace StudHack.Application.Services;
 
