@@ -20,10 +20,12 @@ services.AddScoped<IRegionRepository, RegionRepository>();
 services.AddScoped<ICityRepository, CityRepository>();
 services.AddScoped<ISkillRepository, SkillRepository>();
 services.AddScoped<ISpecializationRepository, SpecializationRepository>();
+services.AddScoped<IUniversityRepository, UniversityRepository>();
 
 services.AddScoped<CitiesFiller>();
 services.AddScoped<SkillsFiller>();
 services.AddScoped<SpecializationsFiller>();
+services.AddScoped<UniversityFiller>();
 
 var serviceProvider = services.BuildServiceProvider();
 
@@ -35,5 +37,8 @@ using var scope = serviceProvider.CreateScope();
 // var skillsFiller = scope.ServiceProvider.GetRequiredService<SkillsFiller>();
 // await skillsFiller.FillAsync();
 
-var specializationsFiller = scope.ServiceProvider.GetRequiredService<SpecializationsFiller>();
-await specializationsFiller.FillAsync();
+// var specializationsFiller = scope.ServiceProvider.GetRequiredService<SpecializationsFiller>();
+// await specializationsFiller.FillAsync();
+
+var universityFiller = scope.ServiceProvider.GetRequiredService<UniversityFiller>();
+await universityFiller.FillAsync();

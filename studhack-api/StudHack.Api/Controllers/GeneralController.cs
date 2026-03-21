@@ -15,7 +15,7 @@ public class GeneralController(
     IRegionRepository regionRepository,
     ISpecializationRepository specializationRepository) : ControllerBase
 {
-    [HttpGet]
+    [HttpGet("dictionaries")]
     [AllowAnonymous]
     public async Task<ActionResult<ApiResponseDto<DictionariesDto>>> GetDictionaries(CancellationToken ct)
     {
