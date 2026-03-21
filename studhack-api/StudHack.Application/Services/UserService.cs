@@ -1,4 +1,5 @@
-﻿using Avalux.Auth.ApiClient;
+﻿using System.Net;
+using Avalux.Auth.ApiClient;
 using StudHack.Domain.Models;
 using StudHack.Domain.Abstractions;
 
@@ -16,10 +17,19 @@ public class UserService(IUserRepository userRepository, IAuthClient authClient)
         return await userRepository.GetUserByAuthAsync(authId, ct);
     }
 
-    public async Task<UserAuthInfo> LoadUserInfoAsync(Guid authId, CancellationToken ct = default)
+    public async Task<UserAuthInfo?> LoadUserInfoAsync(Guid authId, CancellationToken ct = default)
     {
-        var user = await authClient.GetUserAsync(authId, ct);
-        return FromAuthApi(user);
+        try
+        {
+            var user = await authClient.GetUserAsync(authId, ct);
+            return FromAuthApi(user);
+        }
+        catch (HttpRequestException e)
+        {
+            if (e.StatusCode == HttpStatusCode.NotFound)
+                return null;
+            throw;
+        }
     }
 
     public async Task<ICollection<User>> GetUsersAsync(CancellationToken ct = default)

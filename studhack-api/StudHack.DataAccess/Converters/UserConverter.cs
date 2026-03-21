@@ -23,6 +23,8 @@ public static class UserConverter
             Skills = db.UserSkills.Select(e => e.Skill.ToDomain()).ToList(),
             Specializations = db.UserSpecializations.Select(e => e.Specialization.ToDomain()).ToList(),
             Educations = db.Educations.Select(EducationConverter.ToDomain).ToList(),
+            CreatedAt = db.CreatedAt,
+            UpdatedAt = db.UpdatedAt,
         };
     }
 }
