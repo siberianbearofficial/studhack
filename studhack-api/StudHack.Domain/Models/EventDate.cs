@@ -6,14 +6,18 @@ public class EventDate
 {
     internal EventDate() { }
 
-    public EventDate(Guid eventId, DateTime startsAt, DateTime endsAt, string? description)
+    public EventDate(Guid id, Guid eventId, DateTime startsAt, DateTime endsAt, string? description)
     {
+        Id = id;
         EventId = eventId;
         StartsAt = startsAt;
         EndsAt = endsAt;
         Description = description;
     }
 
+    [Required]
+    public Guid Id { get; init; }
+    
     [Required]
     public Guid EventId { get; init; }
 

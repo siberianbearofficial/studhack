@@ -12,7 +12,7 @@ public class UserDb
         Guid id,
         string uniqueName,
         string displayedName,
-        DateTime birthDate,
+        DateTime? birthDate,
         bool available,
         Guid? cityOfResidenceId,
         Guid authId)

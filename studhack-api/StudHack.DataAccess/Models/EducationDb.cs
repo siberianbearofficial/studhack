@@ -9,7 +9,6 @@ public class EducationDb
 
     public EducationDb(
         Guid id,
-        Guid userId,
         Guid universityId,
         EducationDegreeDb degree,
         string? faculty,
@@ -17,7 +16,6 @@ public class EducationDb
         int yearEnd)
     {
         Id = id;
-        UserId = userId;
         UniversityId = universityId;
         Degree = degree;
         Faculty = faculty;
@@ -26,9 +24,6 @@ public class EducationDb
     }
 
     public Guid Id { get; set; }
-
-    [Required]
-    public Guid UserId { get; set; }
 
     [Required]
     public Guid UniversityId { get; set; }
@@ -45,6 +40,5 @@ public class EducationDb
     [Required]
     public int YearEnd { get; set; }
 
-    public virtual UserDb User { get; set; }
     public virtual UniversityDb University { get; set; }
 }

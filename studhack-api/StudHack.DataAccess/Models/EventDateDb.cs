@@ -6,14 +6,17 @@ public class EventDateDb
 {
     internal EventDateDb() { }
 
-    public EventDateDb(Guid eventId, DateTime startsAt, DateTime endsAt, string? description)
+    public EventDateDb(Guid id, Guid eventId, DateTime startsAt, DateTime endsAt, string? description)
     {
+        Id = id;
         EventId = eventId;
         StartsAt = startsAt;
         EndsAt = endsAt;
         Description = description;
     }
 
+    public Guid Id { get; set; }
+    
     [Required]
     public Guid EventId { get; set; }
 
