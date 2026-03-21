@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using StudHack.Domain;
 
-namespace Eventity.Domain.Models;
+namespace StudHack.Domain.Models;
 
 public class TeamPosition
 {

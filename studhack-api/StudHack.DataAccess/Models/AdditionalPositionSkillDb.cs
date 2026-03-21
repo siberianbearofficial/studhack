@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Eventity.DataAccess.Models;
+namespace StudHack.DataAccess.Models;
 
 public class AdditionalPositionSkillDb
 {
