@@ -8,7 +8,7 @@ public class SubscriptionConfiguration : IEntityTypeConfiguration<SubscriptionDb
 {
     public void Configure(EntityTypeBuilder<SubscriptionDb> builder)
     {
-        builder.HasKey(s => new { s.EventId, s.UserId });
+        builder.HasKey(s => s.Id);
 
         builder.HasOne(s => s.Event)
             .WithMany(e => e.Subscriptions)

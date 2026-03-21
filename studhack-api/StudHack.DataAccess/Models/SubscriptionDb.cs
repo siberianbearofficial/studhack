@@ -6,11 +6,15 @@ public class SubscriptionDb
 {
     internal SubscriptionDb() { }
 
-    public SubscriptionDb(Guid eventId, Guid userId)
+    public SubscriptionDb(Guid id, Guid eventId, Guid userId)
     {
+        Id = id;
         EventId = eventId;
         UserId = userId;
     }
+
+    [Required]
+    public Guid Id { get; set; }
 
     [Required]
     public Guid EventId { get; set; }

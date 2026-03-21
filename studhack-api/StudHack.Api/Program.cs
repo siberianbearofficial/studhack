@@ -6,6 +6,7 @@ using StudHack.Application.Services;
 using StudHack.DataAccess.Context;
 using StudHack.DataAccess.Repositories;
 using StudHack.Domain.Abstractions;
+using StudHack.Domain.Abstractions.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddEnvironmentVariables();
