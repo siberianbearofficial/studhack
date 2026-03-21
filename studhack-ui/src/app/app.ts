@@ -1,11 +1,18 @@
+<<<<<<< HEAD
 import { ChangeDetectionStrategy, Component, computed, effect, inject } from '@angular/core';
+=======
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+>>>>>>> 439482de (fix footer padding)
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { TuiRoot } from '@taiga-ui/core';
 import { filter, map, startWith } from 'rxjs';
 
 import { AppFooterComponent, AppShellHeaderComponent } from '@shared/ui';
+<<<<<<< HEAD
 import { AuthService } from '@core/auth';
+=======
+>>>>>>> 439482de (fix footer padding)
 
 const FOOTER_ROUTES = new Set([
   '/',
@@ -14,7 +21,10 @@ const FOOTER_ROUTES = new Set([
   '/profile',
   '/profiles',
 ]);
+<<<<<<< HEAD
 const FOOTER_ROUTE_PREFIXES = ['/events/'];
+=======
+>>>>>>> 439482de (fix footer padding)
 
 @Component({
   selector: 'app-root',
@@ -24,7 +34,10 @@ const FOOTER_ROUTE_PREFIXES = ['/events/'];
   styleUrl: './app.less',
 })
 export class App {
+<<<<<<< HEAD
   private readonly auth = inject(AuthService);
+=======
+>>>>>>> 439482de (fix footer padding)
   private readonly router = inject(Router);
   private readonly currentUrl = toSignal(
     this.router.events.pipe(
@@ -35,6 +48,7 @@ export class App {
     { initialValue: this.router.url },
   );
   protected readonly showFooter = computed(() =>
+<<<<<<< HEAD
     FOOTER_ROUTES.has(this.normalizeUrl(this.currentUrl())) ||
     FOOTER_ROUTE_PREFIXES.some((prefix) =>
       this.normalizeUrl(this.currentUrl()).startsWith(prefix),
@@ -60,6 +74,11 @@ export class App {
     });
   }
 
+=======
+    FOOTER_ROUTES.has(this.normalizeUrl(this.currentUrl())),
+  );
+
+>>>>>>> 439482de (fix footer padding)
   private normalizeUrl(url: string): string {
     const [path] = url.split(/[?#]/);
     const normalizedPath = path || '/';
