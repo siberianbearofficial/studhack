@@ -27,6 +27,7 @@ public class StudHackDbContext : DbContext
     public virtual DbSet<MandatoryPositionSkillDb> MandatoryPositionSkills { get; set; }
     public virtual DbSet<AdditionalPositionDataDb> AdditionalPositionDataItems { get; set; }
     public virtual DbSet<AdditionalPositionSkillDb> AdditionalPositionSkills { get; set; }
+    public virtual DbSet<SentMessageDb> SentMessages { get; set; }
 
     public StudHackDbContext(DbContextOptions<StudHackDbContext> options)
         : base(options) { }

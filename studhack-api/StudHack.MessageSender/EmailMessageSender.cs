@@ -1,13 +1,9 @@
 ﻿using Microsoft.Extensions.Configuration;
 using System.Net;
 using System.Net.Mail;
+using StudHack.Core.Abstractions;
 
-namespace MessageSender;
-
-public interface IMessageSender
-{
-    Task Send(string address, string subject, string message);
-}
+namespace Studhack.MessageSender;
 
 public class EmailMessageSender(IConfiguration config) : IMessageSender
 {
