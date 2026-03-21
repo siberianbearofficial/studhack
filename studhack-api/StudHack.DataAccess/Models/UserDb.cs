@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace Eventity.DataAccess.Models;
+namespace StudHack.DataAccess.Models;
 
 public class UserDb
 {

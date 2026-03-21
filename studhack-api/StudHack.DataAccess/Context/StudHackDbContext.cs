@@ -1,8 +1,8 @@
-using Eventity.DataAccess.Configurations;
-using Eventity.DataAccess.Models;
+using StudHack.DataAccess.Configurations;
+using StudHack.DataAccess.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Eventity.DataAccess.Context;
+namespace StudHack.DataAccess.Context;
 
 public class StudHackDbContext : DbContext
 {

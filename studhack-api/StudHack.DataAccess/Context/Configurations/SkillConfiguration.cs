@@ -1,8 +1,8 @@
-using Eventity.DataAccess.Models;
+using StudHack.DataAccess.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Eventity.DataAccess.Configurations;
+namespace StudHack.DataAccess.Configurations;
 
 public class SkillConfiguration : IEntityTypeConfiguration<SkillDb>
 {
