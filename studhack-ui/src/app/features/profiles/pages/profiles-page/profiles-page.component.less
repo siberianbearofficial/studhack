@@ -1,6 +1,6 @@
 .profiles-page {
   display: grid;
-  gap: 1rem;
+  gap: 3.125rem;
 }
 
 .profiles-page__hero,
@@ -89,6 +89,29 @@
 .profiles-page__pagination {
   display: flex;
   justify-content: center;
+}
+
+.profiles-page__top {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.profiles-page__heading-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.profiles-page__heading__events-count {
+  font: var(--tui-font-heading-6);
+  color: var(--tui-text-tertiary);
+}
+
+.profiles-page__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
 @media (min-width: 1100px) {

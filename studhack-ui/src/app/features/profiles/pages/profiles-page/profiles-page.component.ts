@@ -1,6 +1,7 @@
+import { Location } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TuiButton, TuiLabel, TuiLoader, TuiSurface, TuiTextfield, TuiTitle } from '@taiga-ui/core';
+import { TuiButton, TuiLabel, TuiLink, TuiLoader, TuiSurface, TuiTextfield, TuiTitle } from '@taiga-ui/core';
 import { TuiCheckbox, TuiPagination } from '@taiga-ui/kit';
 import { TuiCard, TuiHeader } from '@taiga-ui/layout';
 
@@ -23,6 +24,7 @@ import { ProfilesStore } from '../../store/profiles.store';
     TuiTitle,
     TuiSurface,
     TuiLoader,
+    TuiLink,
   ],
   providers: [ProfilesStore],
   templateUrl: './profiles-page.component.html',
@@ -30,4 +32,9 @@ import { ProfilesStore } from '../../store/profiles.store';
 })
 export class ProfilesPageComponent {
   protected readonly store = inject(ProfilesStore);
+  private readonly location = inject(Location);
+
+  protected goBack(): void {
+    this.location.back();
+  }
 }

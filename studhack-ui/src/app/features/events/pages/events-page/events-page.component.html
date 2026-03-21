@@ -1,82 +1,204 @@
 <section class="events-page">
-  <section tuiCardLarge class="events-page__hero">
-    <header tuiHeader="h3">
-      <span tuiTitle>События</span>
-      <p tuiSubtitle>
-        Здесь уже есть базовая витрина хакатонов и других мероприятий, на которую
-        потом можно навешивать подробные event screens.
-      </p>
-    </header>
+  <section class="events-page__top">
+    <nav class="events-page__links" aria-label="Навигация по каталогу">
+      <button
+        tuiLink
+        type="button"
+        iconStart="@tui.chevron-left"
+        (click)="goBack()"
+      >
+        Назад
+      </button>
 
-    <div class="events-page__summary">
-      <span tuiBadge appearance="primary">
-        {{ store.events().length }} событий
-      </span>
-      <span tuiBadge appearance="warning">
-        {{
-          store.events().filter((event) => event.type === 'hackathon').length
-        }}
-        хакатонов
-      </span>
-      <span tuiBadge appearance="neutral">
-        {{ store.filteredEvents().length }} после фильтрации
-      </span>
+      <a tuiLink routerLink="/profiles" iconEnd="@tui.chevron-right">
+        К поиску участников
+      </a>
+    </nav>
+
+    <div class="events-page__heading-container">
+      <header tuiHeader="h1" class="events-page__heading">
+        <span tuiTitle>Поиск мероприятий</span>
+      </header>
+      <span class="events-page__heading__events-count">Найдено {{ store.filteredEvents().length }}</span>
     </div>
-  </section>
-
-  <section tuiCardLarge="compact" class="events-page__filters">
-    <label tuiLabel>
-      Поиск
-      <tui-textfield>
-        <input
-          tuiTextfield
-          [value]="store.query()"
-          placeholder="Название, описание, город или формат"
-          (input)="store.setQuery($any($event.target).value)"
-        />
-      </tui-textfield>
-    </label>
-
-    <label tuiLabel class="events-page__checkbox">
-      <input
-        tuiCheckbox
-        type="checkbox"
-        [ngModel]="store.hackathonsOnly()"
-        [ngModelOptions]="{ standalone: true }"
-        (ngModelChange)="store.setHackathonsOnly($event)"
-      />
-      Только хакатоны
-    </label>
   </section>
 
   @if (store.error()) {
     <section tuiCardLarge="compact" class="events-page__status">
       <header tuiHeader="h6">
-        <span tuiTitle>Не удалось загрузить события</span>
+        <span tuiTitle>Не удалось загрузить мероприятия</span>
         <p tuiSubtitle>{{ store.error() }}</p>
       </header>
     </section>
   } @else if (store.isLoading()) {
     <section tuiCardLarge="compact" class="events-page__status">
       <header tuiHeader="h6">
-        <span tuiTitle>Загрузка событий</span>
-        <p tuiSubtitle>Подтягиваем витрину событий из API или mock-клиента.</p>
+        <span tuiTitle>Загрузка мероприятий</span>
+        <tui-loader></tui-loader>
       </header>
-    </section>
-  } @else if (store.filteredEvents().length) {
-    <section class="events-page__grid">
-      @for (event of store.filteredEvents(); track event.id) {
-        <app-event-card [event]="event" />
-      }
     </section>
   } @else {
-    <section tuiCardLarge="compact" class="events-page__status">
-      <header tuiHeader="h6">
-        <span tuiTitle>События не найдены</span>
-        <p tuiSubtitle>
-          Попробуйте изменить поисковый запрос или вернуть все типы событий.
-        </p>
-      </header>
+    <section class="events-page__catalog">
+      <aside class="events-page__sidebar">
+        <div class="events-page__sidebar-header">
+          <header tuiHeader="h4">
+            <span tuiTitle>Фильтры</span>
+          </header>
+
+          @if (store.activeFiltersCount()) {
+            <button
+              tuiButton
+              type="button"
+              appearance="secondary"
+              size="m"
+              (click)="store.clearFilters()"
+            >
+              Сбросить
+            </button>
+          }
+        </div>
+
+        <tui-textfield>
+          <input
+            tuiTextfield
+            [value]="store.query()"
+            placeholder="Поиск по названию/описанию"
+            (input)="store.setQuery($any($event.target).value)"
+          />
+        </tui-textfield>
+
+        <div tuiCardLarge="compact" tuiSurface="floating">
+          <section class="events-page__filter-group">
+            <h3 class="events-page__filter-title">Даты</h3>
+
+            <tui-textfield [tuiTextfieldCleaner]="false">
+              <input
+                tuiInputDateRange
+                [ngModel]="store.dateRange()"
+                [ngModelOptions]="{ standalone: true }"
+                placeholder="Выберите диапазон"
+                (ngModelChange)="store.setDateRange($event)"
+              />
+              <tui-calendar-range *tuiTextfieldDropdown />
+            </tui-textfield>
+          </section>
+
+          <section class="events-page__filter-group">
+            <div class="events-page__filter-header">
+              <h3 class="events-page__filter-title">Размер команды</h3>
+              <span class="events-page__filter-caption">{{ teamSizeLabel() }}</span>
+            </div>
+
+            <tui-range
+              size="m"
+              [min]="minTeamSize"
+              [max]="maxTeamSize"
+              [step]="1"
+              [segments]="maxTeamSize - minTeamSize"
+              [ngModel]="store.teamSizeRange()"
+              [ngModelOptions]="{ standalone: true }"
+              (ngModelChange)="store.setTeamSizeRange($event)"
+            />
+
+            <div class="events-page__range-steps">
+              @for (step of teamSizeSteps; track step.value) {
+                <span>{{ step.label }}</span>
+              }
+            </div>
+          </section>
+
+          <section class="events-page__filter-group">
+            <h3 class="events-page__filter-title">Дополнительно</h3>
+
+            <div class="events-page__filter-list">
+              <label tuiLabel class="events-page__filter-option">
+                <span class="events-page__filter-option-copy">
+                  <input
+                    tuiCheckbox
+                    type="checkbox"
+                    [ngModel]="store.recommendedOnly()"
+                    [ngModelOptions]="{ standalone: true }"
+                    (ngModelChange)="store.setRecommendedOnly($event)"
+                  />
+                  <span>Рекомендуемое</span>
+                </span>
+
+                <span class="events-page__filter-count">
+                  {{ store.recommendedEventsCount() }}
+                </span>
+              </label>
+
+              <label tuiLabel class="events-page__filter-option">
+                <span class="events-page__filter-option-copy">
+                  <input
+                    tuiCheckbox
+                    type="checkbox"
+                    [ngModel]="store.inPersonOnly()"
+                    [ngModelOptions]="{ standalone: true }"
+                    (ngModelChange)="store.setInPersonOnly($event)"
+                  />
+                  <span>Очное участие</span>
+                </span>
+
+                <span class="events-page__filter-count">
+                  {{ store.inPersonEventsCount() }}
+                </span>
+              </label>
+
+              <label tuiLabel class="events-page__filter-option">
+                <span class="events-page__filter-option-copy">
+                  <input
+                    tuiCheckbox
+                    type="checkbox"
+                    [ngModel]="store.multiDayOnly()"
+                    [ngModelOptions]="{ standalone: true }"
+                    (ngModelChange)="store.setMultiDayOnly($event)"
+                  />
+                  <span>Несколько дней</span>
+                </span>
+
+                <span class="events-page__filter-count">
+                  {{ store.multiDayEventsCount() }}
+                </span>
+              </label>
+            </div>
+          </section>
+        </div>
+      </aside>
+
+      <section class="events-page__results">
+        @if (store.filteredEvents().length) {
+          <section class="events-page__grid">
+            @for (event of store.pagedEvents(); track event.id) {
+              <app-event-card
+                [event]="event"
+                [isRecommended]="store.isRecommended(event.id)"
+                [isSubscribed]="store.isSubscribed(event.id)"
+                (subscribeToggled)="store.toggleSubscription(event.id)"
+              />
+            }
+          </section>
+
+          @if (store.pageCount() > 1) {
+            <footer class="events-page__pagination">
+              <tui-pagination
+                [index]="store.currentPage()"
+                [length]="store.pageCount()"
+                (indexChange)="store.setCurrentPage($event)"
+              />
+            </footer>
+          }
+        } @else {
+          <section tuiCardLarge="compact" class="events-page__status">
+            <header tuiHeader="h6">
+              <span tuiTitle>Ничего не найдено</span>
+              <p tuiSubtitle>
+                Сбросьте часть фильтров или скорректируйте поисковый запрос.
+              </p>
+            </header>
+          </section>
+        }
+      </section>
     </section>
   }
 </section>

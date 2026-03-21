@@ -1,19 +1,107 @@
 .events-page {
-  display: grid;
+  display: flex;
+  flex-direction: column;
+  gap: 3.125rem;
+}
+
+.events-page__top {
+  display: flex;
+  flex-direction: column;
   gap: 1rem;
 }
 
-.events-page__hero,
-.events-page__filters,
+.events-page__catalog {
+  display: grid;
+  gap: 1rem;
+  align-items: start;
+  grid-template-columns: 20rem minmax(0, 1fr);
+}
+
+.events-page__results,
+.events-page__filter-group,
 .events-page__status {
   display: grid;
   gap: 1rem;
 }
 
-.events-page__summary {
+.events-page__links {
   display: flex;
   flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.events-page__sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.events-page__results-header,
+.events-page__filter-option,
+.events-page__filter-header {
+  display: flex;
   gap: 0.75rem;
+}
+
+.events-page__filter-option,
+.events-page__filter-header {
+  justify-content: space-between;
+}
+
+.events-page__filter-title,
+.events-page__results-title {
+  margin: 0;
+}
+
+.events-page__results-title {
+  font: var(--tui-font-heading-4);
+}
+
+.events-page__results-subtitle {
+  margin: 0.25rem 0 0;
+  color: var(--tui-text-secondary);
+}
+
+.events-page__filter-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.events-page__filter-option {
+  align-items: flex-start;
+}
+
+.events-page__filter-option-copy {
+  display: flex;
+  gap: 0.625rem;
+  align-items: flex-start;
+}
+
+.events-page__filter-count,
+.events-page__filter-caption {
+  color: var(--tui-text-tertiary);
+  font: var(--tui-font-text-s);
+  white-space: nowrap;
+}
+
+.events-page__range-steps {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 0.25rem;
+  color: var(--tui-text-tertiary);
+  font: var(--tui-font-text-s);
+}
+
+.events-page__range-steps span {
+  text-align: center;
+}
+
+.events-page__range-steps span:first-child {
+  text-align: left;
+}
+
+.events-page__range-steps span:last-child {
+  text-align: right;
 }
 
 .events-page__grid {
@@ -21,17 +109,18 @@
   gap: 1rem;
 }
 
-.events-page__checkbox {
-  align-self: start;
+.events-page__pagination {
+  display: flex;
+  justify-content: center;
 }
 
-@media (min-width: 900px) {
-  .events-page__filters {
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: end;
-  }
+.events-page__heading-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
 
-  .events-page__grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+.events-page__heading__events-count {
+  font: var(--tui-font-heading-6);
+  color: var(--tui-text-tertiary);
 }

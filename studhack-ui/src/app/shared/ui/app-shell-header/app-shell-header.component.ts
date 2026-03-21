@@ -14,7 +14,6 @@ import {
 } from '@taiga-ui/core';
 import {
   TuiAvatar,
-  TuiBadge,
   TuiBadgeNotification,
   TuiBadgedContent,
   TuiProgressBar,
@@ -47,7 +46,6 @@ interface HeaderNavItem {
     RouterLink,
     RouterLinkActive,
     TuiAvatar,
-    TuiBadge,
     TuiBadgeNotification,
     TuiBadgedContent,
     TuiButton,
