@@ -27,7 +27,7 @@ public static class EventConverter
 
         if (domain.Hackaton is not null)
         {
-            db.Hackaton = domain.Hackaton.ToDb(domain.Id);
+            db.Hackaton = domain.Hackaton.ToDb();
         }
 
         foreach (var eventDate in domain.EventDates)

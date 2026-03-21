@@ -24,10 +24,10 @@ public class TeamPositionRepository : ITeamPositionRepository
         try
         {
             var teamPositionDb = await _context.TeamPositions
-                .Include(tp => tp.AdditionalPositionData)
+                .Include(tp => tp.AdditionalPositionData!)
                 .ThenInclude(ap => ap.AdditionalPositionSkills)
                 .ThenInclude(aps => aps.Skill)
-                .Include(tp => tp.MandatoryPositionData)
+                .Include(tp => tp.MandatoryPositionData!)
                 .ThenInclude(mp => mp.MandatoryPositionSkills)
                 .ThenInclude(mps => mps.Skill)
                 .AsNoTracking()
@@ -47,10 +47,10 @@ public class TeamPositionRepository : ITeamPositionRepository
         try
         {
             var teamPositionsDb = await _context.TeamPositions
-                .Include(tp => tp.AdditionalPositionData)
+                .Include(tp => tp.AdditionalPositionData!)
                 .ThenInclude(ap => ap.AdditionalPositionSkills)
                 .ThenInclude(aps => aps.Skill)
-                .Include(tp => tp.MandatoryPositionData)
+                .Include(tp => tp.MandatoryPositionData!)
                 .ThenInclude(mp => mp.MandatoryPositionSkills)
                 .ThenInclude(mps => mps.Skill)
                 .AsNoTracking()

@@ -59,7 +59,7 @@ public class HackatonRepository : IHackatonRepository
                     "This repository expects EventId to match Hackaton Id.");
             }
 
-            await _context.Hackatons.AddAsync(hackaton.ToDb(hackaton.Id), ct);
+            await _context.Hackatons.AddAsync(hackaton.ToDb(), ct);
             await _context.SaveChangesAsync(ct);
             return hackaton;
         }

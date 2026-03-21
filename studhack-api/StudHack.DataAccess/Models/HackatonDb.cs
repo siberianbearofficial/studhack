@@ -6,12 +6,12 @@ public class HackatonDb
 {
     internal HackatonDb() { }
 
-    public HackatonDb(Guid id, int maxTeamSize, int minTeamSize, Guid eventId)
+    public HackatonDb(Guid id, Guid eventId, int maxTeamSize, int minTeamSize)
     {
         Id = id;
+        EventId = eventId;
         MaxTeamSize = maxTeamSize;
         MinTeamSize = minTeamSize;
-        EventId = eventId;
     }
 
     public Guid Id { get; set; }

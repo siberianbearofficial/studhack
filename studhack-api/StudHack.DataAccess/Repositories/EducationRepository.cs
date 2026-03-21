@@ -49,20 +49,18 @@ public class EducationRepository : IEducationRepository
 
     public async Task<Education> AddAsync(Education education, CancellationToken ct = default)
     {
+        _logger.LogDebug("Adding education: {@EventDate}", education);
+
         try
         {
-            throw new EducationRepositoryException(
-                "Cannot add education because Education model does not contain UserId. " +
-                "Create education via aggregate operation where user context is available.");
-        }
-        catch (EducationRepositoryException)
-        {
-            throw;
+            await _context.Educations.AddAsync(education.ToDb(), ct);
+            await _context.SaveChangesAsync(ct);
+            return education;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to add education: {@Education}", education);
-            throw new EducationRepositoryException("Failed to add education", ex);
+            _logger.LogError(ex, "Failed to add event date: {@EventDate}", education);
+            throw new EventDateRepositoryException("Failed to add event date", ex);
         }
     }
 
@@ -77,7 +75,7 @@ public class EducationRepository : IEducationRepository
                 throw new EducationRepositoryException($"Education with id {education.Id} not found");
             }
 
-            _context.Entry(educationDb).CurrentValues.SetValues(education.ToDb(educationDb.UserId));
+            _context.Entry(educationDb).CurrentValues.SetValues(education.ToDb());
             await _context.SaveChangesAsync(ct);
             return education;
         }

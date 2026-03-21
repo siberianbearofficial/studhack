@@ -15,7 +15,6 @@ public class EventDateDb
         Description = description;
     }
 
-    [Required]
     public Guid Id { get; set; }
     
     [Required]
