@@ -1,0 +1,23 @@
+<section class="login-page">
+  <section tuiCardLarge class="login-page__card">
+    <header tuiHeader="h1">
+      <span tuiTitle>Войти</span>
+    </header>
+
+    <div class="login-page__actions">
+      @for (provider of providers; track provider.id) {
+        <button
+          tuiButton
+          type="button"
+          size="l"
+          class="login-page__button"
+          [appearance]="provider.appearance"
+          [iconStart]="provider.icon"
+          (click)="login(provider.id)"
+        >
+          {{ provider.label }}
+        </button>
+      }
+    </div>
+  </section>
+</section>

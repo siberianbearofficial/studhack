@@ -1,0 +1,19 @@
+<a
+  routerLink="/"
+  class="app-logo"
+  [class.app-logo_icon-only]="!showTitle()"
+  [attr.aria-label]="ariaLabel()"
+>
+  <img
+    priority
+    class="app-logo__image"
+    ngSrc="assets/brand/studhack-logo-mark.svg"
+    [width]="size()"
+    [height]="size()"
+    [alt]="imageAlt()"
+  />
+
+  @if (showTitle()) {
+    <span class="app-logo__title">{{ title() }}</span>
+  }
+</a>
