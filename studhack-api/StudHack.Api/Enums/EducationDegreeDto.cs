@@ -1,6 +1,6 @@
-namespace StudHack.Domain.Enums;
+﻿namespace StudHack.Api.Enums;
 
-public enum EducationDegree
+public enum EducationDegreeDto
 {
     Bachelor,
     Magistracy,

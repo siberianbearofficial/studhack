@@ -1,4 +1,3 @@
-using System.Linq;
 using StudHack.DataAccess.Models;
 using StudHack.Domain.Models;
 
@@ -8,24 +7,24 @@ public static class UserConverter
 {
     public static User ToDomain(this UserDb db)
     {
-        return new User(
-            db.Id,
-            db.UniqueName,
-            db.DisplayedName,
-            db.BirthDate,
-            db.Available,
-            db.CityOfResidenceId,
-            db.MainSpecializationId,
-            db.AuthId,
-            db.AvatarUrl,
-            db.Email,
-            db.Biography,
-            db.CreatedAt,
-            db.UpdatedAt,
-            db.CityOfResidence?.ToDomain(),
-            db.UserSkills.Select(x => x.Skill.ToDomain()).ToList(),
-            db.UserSpecializations.Select(x => x.Specialization.ToDomain()).ToList(),
-            db.PortfolioLinks.Select(x => x.ToDomain()).ToList(),
-            db.Educations.Select(x => x.ToDomain()).ToList());
+        return new User
+        {
+            Id = db.Id,
+            AuthId = db.AuthId,
+            Available = db.Available,
+            UniqueName =  db.UniqueName,
+            DisplayedName = db.DisplayedName,
+            Email = db.Email,
+            AvatarUrl =  db.AvatarUrl,
+            BirthDate = db.BirthDate,
+            Biography =  db.Biography,
+            City =  db.CityOfResidence?.ToDomain(),
+            PortfolioLinks = db.PortfolioLinks.Select(PortfolioLinkConverter.ToDomain).ToList(),
+            Skills = db.UserSkills.Select(e => e.Skill.ToDomain()).ToList(),
+            Specializations = db.UserSpecializations.Select(e => e.Specialization.ToDomain()).ToList(),
+            Educations = db.Educations.Select(EducationConverter.ToDomain).ToList(),
+            CreatedAt = db.CreatedAt,
+            UpdatedAt = db.UpdatedAt,
+        };
     }
 }
