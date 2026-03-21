@@ -1,0 +1,43 @@
+when:
+  - event: pull_request
+    path:
+      include:
+        - .woodpecker/studhack-ui.yml
+        - studhack-ui/**
+
+  - event: push
+    branch: main
+    path:
+      include:
+        - .woodpecker/studhack-ui.yml
+        - studhack-ui/**
+
+steps:
+  - name: UI Dev
+    image: woodpeckerci/plugin-docker-buildx
+    when:
+      - event: pull_request
+    settings:
+      repo: ghcr.io/siberianbearofficial/studhack-prvt-ui
+      registry: ghcr.io
+      username: siberianbearofficial
+      password:
+        from_secret: GITHUB_TOKEN
+      context: studhack-ui
+      dockerfile: studhack-ui/Dockerfile
+      tag: dev
+
+  - name: UI Prod
+    image: woodpeckerci/plugin-docker-buildx
+    when:
+      - event: push
+        branch: main
+    settings:
+      repo: ghcr.io/siberianbearofficial/studhack-prvt-ui
+      registry: ghcr.io
+      username: siberianbearofficial
+      password:
+        from_secret: GITHUB_TOKEN
+      context: studhack-ui
+      dockerfile: studhack-ui/Dockerfile
+      tag: main
