@@ -1,48 +1,6 @@
 <tui-root>
   <div class="shell">
-    <header tuiCardLarge class="shell__header">
-      <div tuiHeader="h4" class="shell__branding">
-        <span tuiTitle>StudHack UI</span>
-        <p tuiSubtitle>Каркас роутов и базовых экранов на Taiga UI.</p>
-      </div>
-
-      <nav class="shell__nav">
-        @for (item of navItems; track item.path) {
-          <a
-            tuiButton
-            size="m"
-            [appearance]="isActive(item.path, item.exact) ? 'primary' : 'secondary'"
-            [routerLink]="item.path"
-          >
-            {{ item.label }}
-          </a>
-        }
-      </nav>
-
-      <div class="shell__auth">
-        @if (auth.isAuthenticated()) {
-          <button
-            tuiButton
-            type="button"
-            appearance="secondary"
-            size="m"
-            (click)="logout()"
-          >
-            Выйти
-          </button>
-        } @else {
-          <button
-            tuiButton
-            type="button"
-            appearance="primary"
-            size="m"
-            (click)="loginWithGithub()"
-          >
-            Войти через GitHub
-          </button>
-        }
-      </div>
-    </header>
+    <app-shell-header />
 
     <main class="shell__content">
       <router-outlet />

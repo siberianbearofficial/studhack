@@ -12,11 +12,16 @@ when:
         - .woodpecker/studhack-ui.yml
         - studhack-ui/**
 
+  - event: manual
+
 steps:
   - name: UI Dev
     image: woodpeckerci/plugin-docker-buildx
     when:
       - event: pull_request
+      - event: manual
+        branch:
+          exclude: main
     settings:
       repo: ghcr.io/siberianbearofficial/studhack-ui
       registry: ghcr.io
@@ -31,6 +36,8 @@ steps:
     image: woodpeckerci/plugin-docker-buildx
     when:
       - event: push
+        branch: main
+      - event: manual
         branch: main
     settings:
       repo: ghcr.io/siberianbearofficial/studhack-ui
