@@ -18,11 +18,22 @@ services.AddLogging();
 
 services.AddScoped<IRegionRepository, RegionRepository>();
 services.AddScoped<ICityRepository, CityRepository>();
+services.AddScoped<ISkillRepository, SkillRepository>();
+services.AddScoped<ISpecializationRepository, SpecializationRepository>();
 
 services.AddScoped<CitiesFiller>();
+services.AddScoped<SkillsFiller>();
+services.AddScoped<SpecializationsFiller>();
 
 var serviceProvider = services.BuildServiceProvider();
 
 using var scope = serviceProvider.CreateScope();
-var citiesFiller = scope.ServiceProvider.GetRequiredService<CitiesFiller>();
-await citiesFiller.FillAsync();
+
+// var citiesFiller = scope.ServiceProvider.GetRequiredService<CitiesFiller>();
+// await citiesFiller.FillAsync();
+
+// var skillsFiller = scope.ServiceProvider.GetRequiredService<SkillsFiller>();
+// await skillsFiller.FillAsync();
+
+var specializationsFiller = scope.ServiceProvider.GetRequiredService<SpecializationsFiller>();
+await specializationsFiller.FillAsync();
