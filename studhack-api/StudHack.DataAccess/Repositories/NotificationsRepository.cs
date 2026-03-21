@@ -1,23 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using StudHack.DataAccess.Context;
-using StudHack.Domain.Models;
 using StudHack.DataAccess.Models;
-using System.ComponentModel.DataAnnotations;
+using StudHack.Domain;
+using StudHack.Domain.Models;
 
 namespace StudHack.DataAccess.Repositories;
 
-/*
- * public bool TryUpdate(Habit h)
-    {
-        var habit = _dbContext.Habits.Include(h => h.ActualTimings).Include(h => h.PrefFixedTimings)
-            .FirstOrDefault(h => h.Id == h.Id);
-        if (habit == null)
-            return false;
-        return true;
-    }
- * */
-
-public class NotificationsRepository(StudHackDbContext dbContext)
+public class NotificationsRepository(StudHackDbContext dbContext): INotificationsRepository
 {
     private StudHackDbContext _dbContext { get; } = dbContext;
 
