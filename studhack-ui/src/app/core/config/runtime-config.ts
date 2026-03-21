@@ -39,16 +39,13 @@ type RuntimeConfigGlobal = typeof globalThis & {
 
 const DEFAULT_ORIGIN = 'http://localhost:4200';
 
-const DEFAULT_RUNTIME_CONFIG: Omit<
-  RuntimeConfig,
-  'redirectUri' | 'postLogoutRedirectUri'
-> = {
+const DEFAULT_RUNTIME_CONFIG: Omit<RuntimeConfig, 'redirectUri' | 'postLogoutRedirectUri'> = {
   issuer: 'https://auth.nachert.art/api/v1',
   clientId: '5caecabfac74b7709d102315ca3abc9b',
   // Наш OAuth провайдер пока требует client secret даже для SPA.
   clientSecret: '0f756a3707762ec4d04df5625adcac6a',
-  apiBaseUrl: 'http://localhost:5000',
-  apiMode: 'real',
+  apiBaseUrl: 'https://studhack-api.nachert.art',
+  apiMode: 'mock',
   apiMockLatencyMs: 200,
   disableNonceCheck: false,
   disableOAuth2StateCheck: false,
@@ -61,8 +58,7 @@ const DEFAULT_RUNTIME_CONFIG: Omit<
   ],
 };
 
-const getBrowserOrigin = (): string =>
-  globalThis.location?.origin ?? DEFAULT_ORIGIN;
+const getBrowserOrigin = (): string => globalThis.location?.origin ?? DEFAULT_ORIGIN;
 
 const getRuntimeConfigOverride = (): RuntimeConfigOverride =>
   (globalThis as RuntimeConfigGlobal).__STUDHACK_RUNTIME_CONFIG__ ?? {};
