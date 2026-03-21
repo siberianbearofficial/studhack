@@ -52,7 +52,13 @@ const DEFAULT_RUNTIME_CONFIG: Omit<
   apiMockLatencyMs: 200,
   disableNonceCheck: false,
   disableOAuth2StateCheck: false,
-  providers: [{ id: 'github', label: 'GitHub' }],
+  providers: [
+    { id: 'password', label: 'Логин / пароль' },
+    { id: 'yandex', label: 'Яндекс' },
+    { id: 'github', label: 'GitHub' },
+    { id: 'gitlab', label: 'GitLab' },
+    { id: 'google', label: 'Google' },
+  ],
 };
 
 const getBrowserOrigin = (): string =>
