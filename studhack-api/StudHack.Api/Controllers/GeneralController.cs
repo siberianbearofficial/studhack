@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using FillDatabase;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using StudHack.Api.Dtos;
 using StudHack.Api.Extensions;
+using StudHack.DataAccess.Context;
 using StudHack.Domain.Abstractions.Repositories;
 using StudHack.Domain.Interfaces.Repositories;
 
@@ -14,7 +17,9 @@ public class GeneralController(
     ISkillRepository skillRepository,
     IRegionRepository regionRepository,
     ISpecializationRepository specializationRepository,
-    IUniversityRepository universityRepository) : ControllerBase
+    IUniversityRepository universityRepository,
+    StudHackDbContext dbContext,
+    IEnumerable<IFiller> fillers) : ControllerBase
 {
     [HttpGet("dictionaries")]
     [AllowAnonymous]
@@ -29,5 +34,22 @@ public class GeneralController(
             Universities = (await universityRepository.GetAllAsync(ct)).Select(e => e.ToDto()),
         };
         return Ok(new ApiResponseDto<DictionariesDto>(res));
+    }
+
+    [HttpPost("migrations")]
+    public async Task<ActionResult> Migrate(CancellationToken ct)
+    {
+        await dbContext.Database.MigrateAsync(ct);
+        return Ok();
+    }
+
+    [HttpPost("parse-data")]
+    public async Task<ActionResult> ParseData(CancellationToken ct)
+    {
+        foreach (var filler in fillers)
+        {
+            await filler.FillAsync();
+        }
+        return Ok();
     }
 }

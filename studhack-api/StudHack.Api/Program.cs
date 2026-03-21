@@ -1,4 +1,5 @@
 using Avalux.Auth.ApiClient;
+using FillDatabase;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -25,6 +26,7 @@ builder.Services.AddScoped<IUniversityRepository, UniversityRepository>();
 
 builder.Services.AddScoped<IUserService, UserService>();
 
+builder.Services.AddDatabaseFillers();
 builder.Services.AddAvaluxAuthApiClient(builder.Configuration["Auth.ApiUrl"] ?? "",
     builder.Configuration["Auth.ApiToken"] ?? "");
 
