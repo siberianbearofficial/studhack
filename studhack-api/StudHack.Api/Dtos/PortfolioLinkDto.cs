@@ -8,5 +8,5 @@ public class PortfolioLinkDto
 
     [StringLength(500)] public string? Description { get; init; }
 
-    [StringLength(500)] public required string Link { get; init; }
+    [StringLength(500)] public required string Url { get; init; }
 }

@@ -1,10 +1,25 @@
+using Avalux.Auth.ApiClient;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using StudHack.Application.Services;
+using StudHack.DataAccess.Context;
+using StudHack.DataAccess.Repositories;
+using StudHack.Domain.Abstractions;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddEnvironmentVariables();
+builder.Services.AddDbContext<StudHackDbContext>(options =>
+{
+    options.UseNpgsql(builder.Configuration["ConnectionStrings.Postgres"]);
+});
 
-// Add services to the container.
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+builder.Services.AddScoped<IUserService, UserService>();
+
+builder.Services.AddAvaluxAuthApiClient(builder.Configuration["Auth.ApiUrl"] ?? "",
+    builder.Configuration["Auth.ApiToken"] ?? "");
 
 builder.Services.AddControllers();
 

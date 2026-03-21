@@ -10,13 +10,13 @@ public static class PortfolioLinkConverter
         return new PortfolioLinkDto
         {
             Id = portfolioLink.Id,
-            Link = portfolioLink.Link,
+            Url = portfolioLink.Link,
             Description = portfolioLink.Description,
         };
     }
 
     public static PortfolioLink ToDomain(this PortfolioLinkDto dto)
     {
-        return new PortfolioLink(dto.Id, dto.Link, dto.Description);
+        return new PortfolioLink(dto.Id, dto.Url, dto.Description);
     }
 }

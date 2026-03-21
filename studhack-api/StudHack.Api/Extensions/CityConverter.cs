@@ -11,12 +11,12 @@ public static class CityConverter
         {
             Id = city.Id,
             Name = city.Name,
-            RegionId = city.RegionId,
+            Region = city.Region.ToDto(),
         };
     }
 
     public static City ToDomain(this CityDto dto)
     {
-        return new City(dto.Id, dto.Name, dto.RegionId);
+        return new City(dto.Id, dto.Name, dto.Region.ToDomain());
     }
 }

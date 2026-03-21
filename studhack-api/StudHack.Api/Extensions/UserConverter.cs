@@ -17,7 +17,7 @@ public static class UserConverter
             Available = user.Available,
             Biography = user.Biography,
             BirthDate = user.BirthDate,
-            City = user.City?.ToDto(),
+            CityOfResidence = user.City?.ToDto(),
             PortfolioLinks = user.PortfolioLinks.Select(PortfolioLinkConverter.ToDto).ToList(),
             Skills = user.Skills.Select(SkillsConverter.ToDto).ToList(),
             Specializations = user.Specializations.Select(SpecializationConverter.ToDto).ToList(),
