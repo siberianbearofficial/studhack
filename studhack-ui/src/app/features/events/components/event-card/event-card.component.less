@@ -1,41 +1,130 @@
 .event-card {
   display: grid;
-  gap: 1rem;
+  gap: 0;
+  overflow: hidden;
 }
 
-.event-card__description {
-  margin: 0;
-  color: var(--tui-text-secondary);
+.event-card__cover {
+  position: relative;
+  min-block-size: 15rem;
+  margin: -1.5rem -1.5rem 0;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
 }
 
-.event-card__facts {
+.event-card__cover::before,
+.event-card__cover::after {
+  content: '';
+  position: absolute;
+  border-radius: 999rem;
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.event-card__cover::before {
+  inline-size: 14rem;
+  block-size: 14rem;
+  inset-inline-end: -3rem;
+  inset-block-start: -4rem;
+  background: rgb(255 255 255 / 0.3);
+}
+
+.event-card__cover::after {
+  inline-size: 8rem;
+  block-size: 8rem;
+  inset-inline-start: -1rem;
+  inset-block-end: -2rem;
+  background: rgb(255 255 255 / 0.18);
+}
+
+.event-card__cover-copy {
+  position: relative;
+  z-index: 1;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.75rem;
+  gap: 0.5rem;
+  color: rgb(255 255 255);
 }
 
-.event-card__fact,
-.event-card__stage,
-.event-card__team {
-  display: grid;
-  gap: 0.25rem;
-}
-
-.event-card__fact span,
-.event-card__stage span,
-.event-card__team span {
-  color: var(--tui-text-secondary);
+.event-card__cover-label {
+  display: inline-flex;
+  inline-size: fit-content;
+  padding: 0.375rem 0.625rem;
+  border-radius: 999rem;
+  background: rgb(255 255 255 / 0.2);
   font: var(--tui-font-text-s);
 }
 
-.event-card__stages,
-.event-card__teams {
-  display: grid;
-  gap: 0.75rem;
+.event-card__cover-date {
+  font: var(--tui-font-heading-4);
 }
 
-.event-card__actions {
+.event-card__content,
+.event-card__main {
+  display: grid;
+  gap: 1rem;
+}
+
+.event-card__chips,
+.event-card__actions,
+.event-card__support {
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
+}
+
+.event-card__main {
+  gap: 0.25rem;
+}
+
+.event-card__name,
+.event-card__description {
+  margin: 0;
+}
+
+.event-card__name {
+  font: var(--tui-font-heading-5);
+}
+
+.event-card__description {
+  color: var(--tui-text-secondary);
+  font: var(--tui-font-text-m);
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+}
+
+.event-card__link {
+  font: var(--tui-font-text-s);
+}
+
+.event-card__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1rem;
+}
+
+.event-card__support {
+  align-items: flex-end;
+  justify-content: flex-end;
+}
+
+.event-card__difficulty {
+  margin-inline-start: auto;
+  display: grid;
+  justify-items: center;
+}
+
+.event-card__difficulty-value {
+  color: var(--tui-text-primary);
+  font: var(--tui-font-text-s);
+  font-weight: 700;
+}
+
+tui-progress-circle {
+  --tui-thickness: 0.5rem;
 }
