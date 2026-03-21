@@ -1,4 +1,4 @@
-﻿using Eventity.Domain.Models;
+﻿using StudHack.Domain.Models;
 
 namespace StudHack.Domain.Abstractions;
 

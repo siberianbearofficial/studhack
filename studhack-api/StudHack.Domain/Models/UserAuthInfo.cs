@@ -1,4 +1,4 @@
-﻿namespace Eventity.Domain.Models;
+﻿namespace StudHack.Domain.Models;
 
 public class UserAuthInfo
 {

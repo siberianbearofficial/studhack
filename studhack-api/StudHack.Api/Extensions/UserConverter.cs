@@ -1,4 +1,4 @@
-﻿using Eventity.Domain.Models;
+﻿using StudHack.Domain.Models;
 using StudHack.Api.Dtos;
 
 namespace StudHack.Api.Extensions;
@@ -18,7 +18,7 @@ public static class UserConverter
             Biography = user.Biography,
             BirthDate = user.BirthDate,
             City = user.City?.ToDto(),
-            PortfolioLinks = user.PortfolioLinks,
+            PortfolioLinks = user.PortfolioLinks.Select(PortfolioLinkConverter.ToDto).ToList(),
             Skills = user.Skills.Select(SkillsConverter.ToDto).ToList(),
             Specializations = user.Specializations.Select(SpecializationConverter.ToDto).ToList(),
             Education = user.Educations.Select(EducationConverter.ToDto).ToList(),
