@@ -19,6 +19,21 @@
   gap: 0.75rem;
 }
 
+.event-details-page__team-column {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.event-details-page__position-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem;
+  border: 1px solid var(--tui-border-normal);
+  border-radius: var(--tui-radius-m);
+}
+
 .event-details-page__status,
 .event-details-page__message,
 .event-details-page__section,
@@ -29,7 +44,6 @@
 .event-details-page__mandatory-head,
 .event-details-page__team-top,
 .event-details-page__team-header,
-.event-details-page__team-column,
 .event-details-page__position-card,
 .event-details-page__position-head,
 .event-details-page__facts,
@@ -275,11 +289,6 @@
 
 .event-details-page__mandatory-grid {
   grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
-}
-
-.event-details-page__mandatory-card,
-.event-details-page__position-card {
-  background: color-mix(in srgb, var(--tui-background-base-alt) 52%, white);
 }
 
 .event-details-page__team-card {
