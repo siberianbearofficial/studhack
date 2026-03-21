@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-using StudHack.DataAccess;
+using StudHack.Domain;
 
 namespace Eventity.Domain.Models;
 

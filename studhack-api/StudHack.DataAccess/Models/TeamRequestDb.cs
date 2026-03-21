@@ -11,8 +11,8 @@ public class TeamRequestDb
         Guid id,
         Guid teamPositionId,
         Guid userId,
-        TeamRequestType type,
-        TeamRequestStatus status,
+        TeamRequestTypeDb type,
+        TeamRequestStatusDb status,
         string? message)
     {
         Id = id;
@@ -34,10 +34,10 @@ public class TeamRequestDb
     public string? Message { get; set; }
 
     [Required]
-    public TeamRequestType Type { get; set; }
+    public TeamRequestTypeDb Type { get; set; }
 
     [Required]
-    public TeamRequestStatus Status { get; set; }
+    public TeamRequestStatusDb Status { get; set; }
 
     [Required]
     public DateTime CreatedAt { get; set; }

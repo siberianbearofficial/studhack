@@ -1,6 +1,6 @@
 namespace StudHack.DataAccess;
 
-public enum TeamPositionType
+public enum TeamPositionTypeDb
 {
     Mandatory,
     Additional

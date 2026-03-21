@@ -1,6 +1,6 @@
 namespace StudHack.DataAccess;
 
-public enum TeamRequestStatus
+public enum TeamRequestStatusDb
 {
     Pending,
     Approved,

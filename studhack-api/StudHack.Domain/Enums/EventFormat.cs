@@ -1,4 +1,4 @@
-namespace StudHack.DataAccess;
+namespace StudHack.Domain;
 
 public enum EventFormat
 {

@@ -1,6 +1,6 @@
 namespace StudHack.DataAccess;
 
-public enum EducationDegree
+public enum EducationDegreeDb
 {
     Bachelor,
     Magistracy,
