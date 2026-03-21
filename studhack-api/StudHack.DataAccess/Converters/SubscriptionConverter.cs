@@ -1,7 +1,7 @@
-using Eventity.DataAccess.Models;
-using Eventity.Domain.Models;
+using StudHack.DataAccess.Models;
+using StudHack.Domain.Models;
 
-namespace Eventity.DataAccess.Converters;
+namespace StudHack.DataAccess.Converters;
 
 public static class SubscriptionConverter
 {

@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using StudHack.DataAccess;
 
-namespace Eventity.DataAccess.Models;
+namespace StudHack.DataAccess.Models;
 
 public class EventDb
 {
