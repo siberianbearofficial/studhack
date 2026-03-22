@@ -141,9 +141,10 @@ public class UserRepository(StudHackDbContext dbContext) : IUserRepository
     {
         var deleted = user.UserSkills
             .Where(e => skills.All(skill => skill.Id != e.SkillId))
+            .Select(e => e.SkillId)
             .ToList();
         await dbContext.UserSkills
-            .Where(e => deleted.Any(x => x.UserId == e.UserId) && deleted.Any(x => x.SkillId == e.SkillId))
+            .Where(e => deleted.Contains(e.SkillId))
             .ExecuteDeleteAsync(ct);
 
         var added = skills
@@ -160,10 +161,10 @@ public class UserRepository(StudHackDbContext dbContext) : IUserRepository
     {
         var deleted = user.UserSpecializations
             .Where(e => skills.All(specialization => specialization.Id != e.SpecializationId))
+            .Select(e => e.SpecializationId)
             .ToList();
         await dbContext.UserSpecializations
-            .Where(e => deleted.Any(x => x.UserId == e.UserId) &&
-                        deleted.Any(x => x.SpecializationId == e.SpecializationId))
+            .Where(e => deleted.Contains(e.SpecializationId))
             .ExecuteDeleteAsync(ct);
 
         var added = skills
