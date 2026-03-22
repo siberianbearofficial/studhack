@@ -17,6 +17,7 @@ public class UserRepository(StudHackDbContext dbContext) : IUserRepository
             .Include(e => e.UserSkills).ThenInclude(s => s.Skill)
             .Include(e => e.UserSpecializations).ThenInclude(s => s.Specialization)
             .Include(e => e.Educations)
+            .Include(e => e.CityOfResidence).ThenInclude(e => e.Region)
             .Include(e => e.PortfolioLinks)
             .FirstOrDefaultAsync(ct);
         return db?.ToDomain();
@@ -28,6 +29,7 @@ public class UserRepository(StudHackDbContext dbContext) : IUserRepository
             .Where(e => e.AuthId == authId)
             .Include(e => e.UserSkills).ThenInclude(s => s.Skill)
             .Include(e => e.UserSpecializations).ThenInclude(s => s.Specialization)
+            .Include(e => e.CityOfResidence).ThenInclude(e => e.Region)
             .Include(e => e.Educations)
             .Include(e => e.PortfolioLinks)
             .FirstOrDefaultAsync(ct);
@@ -40,6 +42,7 @@ public class UserRepository(StudHackDbContext dbContext) : IUserRepository
             .Include(e => e.UserSkills).ThenInclude(s => s.Skill)
             .Include(e => e.UserSpecializations).ThenInclude(s => s.Specialization)
             .Include(e => e.Educations)
+            .Include(e => e.CityOfResidence).ThenInclude(e => e.Region)
             .Include(e => e.PortfolioLinks)
             .ToListAsync(ct);
         return db.Select(UserConverter.ToDomain).ToList();
@@ -68,6 +71,7 @@ public class UserRepository(StudHackDbContext dbContext) : IUserRepository
                 Email = user.Email,
                 AvatarUrl = user.AvatarUrl,
                 BirthDate = user.BirthDate?.ToUniversalTime(),
+                CityOfResidenceId = user.CityOfResidenceId,
                 Biography = user.Biography,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow,
@@ -75,14 +79,18 @@ public class UserRepository(StudHackDbContext dbContext) : IUserRepository
             await dbContext.Users.AddAsync(existing, ct);
         }
         else
-            await dbContext.Users.ExecuteUpdateAsync(e => e
-                .SetProperty(x => x.Available, user.Available)
-                .SetProperty(x => x.UniqueName, user.UniqueName)
-                .SetProperty(x => x.DisplayedName, user.DisplayedName)
-                .SetProperty(x => x.BirthDate, user.BirthDate == null ? null : user.BirthDate.Value.ToUniversalTime())
-                .SetProperty(x => x.Email, user.Email)
-                .SetProperty(x => x.Biography, user.Biography)
-                .SetProperty(x => x.UpdatedAt, DateTime.UtcNow), ct);
+            await dbContext.Users
+                .Where(e => e.Id == existing.Id)
+                .ExecuteUpdateAsync(e => e
+                    .SetProperty(x => x.Available, user.Available)
+                    .SetProperty(x => x.UniqueName, user.UniqueName)
+                    .SetProperty(x => x.DisplayedName, user.DisplayedName)
+                    .SetProperty(x => x.BirthDate,
+                        user.BirthDate == null ? null : user.BirthDate.Value.ToUniversalTime())
+                    .SetProperty(x => x.CityOfResidenceId, user.CityOfResidenceId)
+                    .SetProperty(x => x.Email, user.Email)
+                    .SetProperty(x => x.Biography, user.Biography)
+                    .SetProperty(x => x.UpdatedAt, DateTime.UtcNow), ct);
 
         await UpdatePortfolioLinks(existing, user.PortfolioLinks, ct);
         await UpdateEducations(existing, user.Educations, ct);

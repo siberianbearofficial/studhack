@@ -7,6 +7,7 @@ import {
   type TeamRequestDto,
   type TeamRequestShortDto,
 } from '@core/api';
+import { MyProfileStore } from '@core/data/my-profile.store';
 import { getErrorMessage } from '@shared';
 
 import { EventsService } from '../services/events.service';
@@ -14,6 +15,7 @@ import { EventsService } from '../services/events.service';
 @Injectable()
 export class EventDetailsStore {
   private readonly service = inject(EventsService);
+  private readonly myProfileStore = inject(MyProfileStore);
 
   readonly event = signal<EventFullDto | null>(null);
   readonly isLoading = signal(true);
@@ -151,7 +153,32 @@ export class EventDetailsStore {
   }
 
   hasRequestedPosition(positionId: string | null): boolean {
-    return positionId ? this.requestedPositionIds().includes(positionId) : false;
+    if (!positionId) {
+      return false;
+    }
+
+    if (this.requestedPositionIds().includes(positionId)) {
+      return true;
+    }
+
+    const currentUserId = this.myProfileStore.me()?.id;
+
+    if (!currentUserId) {
+      return false;
+    }
+
+    return this.teams().some((team) =>
+      team.positions.some(
+        (position) =>
+          position.id === positionId &&
+          position.requests.some(
+            (request) =>
+              request.type === 'application' &&
+              request.status === 'pending' &&
+              request.user.id === currentUserId,
+          ),
+      ),
+    );
   }
 
   private toShortRequest(request: TeamRequestDto): TeamRequestShortDto {
