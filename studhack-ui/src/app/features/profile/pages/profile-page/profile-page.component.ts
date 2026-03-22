@@ -27,6 +27,7 @@ import {
   TuiTextfield,
   TuiTitle,
 } from '@taiga-ui/core';
+import { TuiDialog } from '@taiga-ui/core/components/dialog';
 import {
   TuiAvatar,
   TuiAvatarStack,
@@ -58,6 +59,7 @@ import {
   type UpsertMyProfileRequest,
   type UserShortDto,
 } from '@core/api';
+import { TeamCreationModalComponent } from '@features/team-creation';
 import {
   formatEventDateTimeLabel,
   getEventCoverBackground,
@@ -207,6 +209,7 @@ const PROFILE_TAB_LABELS: Record<ProfileTabId, string> = {
     DatePipe,
     ReactiveFormsModule,
     RouterLink,
+    TuiDialog,
     TuiAvatar,
     TuiAvatarStack,
     TuiBadge,
@@ -232,6 +235,7 @@ const PROFILE_TAB_LABELS: Record<ProfileTabId, string> = {
     TuiComboBox,
     TuiFilterByInputPipe,
     TuiCalendar,
+    TeamCreationModalComponent,
     TakePipe,
   ],
   providers: [ProfileStore],
@@ -246,6 +250,7 @@ export class ProfilePageComponent {
   protected readonly store = inject(ProfileStore);
   protected readonly teamChartColors = TEAM_CHART_COLORS;
   protected readonly editMode = signal(false);
+  protected readonly teamCreationOpen = signal(false);
   protected readonly activeTabIndex = signal(0);
   protected readonly skillLevelOptions = PROFILE_EXPERIENCE_OPTIONS;
   protected readonly stringifyCity = (item: CityControlValue): string =>
@@ -764,6 +769,11 @@ export class ProfilePageComponent {
     this.form.controls.portfolioLinks.removeAt(index);
     this.form.controls.portfolioLinks.markAsDirty();
     this.form.markAsDirty();
+  }
+
+  protected handleTeamCreated(): void {
+    this.teamCreationOpen.set(false);
+    this.store.load();
   }
 
   protected submit(): void {

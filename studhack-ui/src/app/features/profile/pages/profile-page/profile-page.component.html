@@ -572,6 +572,19 @@
           <div class="profile-page__tab-content">
             @switch (activeTab()) {
               @case ('teams') {
+                <div class="profile-page__tab-actions">
+                  <button
+                    tuiButton
+                    type="button"
+                    appearance="accent"
+                    size="m"
+                    iconStart="@tui.plus"
+                    (click)="teamCreationOpen.set(true)"
+                  >
+                    Собрать команду
+                  </button>
+                </div>
+
                 @if (teamRows().length) {
                   <div class="profile-page__teams-table">
                     <div class="profile-page__table-head">
@@ -818,6 +831,18 @@
         </section>
       }
     </form>
+
+    <ng-template
+      [tuiDialog]="teamCreationOpen()"
+      (tuiDialogChange)="teamCreationOpen.set($event)"
+      [tuiDialogOptions]="{size: 'xl'}"
+    >
+      <app-team-creation-modal
+        [allowCustomEvent]="true"
+        (dismissed)="teamCreationOpen.set(false)"
+        (saved)="handleTeamCreated()"
+      />
+    </ng-template>
   } @else {
     <section tuiCardLarge class="profile-page__status">
       <header tuiHeader="h5">

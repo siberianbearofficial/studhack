@@ -41,8 +41,8 @@ export class AppFooterComponent {
       link: '/notifications',
     },
     {
-      label: 'Создать команду',
-      link: '/teams/create',
+      label: 'Собрать команду',
+      link: '/profile',
     },
   ];
 }

@@ -93,16 +93,16 @@
         </div>
 
         <div class="event-details-page__hero-actions">
-          <a
+          <button
             tuiButton
+            type="button"
             appearance="accent"
             size="l"
             iconStart="@tui.plus"
-            [routerLink]="['/teams/create']"
-            [queryParams]="{ eventId: event.id }"
+            (click)="teamCreationOpen.set(true)"
           >
             Собрать команду
-          </a>
+          </button>
 
           <button
             tuiButton
@@ -390,5 +390,17 @@
         </section>
       </div>
     </section>
+
+    <ng-template
+      [tuiDialog]="teamCreationOpen()"
+      (tuiDialogChange)="teamCreationOpen.set($event)"
+      [tuiDialogOptions]="{size: 'xl'}"
+    >
+      <app-team-creation-modal
+        [fixedEventId]="event.id"
+        (dismissed)="teamCreationOpen.set(false)"
+        (saved)="handleTeamCreated()"
+      />
+    </ng-template>
   }
 </section>

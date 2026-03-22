@@ -283,7 +283,10 @@ export class MockStudhackApiClient
       this.assertTeamCapacity(
         event,
         nextPositions.filter((position) => position.userId || position.filledByExternal)
-          .length,
+          .length +
+          (nextCaptainId && !nextPositions.some((position) => position.userId === nextCaptainId)
+            ? 1
+            : 0),
       );
 
       const nextPositionIds = new Set(nextPositions.map((position) => position.id));
@@ -738,8 +741,8 @@ export class MockStudhackApiClient
   }
 
   private buildUserMemberships(userId: UUID): readonly UserTeamMembershipDto[] {
-    return this.state.teams.flatMap((team) =>
-      team.positions
+    return this.state.teams.flatMap((team) => {
+      const memberships = team.positions
         .filter((position) => position.userId === userId)
         .map((position): UserTeamMembershipDto => ({
           team: this.buildTeamShort(team.id),
@@ -747,8 +750,23 @@ export class MockStudhackApiClient
           roleTitle: position.title,
           isCaptain: team.captainUserId === userId,
           isMandatoryRole: position.isMandatory,
-        })),
-    );
+        }));
+
+      if (team.captainUserId === userId && !this.isUserAssignedToTeamPosition(team, userId)) {
+        return [
+          ...memberships,
+          {
+            team: this.buildTeamShort(team.id),
+            event: this.buildEventShort(team.eventId),
+            roleTitle: 'Капитан',
+            isCaptain: true,
+            isMandatoryRole: false,
+          },
+        ];
+      }
+
+      return memberships;
+    });
   }
 
   private buildEventShort(eventId: UUID): EventShortDto {
@@ -920,7 +938,7 @@ export class MockStudhackApiClient
   }
 
   private buildTeamMembers(team: MockTeamEntity): readonly TeamMemberDto[] {
-    return team.positions
+    const members = team.positions
       .filter(
         (position): position is MockTeamPositionEntity & { userId: UUID } =>
           position.userId !== null && position.userId !== undefined,
@@ -932,6 +950,21 @@ export class MockStudhackApiClient
         isMandatoryRole: position.isMandatory,
         user: this.buildUserShort(position.userId),
       }));
+
+    if (
+      team.captainUserId &&
+      !this.isUserAssignedToTeamPosition(team, team.captainUserId)
+    ) {
+      members.unshift({
+        positionId: `captain-${team.id}`,
+        title: 'Капитан',
+        isCaptain: true,
+        isMandatoryRole: false,
+        user: this.buildUserShort(team.captainUserId),
+      });
+    }
+
+    return members;
   }
 
   private buildTeamPositions(team: MockTeamEntity): readonly TeamPositionDto[] {
@@ -1241,11 +1274,14 @@ export class MockStudhackApiClient
     userId: UUID,
     excludedTeamId?: UUID,
   ): void {
-    const occupiedTeam = this.state.teams.find(
+      const occupiedTeam = this.state.teams.find(
       (team) =>
         team.eventId === eventId &&
         team.id !== excludedTeamId &&
-        team.positions.some((position) => position.userId === userId),
+        (
+          team.positions.some((position) => position.userId === userId) ||
+          team.captainUserId === userId
+        ),
     );
 
     if (occupiedTeam) {
@@ -1268,9 +1304,13 @@ export class MockStudhackApiClient
   }
 
   private countTeamMembers(team: MockTeamEntity): number {
-    return team.positions.filter(
+    const assignedMembersCount = team.positions.filter(
       (position) => position.userId || position.filledByExternal,
     ).length;
+
+    return this.hasCaptainWithoutAssignedPosition(team)
+      ? assignedMembersCount + 1
+      : assignedMembersCount;
   }
 
   private countOpenPositions(team: MockTeamEntity): number {
@@ -1281,6 +1321,17 @@ export class MockStudhackApiClient
 
   private canManageTeam(team: MockTeamEntity, userId: UUID): boolean {
     return team.creatorUserId === userId || team.captainUserId === userId;
+  }
+
+  private hasCaptainWithoutAssignedPosition(team: MockTeamEntity): boolean {
+    return Boolean(
+      team.captainUserId &&
+      !this.isUserAssignedToTeamPosition(team, team.captainUserId),
+    );
+  }
+
+  private isUserAssignedToTeamPosition(team: MockTeamEntity, userId: UUID): boolean {
+    return team.positions.some((position) => position.userId === userId);
   }
 
   private requireTeamPosition(positionId: UUID): {

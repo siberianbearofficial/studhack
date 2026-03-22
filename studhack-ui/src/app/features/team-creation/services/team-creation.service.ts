@@ -6,6 +6,7 @@ import {
   type BootstrapDto,
   type EventFullDto,
   type TeamFullDto,
+  type UpsertEventRequest,
   type UpsertTeamRequest,
 } from '@core/api';
 
@@ -29,5 +30,9 @@ export class TeamCreationService {
 
   createTeam(payload: UpsertTeamRequest): Observable<TeamFullDto> {
     return this.api.upsertTeam(payload);
+  }
+
+  createEvent(payload: UpsertEventRequest): Observable<EventFullDto> {
+    return this.api.upsertEvent(payload);
   }
 }

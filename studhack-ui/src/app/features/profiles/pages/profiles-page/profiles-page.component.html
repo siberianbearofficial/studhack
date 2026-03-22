@@ -23,6 +23,41 @@
     </div>
   </section>
 
+  @if (searchContext(); as context) {
+    <section tuiCardLarge="compact" tuiSurface="floating" class="profiles-page__preset">
+      <header tuiHeader="h5">
+        <span tuiTitle>Подбор кандидатов</span>
+        <p tuiSubtitle>
+          @if (context.teamName && context.eventName) {
+            Для команды «{{ context.teamName }}» на событие «{{ context.eventName }}».
+          } @else if (context.teamName) {
+            Для команды «{{ context.teamName }}».
+          } @else if (context.eventName) {
+            Для события «{{ context.eventName }}».
+          }
+        </p>
+      </header>
+
+      <div class="profiles-page__summary">
+        @if (store.onlyAvailable()) {
+          <span tuiBadge appearance="positive">Только открытые к предложениям</span>
+        }
+
+        @if (store.selectedSpecializationIds().length) {
+          <span tuiBadge appearance="primary">
+            {{ store.selectedSpecializationIds().length }} специализации
+          </span>
+        }
+
+        @if (store.selectedSkillIds().length) {
+          <span tuiBadge appearance="info">
+            {{ store.selectedSkillIds().length }} навыка
+          </span>
+        }
+      </div>
+    </section>
+  }
+
   @if (store.error()) {
     <section tuiCardLarge="compact" class="profiles-page__status">
       <header tuiHeader="h6">
@@ -68,6 +103,25 @@
         </tui-textfield>
 
         <div tuiCardLarge="compact" tuiSurface="floating">
+        <section class="profiles-page__filter-group">
+          <h3 class="profiles-page__filter-title">Статус</h3>
+
+          <label tuiLabel class="profiles-page__filter-option">
+            <span class="profiles-page__filter-option-copy">
+              <input
+                tuiCheckbox
+                type="checkbox"
+                [ngModel]="store.onlyAvailable()"
+                [ngModelOptions]="{ standalone: true }"
+                (ngModelChange)="store.setOnlyAvailable($event)"
+              />
+              <span>Только открытые к предложениям</span>
+            </span>
+
+            <span class="profiles-page__filter-count">{{ store.availableUsersCount() }}</span>
+          </label>
+        </section>
+
         <section class="profiles-page__filter-group">
           <h3 class="profiles-page__filter-title">Роль</h3>
 

@@ -63,15 +63,6 @@ export const routes: Routes = [
       import('@features/profile').then((module) => module.ProfilePageComponent),
   },
   {
-    path: 'teams/create',
-    title: 'Создание команды',
-    canActivate: [registeredUserGuard],
-    loadComponent: () =>
-      import('@features/team-creation').then(
-        (module) => module.CreateTeamPageComponent,
-      ),
-  },
-  {
     path: '**',
     redirectTo: '',
   },
