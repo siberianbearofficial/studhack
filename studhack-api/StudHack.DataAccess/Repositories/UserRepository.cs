@@ -58,7 +58,7 @@ public class UserRepository(StudHackDbContext dbContext) : IUserRepository
         var id = existing?.Id ?? Guid.NewGuid();
         if (existing == null)
         {
-            var db = new UserDb
+            existing = new UserDb
             {
                 Id = id,
                 AuthId = authId,
@@ -72,14 +72,7 @@ public class UserRepository(StudHackDbContext dbContext) : IUserRepository
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow,
             };
-            await dbContext.Users.AddAsync(db, ct);
-            existing = await dbContext.Users
-                .Where(e => e.AuthId == authId)
-                .Include(e => e.UserSkills).ThenInclude(s => s.Skill)
-                .Include(e => e.UserSpecializations).ThenInclude(s => s.Specialization)
-                .Include(e => e.Educations)
-                .Include(e => e.PortfolioLinks)
-                .FirstAsync(ct);
+            await dbContext.Users.AddAsync(existing, ct);
         }
         else
             await dbContext.Users.ExecuteUpdateAsync(e => e
