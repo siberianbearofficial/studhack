@@ -1196,7 +1196,9 @@ export class MockStudhackApiClient
       });
     }
 
-    this.requireCity(payload.cityOfResidenceId);
+    if (payload.cityOfResidenceId) {
+      this.requireCity(payload.cityOfResidenceId);
+    }
     payload.specializationIds.forEach((specializationId) =>
       this.requireSpecialization(specializationId),
     );

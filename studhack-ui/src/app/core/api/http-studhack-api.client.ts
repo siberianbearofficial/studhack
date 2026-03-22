@@ -84,7 +84,7 @@ interface BackendUpdateUserInfoDto {
   readonly displayName: string;
   readonly birthDate?: string | null;
   readonly available: boolean;
-  readonly city: CityDto;
+  readonly city: CityDto | null;
   readonly avatarUrl?: string | null;
   readonly email: string;
   readonly biography?: string | null;
@@ -393,15 +393,12 @@ export class HttpStudhackApiClient
     currentUser: CurrentUserDto,
   ): SaveCurrentUserInput {
     const email = payload.email?.trim() || currentUser.email?.trim() || '';
-    const cityOfResidenceId =
-      payload.cityOfResidenceId ?? currentUser.cityOfResidence?.id ?? null;
+    const cityOfResidenceId = 'cityOfResidenceId' in payload
+      ? payload.cityOfResidenceId ?? null
+      : currentUser.cityOfResidence?.id ?? null;
 
     if (!email) {
       throw new Error('Для сохранения профиля требуется email');
-    }
-
-    if (!cityOfResidenceId) {
-      throw new Error('Для сохранения профиля требуется город');
     }
 
     return {
@@ -440,7 +437,9 @@ export class HttpStudhackApiClient
       displayName: payload.displayName.trim(),
       birthDate: payload.birthDate ?? null,
       available: payload.available,
-      city: this.requireCity(payload.cityOfResidenceId, dictionaries),
+      city: payload.cityOfResidenceId
+        ? this.requireCity(payload.cityOfResidenceId, dictionaries)
+        : null,
       avatarUrl: payload.avatarUrl ?? null,
       email: payload.email.trim(),
       biography: payload.biography ?? null,
