@@ -69,7 +69,7 @@
 
                 <tui-data-list-wrapper
                   *tuiTextfieldDropdown
-                  [items]="cities() | tuiFilterByInput"
+                  [items]="cities() | tuiFilterByInput | take:100"
                   new
                 />
               </tui-textfield>
