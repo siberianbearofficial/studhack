@@ -4,15 +4,62 @@
 }
 
 .landing__hero {
+  width: 100%;
+  margin: 0;
+  padding: 48px 32px; /* как у остальной страницы */
+
   display: grid;
-  gap: 1rem;
+  border-radius: 32px;
+  grid-template-columns: minmax(0, 1.2fr) minmax(320px, 420px);
+  gap: 40px;
   align-items: center;
 }
 
+
+
+.landing__hero-model {
+  display: flex;
+  align-items: center;      /* по вертикали */
+  justify-content: center;  /* по горизонтали */
+  height: 100%;
+}
+
+.landing__hero-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  width: 100%;
+}
+
 .landing__hero-copy {
-  display: grid;
-  gap: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 24px;
   min-width: 0;
+}
+
+.landing__hero-title {
+  display: block;
+  margin: 0;
+  max-width: 560px;
+  font-size: 24px;
+  line-height: 1.1;
+  font-weight: 800;
+  letter-spacing: normal;
+  color: #181738;
+  white-space: normal;
+}
+
+.landing__hero-subtitle {
+  display: block;
+  margin: 0;
+  max-width: 520px;
+  font-size: 16px !important;
+  line-height: 1.5;
+  color: var(--tui-text-secondary);
 }
 
 .landing__actions,
@@ -20,7 +67,7 @@
 .landing__event-meta {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
+  gap: 16px;
 }
 
 .landing__metrics,
@@ -72,6 +119,80 @@
   }
 }
 
+footer {
+  padding: 40px 0;
+  background: whitesmoke;
+  margin-top: 160px;
+}
+
+.footer-container {
+  width: 1140px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 40px;
+}
+
+.footer-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.footer-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 109px;
+  height: 24px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.footer-logo img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+.footer-copy {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+}
+
+.footer-content {
+  min-width: 160px;
+}
+
+.footer-content h3 {
+  font-size: 16px;
+  margin-bottom: 12px;
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.list li {
+  margin-bottom: 8px;
+}
+
+.list a {
+  text-decoration: none;
+  color: #555;
+  transition: 0.3s;
+}
+
+.list a:hover {
+  color: black;
+}
+
+
+
 .match-hero {
   padding-block: 5rem;
 }
@@ -118,12 +239,27 @@
   gap: 16px;
   overflow-x: auto;
   padding-bottom: 8px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.match-hero__cards::-webkit-scrollbar {
+  display: none;
 }
 
 .user-card {
-  flex: 0 0 280px;
+  position: absolute;
+  width: 280px;
+  min-height: 400px;
   overflow: hidden;
   border-radius: 24px;
+  transition:
+    transform 0.45s ease,
+    opacity 0.45s ease,
+    box-shadow 0.45s ease,
+    filter 0.45s ease;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .user-card__photo {
@@ -157,10 +293,9 @@
   gap: 8px;
 }
 
-/* Меняю цвет кнопки */
 .btn-primary-custom {
-  background: #ED5A2B !important;
-  border-color: #ED5A2B !important;
+  background: #ed5a2b !important;
+  border-color: #ed5a2b !important;
   color: white !important;
 }
 
@@ -169,23 +304,6 @@
   border-color: #d94f23 !important;
 }
 
-/* Меняю скролл карточек */
-.match-hero__cards {
-  display: flex;
-  gap: 16px;
-  overflow-x: auto;
-  padding-bottom: 8px;
-
-  /* скрыть скролл */
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE */
-}
-
-.match-hero__cards::-webkit-scrollbar {
-  display: none; /* Chrome/Safari */
-}
-
-/* Перекрытие скролл */
 .match-hero__carousel {
   position: relative;
   width: 100%;
@@ -200,21 +318,6 @@
 
 .match-hero__carousel:active {
   cursor: grabbing;
-}
-
-.user-card {
-  position: absolute;
-  width: 280px;
-  min-height: 400px;
-  overflow: hidden;
-  border-radius: 24px;
-  transition:
-    transform 0.45s ease,
-    opacity 0.45s ease,
-    box-shadow 0.45s ease,
-    filter 0.45s ease;
-  opacity: 0;
-  pointer-events: none;
 }
 
 .user-card--active {
@@ -253,7 +356,6 @@
   z-index: 1;
 }
 
-/* Color primary */
 .text-primary {
-  color: #526ED3;
+  color: #526ed3;
 }

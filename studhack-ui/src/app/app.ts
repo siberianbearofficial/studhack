@@ -14,6 +14,7 @@ const FOOTER_ROUTES = new Set([
   '/profile',
   '/profiles',
 ]);
+
 const FOOTER_ROUTE_PREFIXES = ['/events/'];
 
 @Component({
@@ -26,6 +27,7 @@ const FOOTER_ROUTE_PREFIXES = ['/events/'];
 export class App {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+
   private readonly currentUrl = toSignal(
     this.router.events.pipe(
       filter((event): event is NavigationEnd => event instanceof NavigationEnd),
@@ -34,6 +36,7 @@ export class App {
     ),
     { initialValue: this.router.url },
   );
+
   protected readonly showFooter = computed(() =>
     FOOTER_ROUTES.has(this.normalizeUrl(this.currentUrl())) ||
     FOOTER_ROUTE_PREFIXES.some((prefix) =>

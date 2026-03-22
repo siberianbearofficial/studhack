@@ -2,60 +2,57 @@
   @if (store.overview(); as overview) {
     <section tuiCardLarge class="landing__hero">
       <div class="landing__hero-copy">
-        <header tuiHeader="h1">
-          <span tuiBadge appearance="primary">Landing</span>
-          <span tuiTitle>Собрали каркас приложения вокруг основных user flows</span>
-          <p tuiSubtitle>
-            На этом экране уже можно переходить к событиям, профилям и сценарию
-            создания команды без дополнительной инфраструктурной подготовки.
+        <header tuiHeader="h1" class="landing__hero-header">
+          <h1 tuiTitle class="landing__hero-title">
+            Находи своих людей для хакатонов и профмероприятий
+          </h1>
+
+          <p class="landing__hero-subtitle">
+            СтудХак помогает студентам находить команду по навыкам, интересам и
+            уровню опыта — без хаоса в чатах и случайных знакомств
           </p>
         </header>
 
         <div class="landing__actions">
           <a
             tuiButton
-            routerLink="/teams/create"
             appearance="primary"
             size="l"
+            class="btn-primary-custom"
           >
             Создать команду
           </a>
-          <a
+
+          <!-- <a
             tuiButton
             routerLink="/profiles"
             appearance="secondary"
             size="l"
           >
             Открыть профили
-          </a>
+          </a> -->
+
           <a
             tuiButton
             routerLink="/events"
             appearance="secondary"
             size="l"
           >
-            Смотреть события
+            Выбрать хакатон
           </a>
-        </div>
-
-        <div class="landing__context">
-          <span tuiBadge appearance="positive">
-            {{ overview.me ? 'Профиль найден' : 'Гость' }}
-          </span>
-          @for (specialization of overview.topSpecializations; track specialization) {
-            <span tuiBadge appearance="neutral">{{ specialization }}</span>
-          }
         </div>
       </div>
 
-      <app-sketchfab-embed
-        title="Cyber Orb"
-        modelUid="8a81aa847da74a5cb36bd8ba13f6ae5e"
-        [interactive]="true"
-        [loopAnimation]="true"
-        [autoplay]="true"
-        [preload]="true"
-      />
+      <div class="landing__hero-model">
+  <app-sketchfab-embed
+    title="Cyber Orb"
+    modelUid="8a81aa847da74a5cb36bd8ba13f6ae5e"
+    [interactive]="true"
+    [loopAnimation]="true"
+    [autoplay]="true"
+    [preload]="true"
+  />
+</div>
     </section>
 
     <section class="landing__metrics">
@@ -88,19 +85,25 @@
 
             <div class="landing__event-meta">
               <span tuiBadge appearance="warning">{{ nextEvent.type }}</span>
-              <span tuiBadge appearance="neutral">{{ nextEvent.location.format }}</span>
+              <span tuiBadge appearance="neutral">{{
+                nextEvent.location.format
+              }}</span>
               <span tuiBadge appearance="primary">
                 {{ nextEvent.teams.length }} команд
               </span>
             </div>
 
             <p>
-              {{ nextEvent.description || 'Описание будет детализировано отдельной задачей.' }}
+              {{
+                nextEvent.description ||
+                  'Описание будет детализировано отдельной задачей.'
+              }}
             </p>
           </div>
         } @else {
           <p class="landing__muted">
-            В моках пока нет активного события, но сам роут и структура уже готовы.
+            В моках пока нет активного события, но сам роут и структура уже
+            готовы.
           </p>
         }
       </article>
@@ -109,7 +112,8 @@
         <header tuiHeader="h5">
           <span tuiTitle>Что уже доступно</span>
           <p tuiSubtitle>
-            Эти страницы можно детализировать независимо, не трогая базовый routing.
+            Эти страницы можно детализировать независимо, не трогая базовый
+            routing.
           </p>
         </header>
 
@@ -137,7 +141,9 @@
     <section tuiCardLarge class="landing__status">
       <header tuiHeader="h5">
         <span tuiTitle>Загружаем стартовый контент</span>
-        <p tuiSubtitle>Подтягиваем профили, события и команды из текущего API.</p>
+        <p tuiSubtitle>
+          Подтягиваем профили, события и команды из текущего API.
+        </p>
       </header>
     </section>
   } @else {
@@ -147,11 +153,69 @@
         <p tuiSubtitle>{{ store.error() }}</p>
       </header>
 
-      <button tuiButton type="button" appearance="primary" (click)="store.load()">
+      <button
+        tuiButton
+        type="button"
+        appearance="primary"
+        (click)="store.load()"
+      >
         Повторить
       </button>
     </section>
   }
+
+  <section class="features">
+  <div class="features__header">
+    <h2 class="features__title">
+      Всё, чтобы собрать команду без лишнего стресса
+    </h2>
+
+    <p class="features__subtitle">
+      От поиска участников до готовой команды — в одном сервисе
+    </p>
+  </div>
+
+  <div class="features__grid">
+    <div class="feature-card">
+      <img src="assets/icon1.png" alt="" />
+      <h3>Поиск по навыкам</h3>
+      <p>Находите участников по ролям</p>
+    </div>
+
+    <div class="feature-card">
+      <img src="assets/icon2.png" alt="" />
+      <h3>Умный мэтчинг</h3>
+      <p>Сервис подбирает подходящих людей</p>
+    </div>
+
+    <div class="feature-card">
+      <img src="assets/icon3.png" alt="" />
+      <h3>Сбор команды</h3>
+      <p>Формируйте команды быстро и удобно</p>
+    </div>
+
+    <div class="feature-card">
+      <img src="assets/icon4.png" alt="" />
+      <h3>Под хакатоны</h3>
+      <p>Используйте сервис под реальные мероприятия</p>
+    </div>
+
+    <div class="feature-card">
+      <img src="assets/icon5.png" alt="" />
+      <h3>Без лишнего стресса</h3>
+      <p>Весь процесс в одном месте</p>
+    </div>
+
+    <div class="feature-card">
+      <img src="assets/icon6.png" alt="" />
+      <h3>Быстрый старт</h3>
+      <p>Начните за пару кликов</p>
+    </div>
+  </div>
+</section>
+
+
+
 
 
   <section class="match-hero">
@@ -173,10 +237,11 @@
             appearance="primary"
             size="l"
             type="button"
+
             routerLink="/login"
             [queryParams]="{ returnUrl: '/profile' }"
-            class="btn-primary-custom"
-          >
+
+            class="btn-primary-custom">
             Начать бесплатно
           </button>
 
@@ -222,4 +287,6 @@
       </div>
     </div>
   </section>
+
+  
 </section>
