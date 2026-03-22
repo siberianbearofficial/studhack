@@ -1,3 +1,5 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Avalux.Auth.ApiClient;
 using FillDatabase;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -30,7 +32,11 @@ builder.Services.AddDatabaseFillers();
 builder.Services.AddAvaluxAuthApiClient(builder.Configuration["Auth.ApiUrl"] ?? "",
     builder.Configuration["Auth.ApiToken"] ?? "");
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
+    });
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>

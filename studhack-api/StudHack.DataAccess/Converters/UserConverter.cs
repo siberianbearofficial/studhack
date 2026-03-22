@@ -1,4 +1,3 @@
-using System.Linq;
 using StudHack.DataAccess.Models;
 using StudHack.Domain.Models;
 
@@ -62,7 +61,7 @@ public static class UserConverter
             Biography =  db.Biography,
             City =  db.CityOfResidence?.ToDomain(),
             PortfolioLinks = db.PortfolioLinks.Select(PortfolioLinkConverter.ToDomain).ToList(),
-            Skills = db.UserSkills.Select(e => e.Skill.ToDomain()).ToList(),
+            Skills = db.UserSkills.Select(e => e.ToDomain()).ToList(),
             Specializations = db.UserSpecializations.Select(e => e.Specialization.ToDomain()).ToList(),
             Educations = db.Educations.Select(EducationConverter.ToDomain).ToList(),
             CreatedAt = db.CreatedAt,

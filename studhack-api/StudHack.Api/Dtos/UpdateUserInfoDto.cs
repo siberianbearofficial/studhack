@@ -10,7 +10,7 @@ public class UpdateUserInfoDto
     public string? AvatarUrl { get; init; }
     public required string Email { get; init; }
     public string? Biography { get; init; }
-    public SkillDto[] Skills { get; init; } = [];
+    public UserSkillDto[] Skills { get; init; } = [];
     public SpecializationDto[] Specializations { get; init; } = [];
     public PortfolioLinkDto[] PortfolioLinks { get; init; } = [];
     public EducationDto[] Education { get; init; } = [];
