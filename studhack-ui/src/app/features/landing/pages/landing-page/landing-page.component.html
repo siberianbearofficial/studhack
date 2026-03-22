@@ -67,11 +67,8 @@
     </section>
 
     <section class="landing__grid">
-      <article tuiCardLarge class="landing__panel">
-        <header tuiHeader="h5">
-          <span tuiTitle>Следующее событие</span>
-          <p tuiSubtitle>Отсюда удобно прыгать в проработку event screens.</p>
-        </header>
+      
+
 
         @if (overview.nextEvent; as nextEvent) {
           <div class="landing__event">
@@ -116,6 +113,8 @@
             routing.
           </p>
         </header>
+=======
+>>>>>>> d_3_clear_branch
 
         <div class="landing__checklist">
           <div class="landing__checklist-item">
@@ -135,7 +134,6 @@
             <span>Рабочий флоу с выбором события и позициями команды.</span>
           </div>
         </div>
-      </article>
     </section>
   } @else if (store.isLoading()) {
     <section tuiCardLarge class="landing__status">
