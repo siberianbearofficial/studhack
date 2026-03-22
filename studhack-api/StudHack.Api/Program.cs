@@ -68,6 +68,7 @@ builder.Services.AddHostedService<MessageSenderService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITeamService, TeamService>();
 builder.Services.AddScoped<ITeamRequestService, TeamRequestService>();
+builder.Services.AddScoped<INotificationsService, NotificationsService>();
 
 var authApiUrl =
     builder.Configuration["Auth.ApiUrl"] ??
