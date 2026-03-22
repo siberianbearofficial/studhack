@@ -67,7 +67,7 @@ public class UserRepository(StudHackDbContext dbContext) : IUserRepository
                 DisplayedName = user.DisplayedName,
                 Email = user.Email,
                 AvatarUrl = user.AvatarUrl,
-                BirthDate = user.BirthDate,
+                BirthDate = user.BirthDate?.ToUniversalTime(),
                 Biography = user.Biography,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow,
@@ -79,6 +79,7 @@ public class UserRepository(StudHackDbContext dbContext) : IUserRepository
                 .SetProperty(x => x.Available, user.Available)
                 .SetProperty(x => x.UniqueName, user.UniqueName)
                 .SetProperty(x => x.DisplayedName, user.DisplayedName)
+                .SetProperty(x => x.BirthDate, user.BirthDate == null ? null : user.BirthDate.Value.ToUniversalTime())
                 .SetProperty(x => x.Email, user.Email)
                 .SetProperty(x => x.Biography, user.Biography)
                 .SetProperty(x => x.UpdatedAt, DateTime.UtcNow), ct);
