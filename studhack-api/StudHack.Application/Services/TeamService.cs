@@ -49,10 +49,13 @@ public class TeamService(
         var currentUser = await userRepository.GetUserByAuthAsync(authId, ct)
             ?? throw new UnauthorizedAccessException("User is not registered");
 
-        var hackatonId = await ResolveHackatonIdAsync(request.EventId, ct);
-        var captainId = request.CaptainUserId ?? currentUser.Id;
+        // Verify hackaton exists
+        _ = await hackatonRepository.GetByIdAsync(request.HackatonId, ct)
+            ?? throw new KeyNotFoundException("Hackaton not found");
 
-        if (request.Id.HasValue)
+        var captainIdForUpdate = request.CaptainUserId ?? currentUser.Id;
+
+        if (request.Id.HasValue && request.Id.Value != Guid.Empty)
         {
             var existingTeam = await teamRepository.GetByIdAsync(request.Id.Value, ct)
                 ?? throw new KeyNotFoundException("Team not found");
@@ -61,8 +64,8 @@ public class TeamService(
 
             var updated = new Team(
                 existingTeam.Id,
-                existingTeam.HackatonId,
-                captainId,
+                request.HackatonId,
+                captainIdForUpdate,
                 existingTeam.CreatorId,
                 request.Name,
                 request.Description,
@@ -78,8 +81,8 @@ public class TeamService(
 
         var createdTeam = new Team(
             Guid.NewGuid(),
-            hackatonId,
-            captainId,
+            request.HackatonId,
+            currentUser.Id,
             currentUser.Id,
             request.Name,
             request.Description,
@@ -118,25 +121,14 @@ public class TeamService(
             throw new UnauthorizedAccessException("Only creator or captain can manage this team");
     }
 
-    private async Task<Guid> ResolveHackatonIdAsync(Guid eventId, CancellationToken ct)
-    {
-        var bySameId = await hackatonRepository.GetByIdAsync(eventId, ct);
-        if (bySameId is not null)
-            return bySameId.Id;
-
-        var all = await hackatonRepository.GetAllAsync(ct);
-        var byEvent = all.FirstOrDefault(x => x.EventId == eventId);
-        if (byEvent is not null)
-            return byEvent.Id;
-
-        throw new KeyNotFoundException("Hackaton for event was not found");
-    }
-
     private async Task ReplaceTeamPositionsAsync(Guid teamId, IReadOnlyCollection<UpsertTeamPositionModel> inputs,
         CancellationToken ct)
     {
         var existing = (await teamPositionRepository.GetAllAsync(ct)).Where(x => x.TeamId == teamId).ToList();
-        var incomingIds = inputs.Where(x => x.Id.HasValue).Select(x => x.Id!.Value).ToHashSet();
+        var incomingIds = inputs
+            .Where(x => x.Id.HasValue && x.Id.Value != Guid.Empty)
+            .Select(x => x.Id!.Value)
+            .ToHashSet();
 
         foreach (var existingPosition in existing.Where(x => !incomingIds.Contains(x.Id)))
         {
@@ -145,7 +137,8 @@ public class TeamService(
 
         foreach (var input in inputs)
         {
-            var existingPosition = input.Id.HasValue ? existing.FirstOrDefault(x => x.Id == input.Id.Value) : null;
+            var hasPositionId = input.Id.HasValue && input.Id.Value != Guid.Empty;
+            var existingPosition = hasPositionId ? existing.FirstOrDefault(x => x.Id == input.Id!.Value) : null;
 
             MandatoryPositionData? mandatoryPosition = null;
             AdditionalPositionData? additionalPosition = null;
@@ -177,7 +170,7 @@ public class TeamService(
             }
 
             var position = new TeamPosition(
-                input.Id ?? Guid.NewGuid(),
+                hasPositionId ? input.Id!.Value : Guid.NewGuid(),
                 teamId,
                 input.FilledByExternal,
                 type,
