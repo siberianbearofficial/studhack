@@ -5,8 +5,10 @@ import {
   inject,
   signal,
 } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { RouterLink, ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+
 import { TuiButton, TuiLink, TuiTitle } from '@taiga-ui/core';
 import { TuiDialog } from '@taiga-ui/core/components/dialog';
 import { TuiBadge, TuiChip, TuiProgress } from '@taiga-ui/kit';
@@ -20,14 +22,13 @@ import {
   getProfileGrade,
 } from '@shared';
 
-import { ProfileMetaCardComponent } from '../../components/profile-meta-card/profile-meta-card.component';
 import { PublicProfileStore } from '../../store/public-profile.store';
 
 @Component({
   selector: 'app-user-profile-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ProfileMetaCardComponent,
+    DatePipe,
     RouterLink,
     TuiDialog,
     TuiBadge,
@@ -53,17 +54,16 @@ export class UserProfilePageComponent {
 
   protected readonly primarySpecialization = computed(() => {
     const user = this.store.user();
-
     return user ? getPrimarySpecializationName(user) : '';
   });
+
   protected readonly highestExperience = computed(() => {
     const user = this.store.user();
-
     return user ? getProfileExperienceLabel(user) : '';
   });
+
   protected readonly grade = computed(() => {
     const user = this.store.user();
-
     return user ? getProfileGrade(user) : null;
   });
 
@@ -71,6 +71,7 @@ export class UserProfilePageComponent {
     this.route.queryParamMap.pipe(takeUntilDestroyed()).subscribe((params) => {
       this.preferredTeamId.set(this.normalizeParam(params.get('teamId')));
     });
+
     this.store.load(this.route.snapshot.paramMap.get('userId'));
   }
 
@@ -92,7 +93,6 @@ export class UserProfilePageComponent {
 
   private normalizeParam(value: string | null): string | null {
     const normalizedValue = value?.trim();
-
     return normalizedValue ? normalizedValue : null;
   }
 }
