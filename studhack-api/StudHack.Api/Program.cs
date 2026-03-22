@@ -16,6 +16,7 @@ using StudHack.Domain.Interfaces.Repositories;
 using StudHack.MessageSenderService;
 using Studhack.MessageSender;
 using StudHack.Core.Abstractions;
+using StudHack.Core.Abstractions.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddEnvironmentVariables();
@@ -39,9 +40,10 @@ builder.Services.AddScoped<ITeamRepository, TeamRepository>();
 builder.Services.AddScoped<ITeamPositionRepository, TeamPositionRepository>();
 builder.Services.AddScoped<ITeamRequestRepository, TeamRequestRepository>();
 builder.Services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
+builder.Services.AddScoped<INotificationsRepository, NotificationsRepository>();
 
 /*
-TODO в EmailMessageSender нужно перекинуть переменные SMTP из среды или хз откуда, формат такой:
+TODO пїЅ EmailMessageSender пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ SMTP пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ:
 
 set Smtp__Host=smtp.yandex.com
 set Smtp__Port=587

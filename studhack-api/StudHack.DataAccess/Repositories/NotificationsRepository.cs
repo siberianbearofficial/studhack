@@ -17,7 +17,7 @@ public class NotificationsRepository(StudHackDbContext dbContext): INotification
             .Include(s => s.User)
             .Include(s => s.Event)
                 .ThenInclude(e => e.EventDates.Where(ed =>
-                    DateTime.Now.AddDays(1) > ed.StartsAt && ed.StartsAt > DateTime.Now))
+                    DateTime.UtcNow.AddDays(1) > ed.StartsAt && ed.StartsAt > DateTime.UtcNow))
                     .ThenInclude(ed => ed.SentMessages)
             .ToListAsync();
 

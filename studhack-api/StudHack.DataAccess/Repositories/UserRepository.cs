@@ -138,7 +138,7 @@ public class UserRepository(StudHackDbContext dbContext) : IUserRepository
         await dbContext.Educations.AddRangeAsync(added, ct);
     }
 
-    private async Task UpdateSkills(UserDb user, IEnumerable<Skill> skills, CancellationToken ct)
+    private async Task UpdateSkills(UserDb user, IEnumerable<UserSkill> skills, CancellationToken ct)
     {
         var deleted = user.UserSkills
             .Where(e => skills.All(skill => skill.Id != e.SkillId))
@@ -170,11 +170,11 @@ public class UserRepository(StudHackDbContext dbContext) : IUserRepository
 
         var added = skills
             .Where(e => user.UserSpecializations.All(specialization => specialization.SpecializationId != e.Id))
-            .Select(e => new UserSkillDb
+            .Select(e => new UserSpecializationDb
             {
                 UserId = user.Id,
-                SkillId = e.Id
+                SpecializationId = e.Id
             });
-        await dbContext.UserSkills.AddRangeAsync(added, ct);
+        await dbContext.UserSpecializations.AddRangeAsync(added, ct);
     }
 }
