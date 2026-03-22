@@ -1,6 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
-using FillDatabase.Fillers;
+using FillDatabase;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using StudHack.DataAccess.Context;
@@ -21,24 +21,19 @@ services.AddScoped<ICityRepository, CityRepository>();
 services.AddScoped<ISkillRepository, SkillRepository>();
 services.AddScoped<ISpecializationRepository, SpecializationRepository>();
 services.AddScoped<IUniversityRepository, UniversityRepository>();
+services.AddScoped<IEventRepository, EventRepository>();
+services.AddScoped<IEventDateRepository, EventDateRepository>();
+services.AddScoped<IHackatonRepository, HackatonRepository>();
+services.AddScoped<IMandatoryPositionRepository, MandatoryPositionRepository>();
 
-services.AddScoped<CitiesFiller>();
-services.AddScoped<SkillsFiller>();
-services.AddScoped<SpecializationsFiller>();
-services.AddScoped<UniversityFiller>();
+services.AddDatabaseFillers();
 
 var serviceProvider = services.BuildServiceProvider();
 
 using var scope = serviceProvider.CreateScope();
 
-var citiesFiller = scope.ServiceProvider.GetRequiredService<CitiesFiller>();
-await citiesFiller.FillAsync();
-
-var skillsFiller = scope.ServiceProvider.GetRequiredService<SkillsFiller>();
-await skillsFiller.FillAsync();
-
-var specializationsFiller = scope.ServiceProvider.GetRequiredService<SpecializationsFiller>();
-await specializationsFiller.FillAsync();
-
-var universityFiller = scope.ServiceProvider.GetRequiredService<UniversityFiller>();
-await universityFiller.FillAsync();
+var fillers = scope.ServiceProvider.GetRequiredService<IEnumerable<IFiller>>();
+foreach (var filler in fillers)
+{
+    await filler.FillAsync();
+}

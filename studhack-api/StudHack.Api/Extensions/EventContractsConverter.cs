@@ -60,6 +60,7 @@ public static class EventContractsConverter
 
     public static EventFullDto ToDto(this EventFullModel model)
     {
+        var isOnline = model.Event.Format == EventFormat.Online;
         var stages = model.Stages
             .OrderBy(x => x.StartsAt)
             .ThenBy(x => x.EndsAt)
@@ -87,9 +88,9 @@ public static class EventContractsConverter
             RegistrationLink = model.Event.RegistrationLink,
             Location = new EventLocationDto
             {
-                Format = model.Event.Format == EventFormat.Online ? EventFormatDto.Online : EventFormatDto.Offline,
-                City = model.City?.ToDto(),
-                AddressText = model.Event.Address,
+                Format = isOnline ? EventFormatDto.Online : EventFormatDto.Offline,
+                City = isOnline ? null : model.City?.ToDto(),
+                AddressText = isOnline ? null : model.Event.Address,
                 VenueName = null,
                 Latitude = model.Event.Latitude,
                 Longitude = model.Event.Longitude,

@@ -11,6 +11,7 @@ public static class ServiceCollectionExtension
         services.AddScoped<IFiller, UniversityFiller>();
         services.AddScoped<IFiller, SkillsFiller>();
         services.AddScoped<IFiller, SpecializationsFiller>();
+        services.AddScoped<IFiller, EventsFiller>();
         return services;
     }
 }
