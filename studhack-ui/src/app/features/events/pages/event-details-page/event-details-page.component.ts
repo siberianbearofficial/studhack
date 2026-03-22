@@ -1,5 +1,11 @@
 import { Location, ViewportScroller } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import {
@@ -18,8 +24,10 @@ import {
   type EventStageDto,
   type TeamInEventDto,
   type TeamPositionDto,
+  type TeamRequestDto,
 } from '@core/api';
 import { TeamCreationModalComponent } from '@features/team-creation';
+import { TeamRequestDialogComponent } from '@features/team-requests';
 import {
   formatEventDateTimeLabel,
   formatEventTeamSizeRange,
@@ -79,6 +87,7 @@ interface EventOpenRole {
     TuiTitle,
     TuiButtonLoading,
     TeamCreationModalComponent,
+    TeamRequestDialogComponent,
   ],
   providers: [EventDetailsStore],
   templateUrl: './event-details-page.component.html',
@@ -91,7 +100,20 @@ export class EventDetailsPageComponent {
 
   protected readonly store = inject(EventDetailsStore);
   protected readonly teamCreationOpen = signal(false);
+  protected readonly teamRequestDialogTeamId = signal<string | null>(null);
   protected readonly event = computed(() => this.store.event());
+  protected readonly teamRequestDialogTeam = computed(() => {
+    const teamId = this.teamRequestDialogTeamId();
+
+    return teamId
+      ? this.store.teams().find((team) => team.id === teamId) ?? null
+      : null;
+  });
+  protected readonly teamRequestDialogPosition = computed(() => {
+    const team = this.teamRequestDialogTeam();
+
+    return team ? this.store.getPrimaryOpenPosition(team) : null;
+  });
   protected readonly coverBackground = computed(() => {
     const event = this.event();
 
@@ -256,8 +278,34 @@ export class EventDetailsPageComponent {
     this.store.toggleSubscription();
   }
 
-  protected applyToTeam(teamId: string): void {
-    this.store.applyToTeam(teamId);
+  protected openApplicationDialog(teamId: string): void {
+    const team = this.store.teams().find((item) => item.id === teamId);
+    const position = team ? this.store.getPrimaryOpenPosition(team) : null;
+
+    if (!position) {
+      this.store.actionError.set('В этой команде сейчас нет доступных ролей');
+
+      return;
+    }
+
+    if (this.store.hasRequestedPosition(position.id)) {
+      this.store.actionSuccess.set('Запрос на эту роль уже отправлен');
+
+      return;
+    }
+
+    this.store.actionError.set(null);
+    this.store.actionSuccess.set(null);
+    this.teamRequestDialogTeamId.set(teamId);
+  }
+
+  protected closeApplicationDialog(): void {
+    this.teamRequestDialogTeamId.set(null);
+  }
+
+  protected handleApplicationCreated(request: TeamRequestDto): void {
+    this.store.registerTeamApplication(request);
+    this.closeApplicationDialog();
   }
 
   protected getPrimaryOpenPosition(team: TeamInEventDto): TeamPositionDto | null {

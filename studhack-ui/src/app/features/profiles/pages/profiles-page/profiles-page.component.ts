@@ -1,5 +1,11 @@
 import { Location } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { TuiButton, TuiLabel, TuiLink, TuiLoader, TuiSurface, TuiTextfield, TuiTitle } from '@taiga-ui/core';
@@ -11,6 +17,7 @@ import { ProfileCardComponent } from '../../components/profile-card/profile-card
 import { ProfilesStore } from '../../store/profiles.store';
 
 interface CandidateSearchContext {
+  readonly teamId: string | null;
   readonly teamName: string | null;
   readonly eventName: string | null;
 }
@@ -44,9 +51,18 @@ export class ProfilesPageComponent {
   private readonly location = inject(Location);
   private readonly route = inject(ActivatedRoute);
   protected readonly searchContext = signal<CandidateSearchContext | null>(null);
+  protected readonly preferredTeamId = computed(
+    () => this.searchContext()?.teamId ?? null,
+  );
+  protected readonly profileLinkQueryParams = computed(() => {
+    const teamId = this.preferredTeamId();
+
+    return teamId ? { teamId } : null;
+  });
 
   constructor() {
     this.route.queryParamMap.pipe(takeUntilDestroyed()).subscribe((params) => {
+      const teamId = this.normalizeParam(params.get('teamId'));
       const teamName = this.normalizeParam(params.get('teamName'));
       const eventName = this.normalizeParam(params.get('eventName'));
 
@@ -56,8 +72,9 @@ export class ProfilesPageComponent {
         onlyAvailable: params.get('available') === 'true',
       });
       this.searchContext.set(
-        teamName || eventName
+        teamId || teamName || eventName
           ? {
+              teamId,
               teamName,
               eventName,
             }

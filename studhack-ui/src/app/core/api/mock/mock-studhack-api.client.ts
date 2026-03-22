@@ -19,7 +19,6 @@ import { type StudhackApiClient } from '../api.client';
 import {
   type ApiErrorCode,
   type ApiFieldErrorMap,
-  type BootstrapDto,
   type CityDto,
   type CreateTeamRequestInput,
   type DeleteResultDto,
@@ -91,13 +90,6 @@ export class MockStudhackApiClient
   private readonly latencyMs = inject(API_MOCK_LATENCY_MS);
   private readonly state: MockDatabaseState = createMockDatabaseState();
   private idCounter = 0;
-
-  getBootstrap(): Observable<BootstrapDto> {
-    return this.respond(() => ({
-      me: this.state.currentUserId ? this.buildMyProfile() : null,
-      dictionaries: this.clone(this.state.dictionaries),
-    }));
-  }
 
   getDictionaries(): Observable<DictionariesDto> {
     return this.respond(() => this.clone(this.state.dictionaries));
@@ -198,7 +190,7 @@ export class MockStudhackApiClient
     payload: SetEventSubscriptionRequest,
   ): Observable<EventSubscriptionDto> {
     return this.respond(() => {
-      const currentUserId = this.requireCurrentUserId();
+      const currentUserId = this.requireSessionUserId();
       const event = this.requireEvent(eventId);
       const existingIndex = event.subscriptions.findIndex(
         (subscription) => subscription.userId === currentUserId,
@@ -236,7 +228,7 @@ export class MockStudhackApiClient
 
   upsertTeam(payload: UpsertTeamRequest): Observable<TeamFullDto> {
     return this.respond(() => {
-      const currentUserId = this.requireCurrentUserId();
+      const currentUserId = this.requireSessionUserId();
       const event = this.requireEvent(payload.eventId);
       const existingTeam = payload.id ? this.requireTeam(payload.id) : undefined;
       const team: MockTeamEntity =
@@ -351,7 +343,7 @@ export class MockStudhackApiClient
     return this.respond(() => {
       this.validateProfilePayload(payload);
 
-      const me = this.requireUser(this.requireCurrentUserId());
+      const me = this.requireUser(this.requireSessionUserId());
       const duplicateUser = this.state.users.find(
         (user) => user.uniqueName === payload.uniqueName.trim() && user.id !== me.id,
       );
@@ -470,7 +462,7 @@ export class MockStudhackApiClient
 
   createTeamRequest(payload: CreateTeamRequestInput): Observable<TeamRequestDto> {
     return this.respond(() => {
-      const currentUserId = this.requireCurrentUserId();
+      const currentUserId = this.requireSessionUserId();
       const { team, position } = this.requireTeamPosition(payload.teamPositionId);
       const now = this.now();
       const userId =
@@ -527,7 +519,7 @@ export class MockStudhackApiClient
     payload: ResolveTeamRequestInput,
   ): Observable<TeamRequestDto> {
     return this.respond(() => {
-      const currentUserId = this.requireCurrentUserId();
+      const currentUserId = this.requireSessionUserId();
       const request = this.requireTeamRequest(requestId);
       const team = this.requireTeam(request.teamId);
 
@@ -595,7 +587,7 @@ export class MockStudhackApiClient
   }
 
   private buildMyProfile(): MyProfileDto {
-    return this.buildUserFull(this.requireCurrentUserId());
+    return this.buildUserFull(this.requireSessionUserId());
   }
 
   private buildCurrentUser(): CurrentUserDto {
@@ -848,7 +840,7 @@ export class MockStudhackApiClient
   }
 
   private buildEventSubscription(event: MockEventEntity): EventSubscriptionDto {
-    const currentUserId = this.state.currentUserId;
+    const currentUserId = this.resolveSessionUserId();
     const current = event.subscriptions.find(
       (subscription) => subscription.userId === currentUserId,
     );
@@ -1046,7 +1038,7 @@ export class MockStudhackApiClient
   }
 
   private buildTeamRequestsFeed(): TeamRequestsFeedDto {
-    const currentUserId = this.requireCurrentUserId();
+    const currentUserId = this.requireSessionUserId();
     const managedTeamIds = new Set(
       this.state.teams
         .filter((team) => this.canManageTeam(team, currentUserId))
@@ -1421,6 +1413,20 @@ export class MockStudhackApiClient
     }
 
     return this.state.currentUserId;
+  }
+
+  private requireSessionUserId(): UUID {
+    const userId = this.resolveSessionUserId();
+
+    if (!userId) {
+      throw this.forbidden('Профиль пользователя ещё не зарегистрирован');
+    }
+
+    return userId;
+  }
+
+  private resolveSessionUserId(): UUID | null {
+    return this.state.currentUserId ?? this.state.meUserId ?? null;
   }
 
   private requireTeamRequest(requestId: UUID): MockTeamRequestEntity {

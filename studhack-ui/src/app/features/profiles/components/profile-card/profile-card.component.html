@@ -17,6 +17,7 @@
       iconEnd="@tui.arrow-up-right"
       tuiLink
       [routerLink]="profileLink()"
+      [queryParams]="profileLinkQueryParams()"
     >
       Подробнее
     </a>
@@ -24,7 +25,13 @@
 
   <div class="profile-card__footer">
     <div class="profile-card__actions">
-      <button tuiButton type="button" appearance="accent" size="m">
+      <button
+        tuiButton
+        type="button"
+        appearance="accent"
+        size="m"
+        (click)="openInviteDialog()"
+      >
         Пригласить
       </button>
 
@@ -55,4 +62,23 @@
       </div>
     </div>
   </div>
+
+  @if (inviteSuccess()) {
+    <p class="profile-card__success">{{ inviteSuccess() }}</p>
+  }
+
+  <ng-template
+    [tuiDialog]="inviteDialogOpen()"
+    (tuiDialogChange)="!$event && closeInviteDialog()"
+    [tuiDialogOptions]="{size: 'm'}"
+  >
+    <app-team-request-dialog
+      kind="invitation"
+      [invitedUserId]="user().id"
+      [invitedUserName]="user().displayName"
+      [preferredTeamId]="preferredTeamId()"
+      (dismissed)="closeInviteDialog()"
+      (completed)="handleInviteCreated($event)"
+    />
+  </ng-template>
 </article>

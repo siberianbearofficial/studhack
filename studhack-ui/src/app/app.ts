@@ -1,10 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, OnInit } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { TuiRoot } from '@taiga-ui/core';
 import { filter, map, startWith } from 'rxjs';
 
 import { AppFooterComponent, AppShellHeaderComponent } from '@shared/ui';
+import { DictionariesStore, MyProfileStore, PublicDataStore } from '@core/data';
 import { AuthService } from '@core/auth';
 
 const FOOTER_ROUTES = new Set([
@@ -24,9 +25,12 @@ const FOOTER_ROUTE_PREFIXES = ['/events/'];
   templateUrl: './app.html',
   styleUrl: './app.less',
 })
-export class App {
+export class App implements OnInit {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly dictionariesStore = inject(DictionariesStore);
+  private readonly publicDataStore = inject(PublicDataStore);
+  private readonly myProfileStore = inject(MyProfileStore);
 
   private readonly currentUrl = toSignal(
     this.router.events.pipe(
@@ -61,6 +65,12 @@ export class App {
         void this.router.navigate(['/login']);
       });
     });
+  }
+
+  ngOnInit() {
+    this.dictionariesStore.load();
+    this.publicDataStore.load();
+    this.myProfileStore.load();
   }
 
   private normalizeUrl(url: string): string {

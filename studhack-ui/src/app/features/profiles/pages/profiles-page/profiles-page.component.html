@@ -223,6 +223,8 @@
               <app-profile-card
                 [user]="user"
                 [isFavorite]="store.isFavorite(user.id)"
+                [preferredTeamId]="preferredTeamId()"
+                [profileLinkQueryParams]="profileLinkQueryParams()"
                 (favoriteToggled)="store.toggleFavorite(user.id)"
               />
             }

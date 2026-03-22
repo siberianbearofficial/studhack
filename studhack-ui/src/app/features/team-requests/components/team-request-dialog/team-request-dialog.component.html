@@ -1,0 +1,100 @@
+<section tuiCardLarge="compact" class="team-request-dialog">
+  <header tuiHeader="h6" class="team-request-dialog__header">
+    <span tuiTitle>{{ title() }}</span>
+    <p tuiSubtitle>{{ subtitle() }}</p>
+  </header>
+
+  @if (kind() === 'application') {
+    <div class="team-request-dialog__context">
+      @if (teamName()) {
+        <span tuiBadge appearance="primary">{{ teamName() }}</span>
+      }
+
+      @if (positionTitle()) {
+        <span tuiBadge appearance="info">{{ positionTitle() }}</span>
+      }
+    </div>
+  } @else if (isLoadingTargets()) {
+    <div class="team-request-dialog__status">
+      <tui-loader size="m"></tui-loader>
+      <span>Подбираем открытые роли для приглашения</span>
+    </div>
+  } @else if (!inviteTargets().length) {
+    <div class="team-request-dialog__status">
+      <span>
+        Сейчас у вас нет команд с открытыми ролями, куда можно отправить приглашение.
+      </span>
+    </div>
+  } @else {
+    @if (inviteTargets().length > 1) {
+      <label tuiLabel>
+        Куда пригласить
+        <tui-textfield
+          tuiChevron
+          [stringify]="stringifyInviteTarget"
+          [identityMatcher]="matchInviteTarget"
+        >
+          <input
+            tuiComboBox
+            [formControl]="form.controls.target"
+            placeholder="Выберите команду и роль"
+          />
+
+          <tui-data-list-wrapper
+            *tuiTextfieldDropdown
+            new
+            [items]="inviteTargets() | tuiFilterByInput"
+          />
+        </tui-textfield>
+      </label>
+    } @else if (selectedInviteTarget(); as target) {
+      <div class="team-request-dialog__context">
+        <span tuiBadge appearance="primary">{{ target.teamName }}</span>
+        <span tuiBadge appearance="info">{{ target.positionTitle }}</span>
+        <span tuiBadge appearance="neutral">{{ target.eventName }}</span>
+      </div>
+    }
+  }
+
+  <label tuiLabel>
+    Сообщение
+    <tui-textfield>
+      <textarea
+        tuiTextarea
+        [formControl]="form.controls.message"
+        [limit]="300"
+        [max]="6"
+        [min]="3"
+        placeholder="Добавьте пару строк, чтобы у команды или участника был контекст"
+      ></textarea>
+    </tui-textfield>
+  </label>
+
+  @if (error()) {
+    <p class="team-request-dialog__error">{{ error() }}</p>
+  }
+
+  <div class="team-request-dialog__actions">
+    <button
+      tuiButton
+      type="button"
+      appearance="secondary"
+      size="m"
+      [disabled]="isSubmitting()"
+      (click)="close()"
+    >
+      Отмена
+    </button>
+
+    <button
+      tuiButton
+      type="button"
+      appearance="accent"
+      size="m"
+      [disabled]="!canSubmit()"
+      (click)="submit()"
+    >
+      {{ submitLabel() }}
+    </button>
+  </div>
+</section>

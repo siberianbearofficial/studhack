@@ -5,7 +5,6 @@ import {
   API_CLIENT_MODE,
   HttpStudhackApiClient,
   MockStudhackApiClient,
-  type DictionariesDto,
 } from '@core/api';
 import { AuthService } from '@core/auth';
 
@@ -23,10 +22,8 @@ export class CurrentUserService {
   private readonly mockApi = inject(MockStudhackApiClient);
 
   private readonly currentUserState = signal<CurrentUserDto | null>(null);
-  private readonly dictionariesState = signal<DictionariesDto | null>(null);
 
   readonly currentUser = computed(() => this.currentUserState());
-  readonly dictionaries = computed(() => this.dictionariesState());
   readonly hasAccount = computed(() => Boolean(this.currentUserState()?.id));
 
   constructor() {
@@ -51,20 +48,6 @@ export class CurrentUserService {
     );
   }
 
-  loadDictionaries(options?: { readonly force?: boolean }): Observable<DictionariesDto> {
-    const cached = this.dictionariesState();
-
-    if (cached && !options?.force) {
-      return of(cached);
-    }
-
-    return this.adapter.getDictionaries().pipe(
-      tap((dictionaries) => {
-        this.dictionariesState.set(dictionaries);
-      }),
-    );
-  }
-
   save(payload: SaveCurrentUserInput): Observable<CurrentUserDto> {
     return this.adapter.saveCurrentUser(payload).pipe(
       tap((user) => {
@@ -75,7 +58,6 @@ export class CurrentUserService {
 
   clear(): void {
     this.currentUserState.set(null);
-    this.dictionariesState.set(null);
   }
 
   private get adapter(): CurrentUserApiAdapter {

@@ -18,7 +18,6 @@ export class EventDetailsStore {
   readonly event = signal<EventFullDto | null>(null);
   readonly isLoading = signal(true);
   readonly isSubscriptionPending = signal(false);
-  readonly joiningTeamId = signal<string | null>(null);
   readonly error = signal<string | null>(null);
   readonly actionError = signal<string | null>(null);
   readonly actionSuccess = signal<string | null>(null);
@@ -31,7 +30,6 @@ export class EventDetailsStore {
       this.error.set('Мероприятие не найдено');
       this.isLoading.set(false);
       this.isSubscriptionPending.set(false);
-      this.joiningTeamId.set(null);
       this.actionError.set(null);
       this.actionSuccess.set(null);
       this.requestedPositionIds.set([]);
@@ -41,7 +39,6 @@ export class EventDetailsStore {
 
     this.isLoading.set(true);
     this.isSubscriptionPending.set(false);
-    this.joiningTeamId.set(null);
     this.error.set(null);
     this.actionError.set(null);
     this.actionSuccess.set(null);
@@ -55,7 +52,6 @@ export class EventDetailsStore {
       error: (error: unknown) => {
         this.event.set(null);
         this.isSubscriptionPending.set(false);
-        this.joiningTeamId.set(null);
         this.error.set(
           getErrorMessage(error, 'Не удалось загрузить карточку мероприятия'),
         );
@@ -103,71 +99,47 @@ export class EventDetailsStore {
       });
   }
 
-  applyToTeam(teamId: string): void {
+  registerTeamApplication(request: TeamRequestDto): void {
     const event = this.event();
-    const team = event?.teams.find((item) => item.id === teamId);
-    const position = team ? this.getPrimaryOpenPosition(team) : null;
 
-    if (!event || !team || !position || this.joiningTeamId()) {
-      if (!position) {
-        this.actionError.set('В этой команде сейчас нет доступных ролей');
-      }
-
+    if (!event) {
       return;
     }
 
-    if (this.requestedPositionIds().includes(position.id)) {
-      this.actionSuccess.set('Запрос на эту роль уже отправлен');
-
-      return;
-    }
-
-    this.joiningTeamId.set(team.id);
+    this.requestedPositionIds.update((ids) =>
+      ids.includes(request.teamPosition.id)
+        ? ids
+        : [...ids, request.teamPosition.id],
+    );
+    this.event.update((current) =>
+      current && current.id === event.id
+        ? {
+            ...current,
+            teams: current.teams.map((team) =>
+              team.id === request.team.id
+                ? {
+                    ...team,
+                    positions: team.positions.map((position) =>
+                      position.id === request.teamPosition.id
+                        ? {
+                            ...position,
+                            requests: [
+                              this.toShortRequest(request),
+                              ...position.requests,
+                            ],
+                          }
+                        : position,
+                    ),
+                  }
+                : team,
+            ),
+          }
+        : current,
+    );
     this.actionError.set(null);
-    this.actionSuccess.set(null);
-
-    this.service.createTeamApplication(position.id).subscribe({
-      next: (request) => {
-        this.requestedPositionIds.update((ids) =>
-          ids.includes(position.id) ? ids : [...ids, position.id],
-        );
-        this.event.update((current) =>
-          current && current.id === event.id
-            ? {
-                ...current,
-                teams: current.teams.map((currentTeam) =>
-                  currentTeam.id === team.id
-                    ? {
-                        ...currentTeam,
-                        positions: currentTeam.positions.map((currentPosition) =>
-                          currentPosition.id === position.id
-                            ? {
-                                ...currentPosition,
-                                requests: [
-                                  this.toShortRequest(request),
-                                  ...currentPosition.requests,
-                                ],
-                              }
-                            : currentPosition,
-                        ),
-                      }
-                    : currentTeam,
-                ),
-              }
-            : current,
-        );
-        this.actionSuccess.set(
-          `Запрос отправлен в команду «${team.name}» на роль «${request.teamPosition.title}»`,
-        );
-        this.joiningTeamId.set(null);
-      },
-      error: (error: unknown) => {
-        this.actionError.set(
-          getErrorMessage(error, 'Не удалось отправить запрос в команду'),
-        );
-        this.joiningTeamId.set(null);
-      },
-    });
+    this.actionSuccess.set(
+      `Запрос отправлен в команду «${request.team.name}» на роль «${request.teamPosition.title}»`,
+    );
   }
 
   getPrimaryOpenPosition(team: TeamInEventDto): TeamPositionDto | null {

@@ -363,19 +363,16 @@
                       size="m"
                       [disabled]="
                         !primaryOpenPosition ||
-                        hasRequestedPosition(primaryOpenPosition.id) ||
-                        store.joiningTeamId() === team.id
+                        hasRequestedPosition(primaryOpenPosition.id)
                       "
-                      (click)="applyToTeam(team.id)"
+                      (click)="openApplicationDialog(team.id)"
                     >
                       {{
-                        store.joiningTeamId() === team.id
-                          ? 'Отправляем запрос...'
-                          : primaryOpenPosition
-                            ? hasRequestedPosition(primaryOpenPosition.id)
-                              ? 'Запрос отправлен'
-                              : 'Откликнуться на ' + primaryOpenPosition.title
-                            : 'Команда укомплектована'
+                        primaryOpenPosition
+                          ? hasRequestedPosition(primaryOpenPosition.id)
+                            ? 'Запрос отправлен'
+                            : 'Откликнуться на ' + primaryOpenPosition.title
+                          : 'Команда укомплектована'
                       }}
                     </button>
                   </div>
@@ -400,6 +397,21 @@
         [fixedEventId]="event.id"
         (dismissed)="teamCreationOpen.set(false)"
         (saved)="handleTeamCreated()"
+      />
+    </ng-template>
+
+    <ng-template
+      [tuiDialog]="!!teamRequestDialogTeamId()"
+      (tuiDialogChange)="!$event && closeApplicationDialog()"
+      [tuiDialogOptions]="{size: 'm'}"
+    >
+      <app-team-request-dialog
+        kind="application"
+        [teamName]="teamRequestDialogTeam()?.name ?? null"
+        [positionTitle]="teamRequestDialogPosition()?.title ?? null"
+        [teamPositionId]="teamRequestDialogPosition()?.id ?? null"
+        (dismissed)="closeApplicationDialog()"
+        (completed)="handleApplicationCreated($event)"
       />
     </ng-template>
   }

@@ -22,7 +22,6 @@ import { API_BASE_URL } from './api.config';
 import { type StudhackApiClient } from './api.client';
 import {
   type ApiResponse,
-  type BootstrapDto,
   type CityDto,
   type CreateTeamRequestInput,
   type DictionariesDto,
@@ -102,20 +101,6 @@ export class HttpStudhackApiClient
   private readonly baseUrl = inject(API_BASE_URL);
   private readonly auth = inject(AuthService);
   private dictionaries$?: Observable<DictionariesDto>;
-
-  getBootstrap(): Observable<BootstrapDto> {
-    return forkJoin({
-      dictionaries: this.getDictionaries(),
-      me: this.auth.token()
-        ? this.getMe().pipe(catchError(() => of(null)))
-        : of<MyProfileDto | null>(null),
-    }).pipe(
-      map(({ dictionaries, me }) => ({
-        me,
-        dictionaries,
-      })),
-    );
-  }
 
   getEvents(): Observable<readonly EventFullDto[]> {
     return this.get('/api/v1/events');
@@ -210,7 +195,13 @@ export class HttpStudhackApiClient
     );
   }
 
-  getDictionaries(): Observable<DictionariesDto> {
+  getDictionaries(
+    options?: { readonly force?: boolean },
+  ): Observable<DictionariesDto> {
+    if (options?.force) {
+      this.dictionaries$ = undefined;
+    }
+
     if (!this.dictionaries$) {
       this.dictionaries$ = this.get<DictionariesDto>('/api/v1/dictionaries').pipe(
         shareReplay({ bufferSize: 1, refCount: true }),
