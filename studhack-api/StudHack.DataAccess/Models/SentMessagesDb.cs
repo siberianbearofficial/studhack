@@ -14,4 +14,6 @@ public class SentMessageDb
 
     public Guid IdEventDate { get; set; }
     public Guid IdSubscription { get; set; }
+    public virtual EventDateDb EventDate { get; set; }
+    public virtual SubscriptionDb Subscription { get; set; }
 }

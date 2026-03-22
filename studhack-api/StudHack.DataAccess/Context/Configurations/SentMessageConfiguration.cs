@@ -8,6 +8,18 @@ public class SentMessageConfiguration : IEntityTypeConfiguration<SentMessageDb>
 {
     public void Configure(EntityTypeBuilder<SentMessageDb> builder)
     {
-        builder.HasKey(ed => new { ed.IdEventDate, ed.IdSubscription });
+        builder.HasKey(sm => new { sm.IdEventDate, sm.IdSubscription });
+
+        builder.HasOne(sm => sm.EventDate)
+            .WithMany(ed => ed.SentMessages)
+            .HasForeignKey(sm => sm.IdEventDate)
+            .OnDelete(DeleteBehavior.Cascade)
+            .IsRequired(true);
+
+        builder.HasOne(sm => sm.Subscription)
+            .WithMany(s => s.SentMessages)
+            .HasForeignKey(sm => sm.IdSubscription)
+            .OnDelete(DeleteBehavior.Cascade)
+            .IsRequired(true);
     }
 }

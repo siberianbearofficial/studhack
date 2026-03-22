@@ -30,4 +30,5 @@ public class EventDateDb
     public DateTime EndsAt { get; set; }
 
     public virtual EventDb Event { get; set; }
+    public virtual ICollection<SentMessageDb> SentMessages { get; set; } = [];
 }
