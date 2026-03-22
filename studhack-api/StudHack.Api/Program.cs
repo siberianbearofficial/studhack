@@ -5,6 +5,8 @@ using FillDatabase;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using Npgsql;
 using StudHack.Application.Services;
 using StudHack.DataAccess.Context;
 using StudHack.DataAccess.Repositories;
@@ -25,12 +27,37 @@ builder.Services.AddScoped<IRegionRepository, RegionRepository>();
 builder.Services.AddScoped<ISkillRepository, SkillRepository>();
 builder.Services.AddScoped<ISpecializationRepository, SpecializationRepository>();
 builder.Services.AddScoped<IUniversityRepository, UniversityRepository>();
+builder.Services.AddScoped<IEventRepository, EventRepository>();
+builder.Services.AddScoped<IEventDateRepository, EventDateRepository>();
+builder.Services.AddScoped<IHackatonRepository, HackatonRepository>();
+builder.Services.AddScoped<IMandatoryPositionRepository, MandatoryPositionRepository>();
+builder.Services.AddScoped<IAdditionalPositionDataRepository, AdditionalPositionDataRepository>();
+builder.Services.AddScoped<ITeamRepository, TeamRepository>();
+builder.Services.AddScoped<ITeamPositionRepository, TeamPositionRepository>();
+builder.Services.AddScoped<ITeamRequestRepository, TeamRequestRepository>();
+builder.Services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
 
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ITeamService, TeamService>();
+builder.Services.AddScoped<ITeamRequestService, TeamRequestService>();
+
+var authApiUrl =
+    builder.Configuration["Auth.ApiUrl"] ??
+    builder.Configuration["Auth:ApiUrl"];
+
+if (string.IsNullOrWhiteSpace(authApiUrl))
+{
+    throw new InvalidOperationException(
+        "Auth API url is missing. Configure 'Auth.ApiUrl' (or 'Auth:ApiUrl') in appsettings or environment variables.");
+}
+
+var authApiToken =
+    builder.Configuration["Auth.ApiToken"] ??
+    builder.Configuration["Auth:ApiToken"] ??
+    builder.Configuration["AUTH_API_TOKEN"];
 
 builder.Services.AddDatabaseFillers();
-builder.Services.AddAvaluxAuthApiClient(builder.Configuration["Auth.ApiUrl"] ?? "",
-    builder.Configuration["Auth.ApiToken"] ?? "");
+builder.Services.AddAvaluxAuthApiClient(authApiUrl, authApiToken ?? string.Empty);
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
@@ -42,8 +69,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
     {
         options.MetadataAddress =
-            $"{builder.Configuration["Auth.ApiUrl"]}/api/v1/.well-known/openid-configuration";
-        options.Authority = builder.Configuration["Auth.ApiUrl"];
+            $"{authApiUrl}/api/v1/.well-known/openid-configuration";
+        options.Authority = authApiUrl;
         options.RequireHttpsMetadata = false;
 
         options.TokenValidationParameters = new TokenValidationParameters
@@ -64,7 +91,33 @@ builder.Services.AddAuthorizationBuilder()
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization header using the Bearer scheme. Example: Bearer {token}",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Scheme = JwtBearerDefaults.AuthenticationScheme,
+        BearerFormat = "JWT"
+    });
+
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
 
 var app = builder.Build();
 
@@ -81,6 +134,7 @@ app.UseCors(options => options
     .AllowAnyMethod()
     .AllowAnyHeader());
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
