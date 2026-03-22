@@ -1,5 +1,6 @@
+import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { RouterLink, ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TuiButton, TuiLink, TuiTitle } from '@taiga-ui/core';
 import { TuiBadge, TuiChip, TuiProgress } from '@taiga-ui/kit';
 import { TuiCard, TuiHeader } from '@taiga-ui/layout';
@@ -10,14 +11,13 @@ import {
   getProfileGrade,
 } from '@shared';
 
-import { ProfileMetaCardComponent } from '../../components/profile-meta-card/profile-meta-card.component';
 import { PublicProfileStore } from '../../store/public-profile.store';
 
 @Component({
   selector: 'app-user-profile-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    ProfileMetaCardComponent,
+    DatePipe,
     RouterLink,
     TuiBadge,
     TuiButton,
@@ -38,17 +38,16 @@ export class UserProfilePageComponent {
 
   protected readonly primarySpecialization = computed(() => {
     const user = this.store.user();
-
     return user ? getPrimarySpecializationName(user) : '';
   });
+
   protected readonly highestExperience = computed(() => {
     const user = this.store.user();
-
     return user ? getProfileExperienceLabel(user) : '';
   });
+
   protected readonly grade = computed(() => {
     const user = this.store.user();
-
     return user ? getProfileGrade(user) : null;
   });
 

@@ -37,10 +37,23 @@
               tuiBadge
               [appearance]="user.available ? 'positive' : 'warning'"
             >
-              {{ user.available ? 'Открыт к предложениям' : 'Сейчас занят' }}
+              {{ user.available ? 'Готов к поиску команды' : 'Сейчас занят' }}
             </span>
           </div>
-          <p tuiSubtitle>@{{ user.uniqueName }}</p>
+
+          <div class="user-profile-page__identity">
+            <p tuiSubtitle>@{{ user.uniqueName }}</p>
+
+            @if (user.email) {
+              <a
+                tuiLink
+                [href]="'mailto:' + user.email"
+                class="user-profile-page__email"
+              >
+                {{ user.email }}
+              </a>
+            }
+          </div>
         </header>
 
         <div class="user-profile-page__grade">
@@ -69,12 +82,40 @@
         </button>
         <a
           tuiButton
-          routerLink="/profile"
+          routerLink="/teams/create"
           appearance="secondary"
           size="m"
         >
-          В мои команды
+          Собрать команду
         </a>
+      </div>
+    </section>
+
+    <section tuiCardLarge="compact" class="user-profile-page__section">
+      <header tuiHeader="h5">
+        <span tuiTitle>Профиль в цифрах</span>
+      </header>
+
+      <div class="user-profile-page__stats">
+        <div class="user-profile-page__stat-card">
+          <strong>{{ user.skills.length }}</strong>
+          <span>навыков</span>
+        </div>
+
+        <div class="user-profile-page__stat-card">
+          <strong>{{ user.teams.length }}</strong>
+          <span>команд</span>
+        </div>
+
+        <div class="user-profile-page__stat-card">
+          <strong>{{ user.portfolioLinks.length }}</strong>
+          <span>ссылок</span>
+        </div>
+
+        <div class="user-profile-page__stat-card">
+          <strong>{{ user.educations.length }}</strong>
+          <span>образований</span>
+        </div>
       </div>
     </section>
 
@@ -121,10 +162,62 @@
             </p>
           }
         </section>
+      </div>
+
+      <aside class="user-profile-page__aside">
+        <section tuiCardLarge="compact" class="user-profile-page__section">
+          <header tuiHeader="h6">
+            <span tuiTitle>Состояние</span>
+          </header>
+
+          <div class="user-profile-page__state">
+            <span
+              tuiBadge
+              [appearance]="user.available ? 'positive' : 'warning'"
+            >
+              {{ user.available ? 'Готов к поиску команды' : 'Сейчас занят' }}
+            </span>
+
+            @if (user.educations.length) {
+              <div class="user-profile-page__list">
+                @for (education of user.educations; track education.id) {
+                  <div class="user-profile-page__list-item">
+                    <strong>{{ education.university.name }}</strong>
+                    <span>
+                      {{ education.program || education.degree }}
+                      @if (education.yearStart || education.yearEnd) {
+                        · {{ education.yearStart || '...' }} -
+                        {{ education.yearEnd || '...' }}
+                      }
+                    </span>
+                  </div>
+                }
+              </div>
+            } @else {
+              <p class="user-profile-page__muted">
+                Данные об образовании пока не добавлены.
+              </p>
+            }
+
+            <div class="user-profile-page__dates">
+              @if (user.createdAt) {
+                <p class="user-profile-page__muted">
+                  Создан {{ user.createdAt | date: 'dd MMM yyyy' }}
+                </p>
+              }
+
+              @if (user.updatedAt) {
+                <p class="user-profile-page__muted">
+                  Обновлен {{ user.updatedAt | date: 'dd MMM yyyy, HH:mm' }}
+                </p>
+              }
+            </div>
+          </div>
+        </section>
 
         <section tuiCardLarge="compact" class="user-profile-page__section">
           <header tuiHeader="h5">
-            <span tuiTitle>Портфолио</span>
+            <span tuiTitle>Ссылки</span>
             <p tuiSubtitle>Ссылки на проекты и внешние материалы.</p>
           </header>
 
@@ -145,38 +238,6 @@
           } @else {
             <p class="user-profile-page__muted">
               Внешние ссылки пока не добавлены.
-            </p>
-          }
-        </section>
-      </div>
-
-      <aside class="user-profile-page__aside">
-        <app-profile-meta-card [profile]="user" />
-
-        <section tuiCardLarge="compact" class="user-profile-page__section">
-          <header tuiHeader="h6">
-            <span tuiTitle>Образование</span>
-            <p tuiSubtitle>Базовый контекст по университетам и программам.</p>
-          </header>
-
-          @if (user.educations.length) {
-            <div class="user-profile-page__list">
-              @for (education of user.educations; track education.id) {
-                <div class="user-profile-page__list-item">
-                  <strong>{{ education.university.name }}</strong>
-                  <span>
-                    {{ education.program || education.degree }}
-                    @if (education.yearStart || education.yearEnd) {
-                      · {{ education.yearStart || '...' }} -
-                      {{ education.yearEnd || '...' }}
-                    }
-                  </span>
-                </div>
-              }
-            </div>
-          } @else {
-            <p class="user-profile-page__muted">
-              Данные об образовании пока не добавлены.
             </p>
           }
         </section>

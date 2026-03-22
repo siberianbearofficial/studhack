@@ -5,12 +5,24 @@
 
 .user-profile-page__status,
 .user-profile-page__hero,
-.user-profile-page__section {
+.user-profile-page__section,
+.user-profile-page__state,
+.user-profile-page__identity,
+.user-profile-page__stats,
+.user-profile-page__stat-card,
+.user-profile-page__layout,
+.user-profile-page__main,
+.user-profile-page__aside,
+.user-profile-page__list,
+.user-profile-page__list-item,
+.user-profile-page__dates {
   display: grid;
   gap: 1rem;
 }
 
-.user-profile-page__back {
+.user-profile-page__back,
+.user-profile-page__external-link,
+.user-profile-page__email {
   inline-size: fit-content;
 }
 
@@ -26,6 +38,10 @@
   display: grid;
   gap: 1rem;
   align-items: center;
+}
+
+.user-profile-page__identity {
+  gap: 0.375rem;
 }
 
 .user-profile-page__grade {
@@ -52,17 +68,30 @@
   color: var(--tui-text-secondary);
 }
 
-.user-profile-page__layout,
-.user-profile-page__main,
-.user-profile-page__aside,
-.user-profile-page__list,
-.user-profile-page__list-item {
-  display: grid;
-  gap: 1rem;
+.user-profile-page__stats {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
 }
 
-.user-profile-page__external-link {
-  inline-size: fit-content;
+.user-profile-page__stat-card {
+  gap: 0.25rem;
+  padding: 1rem;
+  border: 1px solid var(--tui-border-normal);
+  border-radius: 1rem;
+  background: var(--tui-background-base);
+}
+
+.user-profile-page__stat-card strong {
+  font: var(--tui-font-heading-4);
+  line-height: 1;
+}
+
+.user-profile-page__stat-card span {
+  color: var(--tui-text-secondary);
+}
+
+.user-profile-page__dates {
+  gap: 0.375rem;
 }
 
 @media (min-width: 960px) {
@@ -73,5 +102,9 @@
 
   .user-profile-page__grade {
     justify-content: flex-end;
+  }
+
+  .user-profile-page__stats {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
