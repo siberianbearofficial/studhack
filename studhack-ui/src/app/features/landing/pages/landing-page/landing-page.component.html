@@ -173,6 +173,8 @@
             appearance="primary"
             size="l"
             type="button"
+            routerLink="/login"
+            [queryParams]="{ returnUrl: '/profile' }"
             class="btn-primary-custom"
           >
             Начать бесплатно

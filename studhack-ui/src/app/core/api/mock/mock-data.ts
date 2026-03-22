@@ -31,6 +31,22 @@ interface MockEducationEntity {
   yearEnd?: number | null;
 }
 
+export interface MockPendingCurrentUserEntity {
+  id: UUID | null;
+  uniqueName?: string | null;
+  displayName?: string | null;
+  birthDate?: string | null;
+  available: boolean;
+  cityOfResidenceId?: UUID | null;
+  email?: string | null;
+  biography?: string | null;
+  avatarUrl?: string | null;
+  specializationIds: UUID[];
+  skillIds: UUID[];
+  portfolioLinks: MockPortfolioLinkEntity[];
+  educations: MockEducationEntity[];
+}
+
 export interface MockUserEntity {
   id: UUID;
   uniqueName: string;
@@ -139,6 +155,8 @@ export interface MockTeamRequestEntity {
 
 export interface MockDatabaseState {
   meUserId: UUID;
+  currentUserId: UUID | null;
+  pendingCurrentUser: MockPendingCurrentUserEntity;
   dictionaries: DictionariesDto;
   users: MockUserEntity[];
   events: MockEventEntity[];
@@ -2063,8 +2081,41 @@ const teamRequests: MockTeamRequestEntity[] = [
   },
 ];
 
+const pendingCurrentUser: MockPendingCurrentUserEntity = {
+  id: null,
+  uniqueName: 'maria.oauth',
+  displayName: 'Мария Федорова',
+  available: true,
+  cityOfResidenceId: CITY_IDS.saintPetersburg,
+  email: 'maria.fedorova@example.com',
+  biography:
+    'Часть данных уже пришла из OAuth и бэка. Проверьте профиль и завершите регистрацию.',
+  avatarUrl: avatarUrl('maria-oauth'),
+  specializationIds: [SPECIALIZATION_IDS.frontend, SPECIALIZATION_IDS.design],
+  skillIds: [SKILL_IDS.react, SKILL_IDS.typescript, SKILL_IDS.figma],
+  portfolioLinks: [
+    {
+      id: 'portfolio-oauth-001',
+      url: 'https://github.com/maria-oauth',
+      description: 'GitHub профиль',
+    },
+  ],
+  educations: [
+    {
+      id: 'education-oauth-001',
+      universityId: UNIVERSITY_IDS.itmo,
+      degree: 'bachelor',
+      faculty: 'Факультет программной инженерии',
+      yearStart: 2023,
+      yearEnd: 2027,
+    },
+  ],
+};
+
 const seed: MockDatabaseState = {
   meUserId: USER_IDS.egor,
+  currentUserId: null,
+  pendingCurrentUser,
   dictionaries,
   users,
   events,

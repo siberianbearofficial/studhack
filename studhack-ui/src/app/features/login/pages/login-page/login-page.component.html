@@ -4,20 +4,39 @@
       <span tuiTitle>Войти</span>
     </header>
 
-    <div class="login-page__actions">
-      @for (provider of providers; track provider.id) {
-        <button
-          tuiButton
-          type="button"
-          size="l"
-          class="login-page__button"
-          [appearance]="provider.appearance"
-          [iconStart]="provider.icon"
-          (click)="login(provider.id)"
-        >
-          {{ provider.label }}
-        </button>
-      }
+    @if (error()) {
+      <section class="login-page__message login-page__message_error">
+        {{ error() }}
+      </section>
+    }
+
+    @if (isResolving()) {
+      <section class="login-page__status">
+        <tui-loader />
+        <span>Завершаем вход и проверяем аккаунт...</span>
+      </section>
+    } @else {
+      <div class="login-page__actions">
+        @for (provider of providers; track provider.id) {
+          <button
+            tuiButton
+            type="button"
+            size="l"
+            class="login-page__button"
+            [appearance]="provider.appearance"
+            [iconStart]="provider.icon"
+            (click)="login(provider.id)"
+          >
+            {{ provider.label }}
+          </button>
+        }
+      </div>
+    }
+
+    <div class="login-page__footer">
+      <button tuiButton appearance="flat" type="button" size="xs" (click)="goHome()">
+        Вернуться на главную
+      </button>
     </div>
   </section>
 </section>

@@ -7,27 +7,13 @@ import {
   signal,
 } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
-import {
-  TuiButton,
-  TuiDataList,
-  TuiDropdown,
-} from '@taiga-ui/core';
-import {
-  TuiAvatar,
-  TuiBadgeNotification,
-  TuiBadgedContent,
-  TuiProgressBar,
-  TuiProgressSegmented,
-} from '@taiga-ui/kit';
-import { TuiCard } from '@taiga-ui/layout';
-import { catchError, forkJoin, of } from 'rxjs';
+import { TuiButton, TuiDataList, TuiDropdown } from '@taiga-ui/core';
+import { TuiAvatar, TuiBadgeNotification, TuiBadgedContent, TuiProgressBar, TuiProgressSegmented } from '@taiga-ui/kit';
+import { catchError, finalize, of, switchMap, tap } from 'rxjs';
 
-import {
-  injectStudhackApiClient,
-  type MyProfileDto,
-  type TeamRequestsFeedDto,
-} from '@core/api';
+import { injectStudhackApiClient, type MyProfileDto } from '@core/api';
 import { AuthService } from '@core/auth';
+import { CurrentUserService, type CurrentUserDto } from '@core/current-user';
 import { getProfileGrade } from '@shared';
 
 import { AppLogoComponent } from '../app-logo/app-logo.component';
@@ -49,7 +35,6 @@ interface HeaderNavItem {
     TuiBadgeNotification,
     TuiBadgedContent,
     TuiButton,
-    TuiCard,
     TuiDataList,
     TuiDropdown,
     TuiProgressBar,
@@ -61,17 +46,13 @@ interface HeaderNavItem {
 export class AppShellHeaderComponent {
   private readonly api = injectStudhackApiClient();
   private readonly auth = inject(AuthService);
+  private readonly currentUserService = inject(CurrentUserService);
   private readonly router = inject(Router);
 
-  protected readonly navItems: readonly HeaderNavItem[] = [
+  private readonly publicNavItems: readonly HeaderNavItem[] = [
     {
       label: 'Поиск',
       path: '/profiles',
-      exact: true,
-    },
-    {
-      label: 'Мой профиль',
-      path: '/profile',
       exact: true,
     },
     {
@@ -86,25 +67,35 @@ export class AppShellHeaderComponent {
     },
   ];
   protected readonly isAuthenticated = this.auth.isAuthenticated;
+  protected readonly currentUser = this.currentUserService.currentUser;
+  protected readonly hasAccount = this.currentUserService.hasAccount;
   protected readonly menuOpen = signal(false);
-  protected readonly me = signal<MyProfileDto | null>(null);
-  private readonly teamRequests = signal<TeamRequestsFeedDto | null>(null);
+  protected readonly isCurrentUserLoading = signal(false);
+  protected readonly profile = signal<MyProfileDto | null>(null);
+  protected readonly navItems = computed<readonly HeaderNavItem[]>(() => [
+    ...this.publicNavItems,
+    ...(this.hasAccount()
+      ? [
+          {
+            label: 'Мой профиль',
+            path: '/profile',
+            exact: true,
+          } satisfies HeaderNavItem,
+        ]
+      : []),
+  ]);
   protected readonly profileGrade = computed(() => {
-    const me = this.me();
+    const profile = this.profile();
 
-    return me ? getProfileGrade(me) : null;
+    return profile ? getProfileGrade(profile) : null;
   });
-  protected readonly avatarInitials = computed(() => this.getInitials(this.me()));
   protected readonly notificationCount = computed(() => {
-    const feed = this.teamRequests();
+    return 4;
+  });
+  protected readonly progressPercent = computed(() => {
+    const grade = this.profileGrade();
 
-    if (!feed) {
-      return 0;
-    }
-
-    return [...feed.inbox, ...feed.managedTeams].filter(
-      (request) => request.status === 'pending',
-    ).length;
+    return grade ? Math.round((grade.value / grade.max) * 100) : 0;
   });
   protected readonly notificationBadge = computed(() => {
     const count = this.notificationCount();
@@ -115,26 +106,35 @@ export class AppShellHeaderComponent {
 
     return count > 99 ? '99+' : String(count);
   });
+  protected readonly avatarInitials = computed(() =>
+    this.getInitials(this.currentUser()),
+  );
 
   constructor() {
     effect((onCleanup) => {
       if (!this.isAuthenticated()) {
-        this.me.set(null);
-        this.teamRequests.set(null);
         this.menuOpen.set(false);
+        this.isCurrentUserLoading.set(false);
+        this.profile.set(null);
 
         return;
       }
 
-      const subscription = forkJoin({
-        me: this.api.getMe().pipe(catchError(() => of(null))),
-        teamRequests: this.api
-          .getTeamRequests()
-          .pipe(catchError(() => of<TeamRequestsFeedDto | null>(null))),
-      }).subscribe(({ me, teamRequests }) => {
-        this.me.set(me);
-        this.teamRequests.set(teamRequests);
-      });
+      this.isCurrentUserLoading.set(true);
+
+      const subscription = this.currentUserService
+        .load()
+        .pipe(
+          switchMap((user) => (user.id ? this.api.getMe() : of(null))),
+          catchError(() => of(null)),
+          tap((profile) => {
+            this.profile.set(profile);
+          }),
+          finalize(() => {
+            this.isCurrentUserLoading.set(false);
+          }),
+        )
+        .subscribe();
 
       onCleanup(() => subscription.unsubscribe());
     });
@@ -154,13 +154,25 @@ export class AppShellHeaderComponent {
     void this.router.navigateByUrl('/profile');
   }
 
+  protected openRegistration(): void {
+    this.closeMenu();
+    void this.router.navigate(['/register'], {
+      queryParams: {
+        returnUrl: '/profile',
+      },
+    });
+  }
+
   protected logout(): void {
     this.closeMenu();
+    this.currentUserService.clear();
     this.auth.logout();
     void this.router.navigateByUrl('/');
   }
 
-  private getInitials(profile: MyProfileDto | null): string {
+  private getInitials(
+    profile: Pick<CurrentUserDto, 'displayName' | 'uniqueName'> | null,
+  ): string {
     const source = profile?.displayName?.trim() || profile?.uniqueName?.trim();
 
     if (!source) {
