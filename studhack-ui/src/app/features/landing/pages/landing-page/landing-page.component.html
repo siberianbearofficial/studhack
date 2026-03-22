@@ -68,83 +68,47 @@
     </section>
 
     <section class="landing__grid">
-      <article tuiCardLarge class="landing__panel">
-        <header tuiHeader="h5">
-          <span tuiTitle>Следующее событие</span>
-          <p tuiSubtitle>Отсюда удобно прыгать в проработку event screens.</p>
-        </header>
-
-        @if (overview.nextEvent; as nextEvent) {
-          <div class="landing__event">
-            <div class="landing__event-main">
-              <strong>{{ nextEvent.name }}</strong>
-              <span>
-                {{ nextEvent.startsAt | date: 'd MMM y, HH:mm' }} -
-                {{ nextEvent.endsAt | date: 'd MMM y, HH:mm' }}
-              </span>
-            </div>
-
-            <div class="landing__event-meta">
-              <span tuiBadge appearance="warning">{{ nextEvent.type }}</span>
-              <span tuiBadge appearance="neutral">{{
-                nextEvent.location.format
-              }}</span>
-              <span tuiBadge appearance="primary">
-                {{ nextEvent.teams.length }} команд
-              </span>
-            </div>
-
-            <p>
-              {{
-                nextEvent.description ||
-                  'Описание будет детализировано отдельной задачей.'
-              }}
-            </p>
-          </div>
-        } @else {
-          <p class="landing__muted">
-            В моках пока нет активного события, но сам роут и структура уже
-            готовы.
-          </p>
-        }
-      </article>
-
-      <article tuiCardLarge class="landing__panel">
-        <header tuiHeader="h5">
-          <span tuiTitle>Что уже доступно</span>
-          <p tuiSubtitle>
-            Эти страницы можно детализировать независимо, не трогая базовый
-            routing.
-          </p>
-        </header>
-
-        <div class="landing__checklist">
-          <div class="landing__checklist-item">
-            <strong>Профили</strong>
-            <span>Список пользователей с фильтрами и карточками.</span>
-          </div>
-          <div class="landing__checklist-item">
-            <strong>События</strong>
-            <span>Карточки хакатонов и базовый контент по командам.</span>
-          </div>
-          <div class="landing__checklist-item">
-            <strong>Мой профиль</strong>
-            <span>Редактирование ключевых полей текущего пользователя.</span>
-          </div>
-          <div class="landing__checklist-item">
-            <strong>Создание команды</strong>
-            <span>Рабочий флоу с выбором события и позициями команды.</span>
-          </div>
+  @if (overview.nextEvent; as nextEvent) {
+    <article tuiCardLarge class="landing__panel">
+      <div class="landing__event">
+        <div class="landing__event-main">
+          <strong>{{ nextEvent.name }}</strong>
+          <span>
+            {{ nextEvent.startsAt | date: 'd MMM y, HH:mm' }} -
+            {{ nextEvent.endsAt | date: 'd MMM y, HH:mm' }}
+          </span>
         </div>
-      </article>
-    </section>
+
+        <div class="landing__event-meta">
+          <span tuiBadge appearance="warning">{{ nextEvent.type }}</span>
+          <span tuiBadge appearance="neutral">
+            {{ nextEvent.location.format }}
+          </span>
+          <span tuiBadge appearance="primary">
+            {{ nextEvent.teams.length }} команд
+          </span>
+        </div>
+
+        <p>
+          {{
+            nextEvent.description ||
+            'Описание будет детализировано отдельной задачей.'
+          }}
+        </p>
+      </div>
+    </article>
+  } @else {
+    <p class="landing__muted">
+      В моках пока нет активного события, но сам роут и структура уже готовы.
+    </p>
+  }
+</section>
+
+
   } @else if (store.isLoading()) {
     <section tuiCardLarge class="landing__status">
       <header tuiHeader="h5">
         <span tuiTitle>Загружаем стартовый контент</span>
-        <p tuiSubtitle>
-          Подтягиваем профили, события и команды из текущего API.
-        </p>
       </header>
     </section>
   } @else {
@@ -178,37 +142,50 @@
 
   <div class="features__grid">
     <div class="feature-card">
-      <img src="assets/icon1.png" alt="" />
+      <div class="feature-card__image">
+      <img src="assets\brand\Landing Card 1.png" alt="" />
+      </div>
       <h3>Поиск по навыкам</h3>
       <p>Находите участников по ролям</p>
     </div>
 
     <div class="feature-card">
-      <img src="assets/icon2.png" alt="" />
+      <div class="feature-card__image">
+      <img src="assets\brand\Landing Card 2.png" alt="" />
+      </div>
+
       <h3>Умный мэтчинг</h3>
       <p>Сервис подбирает подходящих людей</p>
     </div>
 
     <div class="feature-card">
-      <img src="assets/icon3.png" alt="" />
+      <div class="feature-card__image">
+      <img src="assets\brand\Landing Card 3.png" alt="" />
+      </div>
       <h3>Сбор команды</h3>
       <p>Формируйте команды быстро и удобно</p>
     </div>
 
     <div class="feature-card">
-      <img src="assets/icon4.png" alt="" />
+      <div class="feature-card__image">
+      <img src="assets\brand\Landing Card 4.png" alt="" />
+      </div>
       <h3>Под хакатоны</h3>
       <p>Используйте сервис под реальные мероприятия</p>
     </div>
 
     <div class="feature-card">
-      <img src="assets/icon5.png" alt="" />
+      <div class="feature-card__image">
+      <img src="assets\brand\Landing Card 5.png" alt="" />
+      </div>
       <h3>Без лишнего стресса</h3>
       <p>Весь процесс в одном месте</p>
     </div>
 
     <div class="feature-card">
-      <img src="assets/icon6.png" alt="" />
+      <div class="feature-card__image">
+      <img src="assets\brand\Landing Card 6.png" alt="" />
+      </div>
       <h3>Быстрый старт</h3>
       <p>Начните за пару кликов</p>
     </div>
