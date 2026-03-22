@@ -1,10 +1,9 @@
 import { computed, effect, inject, Injectable, signal } from '@angular/core';
-import { catchError, forkJoin, of } from 'rxjs';
+import { catchError, of } from 'rxjs';
 
 import {
   injectStudhackApiClient,
   type MyProfileDto,
-  type TeamRequestsFeedDto,
   type UpsertMyProfileRequest,
 } from '@core/api';
 import { AuthService } from '@core/auth';
@@ -21,7 +20,6 @@ export class MyProfileStore {
   private readonly publicDataStore = inject(PublicDataStore);
 
   readonly me = signal<MyProfileDto | null>(null);
-  readonly teamRequests = signal<TeamRequestsFeedDto | null>(null);
   readonly isLoading = signal(false);
   readonly isSaving = signal(false);
   readonly error = signal<string | null>(null);
@@ -50,13 +48,9 @@ export class MyProfileStore {
     this.isLoading.set(true);
     this.error.set(null);
 
-    forkJoin({
-      me: this.api.getMe().pipe(catchError(() => of(null))),
-      teamRequests: this.api.getTeamRequests().pipe(catchError(() => of(null))),
-    }).subscribe({
-      next: ({ me, teamRequests }) => {
+    this.api.getMe().pipe(catchError(() => of(null))).subscribe({
+      next: (me) => {
         this.me.set(me);
-        this.teamRequests.set(teamRequests);
 
         if (me) {
           this.publicDataStore.upsertUser(me);
@@ -96,7 +90,6 @@ export class MyProfileStore {
 
   clear(): void {
     this.me.set(null);
-    this.teamRequests.set(null);
     this.isLoading.set(false);
     this.isSaving.set(false);
     this.error.set(null);

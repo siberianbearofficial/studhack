@@ -4,6 +4,7 @@ import {
   DictionariesStore,
   MyProfileStore,
   PublicDataStore,
+  TeamRequestsStore,
 } from '@core/data';
 import {
   type MyProfileDto,
@@ -15,15 +16,17 @@ export class ProfileStore {
   private readonly dictionariesStore = inject(DictionariesStore);
   private readonly myProfileStore = inject(MyProfileStore);
   private readonly publicDataStore = inject(PublicDataStore);
+  private readonly teamRequestsStore = inject(TeamRequestsStore);
 
   readonly events = computed(() => this.publicDataStore.events());
   readonly users = computed(() => this.publicDataStore.users());
-  readonly teamRequests = computed(() => this.myProfileStore.teamRequests());
+  readonly teamRequests = computed(() => this.teamRequestsStore.feed());
   readonly isLoading = computed(
     () =>
       this.dictionariesStore.isLoading() ||
       this.myProfileStore.isLoading() ||
-      this.publicDataStore.isLoading(),
+      this.publicDataStore.isLoading() ||
+      this.teamRequestsStore.isLoading(),
   );
   readonly isSaving = computed(() => this.myProfileStore.isSaving());
   readonly error = computed(
@@ -44,6 +47,7 @@ export class ProfileStore {
     this.dictionariesStore.load();
     this.publicDataStore.load();
     this.myProfileStore.load();
+    this.teamRequestsStore.load();
   }
 
   save(

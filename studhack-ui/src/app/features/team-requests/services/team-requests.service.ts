@@ -3,8 +3,10 @@ import { forkJoin, map, Observable } from 'rxjs';
 
 import {
   injectStudhackApiClient,
+  type TeamRequestsFeedDto,
   type TeamFullDto,
   type TeamRequestDto,
+  type TeamRequestStatus,
 } from '@core/api';
 
 export interface InviteTargetOption {
@@ -20,6 +22,10 @@ export interface InviteTargetOption {
 })
 export class TeamRequestsService {
   private readonly api = injectStudhackApiClient();
+
+  getFeed(): Observable<TeamRequestsFeedDto> {
+    return this.api.getTeamRequests();
+  }
 
   createApplication(
     teamPositionId: string,
@@ -43,6 +49,13 @@ export class TeamRequestsService {
       invitedUserId,
       message: this.toNullableMessage(message),
     });
+  }
+
+  resolveRequest(
+    requestId: string,
+    status: Extract<TeamRequestStatus, 'approved' | 'rejected' | 'cancelled'>,
+  ): Observable<TeamRequestDto> {
+    return this.api.resolveTeamRequest(requestId, { status });
   }
 
   getInviteTargets(

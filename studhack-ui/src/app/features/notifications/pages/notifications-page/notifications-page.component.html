@@ -1,27 +1,191 @@
 <section class="notifications-page">
   <section tuiCardLarge class="notifications-page__hero">
-    <h2>Приглашения в команды</h2>
-    @for (teamRequest of invitations(); track teamRequest.id) {
-      <div tuiCardLarge tuiAppearance="outline-grayscale" class="team-request-card">
-        <div class="team-request-info-container">
-          <h4>{{ teamRequest.team.name }}</h4>
-          <p>{{ teamRequest.message }}</p>
-          <tui-badge appearance="info" size="m">{{ teamRequest.teamPosition.specialization.name }}</tui-badge>
-        </div>
-        <button tuiIconButton iconStart="@tui.check" appearance="positive" size="m"></button>
-        <button tuiIconButton iconStart="@tui.x" appearance="negative" size="m"></button>
+    <div class="notifications-page__heading">
+      <h1>Уведомления</h1>
+      <p>Все активные запросы в команды собраны в одном месте.</p>
+    </div>
+
+    @if (store.isLoading()) {
+      <div class="notifications-page__state">
+        <tui-loader></tui-loader>
+        <p>Загружаем актуальные team requests...</p>
       </div>
-    }
-    <h2>Заявки в команды</h2>
-    @for (teamRequest of applications(); track teamRequest.id) {
-      <div tuiCardLarge tuiAppearance="outline-grayscale" class="team-request-card">
-        <div class="team-request-info-container">
-          <h4>{{ teamRequest.team.name }}</h4>
-          <p>{{ teamRequest.message }}</p>
-          <tui-badge appearance="info" size="m">{{ teamRequest.teamPosition.specialization.name }}</tui-badge>
+    } @else {
+      @if (store.error(); as error) {
+        <p class="notifications-page__error">{{ error }}</p>
+      }
+
+      @if (!hasPendingRequests()) {
+        <div class="notifications-page__state notifications-page__state_empty">
+          <p>Активных запросов сейчас нет.</p>
         </div>
-        <button tuiIconButton iconStart="@tui.ban" appearance="negative" size="m"></button>
-      </div>
+      }
+
+      <section class="notifications-page__section">
+        <div class="notifications-page__section-header">
+          <h2>Входящие приглашения</h2>
+          <tui-badge appearance="neutral" size="m">{{ incomingInvitations().length }}</tui-badge>
+        </div>
+        @if (incomingInvitations().length) {
+          @for (teamRequest of incomingInvitations(); track teamRequest.id) {
+            <article tuiCardLarge tuiAppearance="outline-grayscale" class="team-request-card">
+              <div class="team-request-info-container">
+                <h3>{{ getRequestHeadline(teamRequest) }}</h3>
+                <p>{{ getIncomingInvitationDescription() }}</p>
+                <p class="team-request-card__message">{{ getRequestMessage(teamRequest) }}</p>
+                <tui-badge appearance="info" size="m">
+                  {{ teamRequest.teamPosition.specialization.name }}
+                </tui-badge>
+              </div>
+
+              <div class="team-request-card__actions">
+                <button
+                  tuiButton
+                  appearance="positive"
+                  size="s"
+                  type="button"
+                  [disabled]="isResolving(teamRequest.id)"
+                  (click)="approve(teamRequest.id)"
+                >
+                  Принять
+                </button>
+                <button
+                  tuiButton
+                  appearance="secondary"
+                  size="s"
+                  type="button"
+                  [disabled]="isResolving(teamRequest.id)"
+                  (click)="reject(teamRequest.id)"
+                >
+                  Отклонить
+                </button>
+              </div>
+            </article>
+          }
+        } @else {
+          <p class="notifications-page__empty-copy">Новых приглашений пока нет.</p>
+        }
+      </section>
+
+      <section class="notifications-page__section">
+        <div class="notifications-page__section-header">
+          <h2>Заявки в мои команды</h2>
+          <tui-badge appearance="warning" size="m">{{ managedApplications().length }}</tui-badge>
+        </div>
+        @if (managedApplications().length) {
+          @for (teamRequest of managedApplications(); track teamRequest.id) {
+            <article tuiCardLarge tuiAppearance="outline-grayscale" class="team-request-card">
+              <div class="team-request-info-container">
+                <h3>{{ getRequestHeadline(teamRequest) }}</h3>
+                <p>{{ getManagedApplicationDescription(teamRequest) }}</p>
+                <p class="team-request-card__message">{{ getRequestMessage(teamRequest) }}</p>
+                <tui-badge appearance="info" size="m">
+                  {{ teamRequest.teamPosition.specialization.name }}
+                </tui-badge>
+              </div>
+
+              <div class="team-request-card__actions">
+                <button
+                  tuiButton
+                  appearance="positive"
+                  size="s"
+                  type="button"
+                  [disabled]="isResolving(teamRequest.id)"
+                  (click)="approve(teamRequest.id)"
+                >
+                  Одобрить
+                </button>
+                <button
+                  tuiButton
+                  appearance="secondary"
+                  size="s"
+                  type="button"
+                  [disabled]="isResolving(teamRequest.id)"
+                  (click)="reject(teamRequest.id)"
+                >
+                  Отклонить
+                </button>
+              </div>
+            </article>
+          }
+        } @else {
+          <p class="notifications-page__empty-copy">
+            Сейчас нет входящих заявок в команды под вашим управлением.
+          </p>
+        }
+      </section>
+
+      <section class="notifications-page__section">
+        <div class="notifications-page__section-header">
+          <h2>Мои заявки</h2>
+          <tui-badge appearance="primary" size="m">{{ outgoingApplications().length }}</tui-badge>
+        </div>
+        @if (outgoingApplications().length) {
+          @for (teamRequest of outgoingApplications(); track teamRequest.id) {
+            <article tuiCardLarge tuiAppearance="outline-grayscale" class="team-request-card">
+              <div class="team-request-info-container">
+                <h3>{{ getRequestHeadline(teamRequest) }}</h3>
+                <p>{{ getOutgoingApplicationDescription() }}</p>
+                <p class="team-request-card__message">{{ getRequestMessage(teamRequest) }}</p>
+                <tui-badge appearance="info" size="m">
+                  {{ teamRequest.teamPosition.specialization.name }}
+                </tui-badge>
+              </div>
+
+              <div class="team-request-card__actions">
+                <button
+                  tuiButton
+                  appearance="secondary"
+                  size="s"
+                  type="button"
+                  [disabled]="isResolving(teamRequest.id)"
+                  (click)="cancel(teamRequest.id)"
+                >
+                  Отменить
+                </button>
+              </div>
+            </article>
+          }
+        } @else {
+          <p class="notifications-page__empty-copy">Активных исходящих заявок нет.</p>
+        }
+      </section>
+
+      <section class="notifications-page__section">
+        <div class="notifications-page__section-header">
+          <h2>Отправленные приглашения</h2>
+          <tui-badge appearance="primary" size="m">{{ sentInvitations().length }}</tui-badge>
+        </div>
+        @if (sentInvitations().length) {
+          @for (teamRequest of sentInvitations(); track teamRequest.id) {
+            <article tuiCardLarge tuiAppearance="outline-grayscale" class="team-request-card">
+              <div class="team-request-info-container">
+                <h3>{{ getRequestHeadline(teamRequest) }}</h3>
+                <p>{{ getSentInvitationDescription(teamRequest) }}</p>
+                <p class="team-request-card__message">{{ getRequestMessage(teamRequest) }}</p>
+                <tui-badge appearance="info" size="m">
+                  {{ teamRequest.teamPosition.specialization.name }}
+                </tui-badge>
+              </div>
+
+              <div class="team-request-card__actions">
+                <button
+                  tuiButton
+                  appearance="secondary"
+                  size="s"
+                  type="button"
+                  [disabled]="isResolving(teamRequest.id)"
+                  (click)="cancel(teamRequest.id)"
+                >
+                  Отозвать
+                </button>
+              </div>
+            </article>
+          }
+        } @else {
+          <p class="notifications-page__empty-copy">Активных приглашений от вас нет.</p>
+        }
+      </section>
     }
   </section>
 </section>
