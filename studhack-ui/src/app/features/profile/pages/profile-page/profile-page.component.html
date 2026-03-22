@@ -485,7 +485,8 @@
 
                 <tui-data-list-wrapper
                   *tuiTextfieldDropdown
-                  [items]="store.cities() | tuiFilterByInput"
+                  [items]="store.cities() | tuiFilterByInput | take:100"
+                  new
                 />
               </tui-textfield>
             </label>
