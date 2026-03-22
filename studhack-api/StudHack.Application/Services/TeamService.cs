@@ -49,8 +49,7 @@ public class TeamService(
         var currentUser = await userRepository.GetUserByAuthAsync(authId, ct)
             ?? throw new UnauthorizedAccessException("User is not registered");
 
-        // Verify hackaton exists
-        _ = await hackatonRepository.GetByIdAsync(request.HackatonId, ct)
+        var hackaton = (await hackatonRepository.GetAllAsync(ct)).FirstOrDefault(x => x.EventId == request.EventId)
             ?? throw new KeyNotFoundException("Hackaton not found");
 
         var captainIdForUpdate = request.CaptainUserId ?? currentUser.Id;
@@ -64,7 +63,7 @@ public class TeamService(
 
             var updated = new Team(
                 existingTeam.Id,
-                request.HackatonId,
+                hackaton.Id,
                 captainIdForUpdate,
                 existingTeam.CreatorId,
                 request.Name,
@@ -81,7 +80,7 @@ public class TeamService(
 
         var createdTeam = new Team(
             Guid.NewGuid(),
-            request.HackatonId,
+            hackaton.Id,
             currentUser.Id,
             currentUser.Id,
             request.Name,

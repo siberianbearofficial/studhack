@@ -3,7 +3,7 @@ namespace StudHack.Domain.Models;
 public class UpsertTeamModel
 {
     public Guid? Id { get; init; }
-    public Guid HackatonId { get; init; }
+    public Guid EventId { get; init; }
     public required string Name { get; init; }
     public string? Description { get; init; }
     public Guid? CaptainUserId { get; init; }

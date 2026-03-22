@@ -45,6 +45,33 @@ public static class TeamContractsOutputConverter
         };
     }
 
+    public static TeamInEventDto ToInEventDto(this TeamFullModel model)
+    {
+        var mandatoryPositions = model.Positions.Where(x => x.Position.Type == TeamPositionType.Mandatory).ToList();
+        var mandatoryFilled = mandatoryPositions.Count(x => x.Position.UserId.HasValue || x.Position.FilledByExternal);
+
+        return new TeamInEventDto
+        {
+            Id = model.Team.Id,
+            Name = model.Team.Name,
+            Description = model.Team.Description,
+            Creator = model.Creator.ToUserShortDto(),
+            Captain = model.Captain?.ToUserShortDto(),
+            MemberCount = model.Members.Select(x => x.User.Id).Distinct().Count(),
+            OpenPositionsCount = model.Positions.Count(x => !x.Position.UserId.HasValue && !x.Position.FilledByExternal),
+            MandatoryCoverage = new MandatoryCoverageDto
+            {
+                Total = mandatoryPositions.Count,
+                Filled = mandatoryFilled,
+                AllFilled = mandatoryPositions.Count == mandatoryFilled,
+            },
+            Members = model.Members.Select(ToDto).ToList(),
+            Positions = model.Positions.Select(ToDto).ToList(),
+            CreatedAt = model.Team.CreatedAt,
+            UpdatedAt = model.Team.UpdatedAt ?? model.Team.CreatedAt,
+        };
+    }
+
     public static TeamRequestDto ToDto(this TeamRequestFullModel model)
     {
         return new TeamRequestDto
@@ -86,7 +113,7 @@ public static class TeamContractsOutputConverter
         return new TeamShortDto
         {
             Id = team.Id,
-            HackatonId = team.HackatonId,
+            EventId = team.HackatonId,
             Name = team.Name,
             Description = team.Description,
             Captain = null,

@@ -11,7 +11,7 @@ public static class TeamContractsInputConverter
         return new UpsertTeamModel
         {
             Id = NormalizeNullableGuid(dto.Id),
-            HackatonId = dto.HackatonId,
+            EventId = dto.EventId,
             Name = dto.Name,
             Description = dto.Description,
             CaptainUserId = NormalizeNullableGuid(dto.CaptainUserId),

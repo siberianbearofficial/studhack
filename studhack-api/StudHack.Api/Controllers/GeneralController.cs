@@ -6,6 +6,7 @@ using StudHack.Api.Dtos;
 using StudHack.Api.Extensions;
 using StudHack.DataAccess.Context;
 using StudHack.Domain.Abstractions.Repositories;
+using StudHack.Domain.Abstractions;
 using StudHack.Domain.Interfaces.Repositories;
 
 namespace StudHack.Api.Controllers;
@@ -18,8 +19,9 @@ public class GeneralController(
     IRegionRepository regionRepository,
     ISpecializationRepository specializationRepository,
     IUniversityRepository universityRepository,
+    IUserService userService,
     StudHackDbContext dbContext,
-    IEnumerable<IFiller> fillers) : ControllerBase
+    IEnumerable<IFiller> fillers) : ControllerBase 
 {
     [HttpGet("dictionaries")]
     [AllowAnonymous]
