@@ -55,6 +55,7 @@ import {
   type SaveCurrentUserInput,
 } from '@core/current-user';
 import { getErrorMessage } from '@shared';
+import { TakePipe } from '@shared/pipes/take.pipe';
 
 type BirthDateControlValue = TuiDay | null;
 type CityOption = CityDto;
@@ -119,6 +120,7 @@ const EDUCATION_DEGREE_OPTIONS: readonly EducationDegreeOption[] = [
     TuiTitle,
     TuiSurface,
     TuiHint,
+    TakePipe,
   ],
   templateUrl: './register-page.component.html',
   styleUrl: './register-page.component.less',
@@ -140,18 +142,15 @@ export class RegisterPageComponent {
   protected readonly cities = computed(() => this.dictionaries()?.cities ?? []);
   protected readonly universities = computed(() => this.dictionaries()?.universities ?? []);
   protected readonly skills = computed(() => this.dictionaries()?.skills ?? []);
-  protected readonly specializations = computed(
-    () => this.dictionaries()?.specializations ?? [],
-  );
+  protected readonly specializations = computed(() => this.dictionaries()?.specializations ?? []);
   protected readonly stringifyCity = (item: CityControlValue): string =>
     typeof item === 'string' ? item : (item?.name ?? '');
   protected readonly stringifySkill = (item: SkillControlValue): string =>
     typeof item === 'string' ? item : (item?.name ?? '');
   protected readonly stringifyUniversity = (item: UniversityControlValue): string =>
     typeof item === 'string' ? item : (item?.name ?? '');
-  protected readonly stringifyEducationDegree = (
-    item: EducationDegreeControlValue,
-  ): string => (typeof item === 'string' ? item : (item?.label ?? ''));
+  protected readonly stringifyEducationDegree = (item: EducationDegreeControlValue): string =>
+    typeof item === 'string' ? item : (item?.label ?? '');
   protected readonly matchCity = (left: CityControlValue, right: CityControlValue): boolean =>
     this.getCityId(left) === this.getCityId(right);
   protected readonly matchSkill = (left: SkillControlValue, right: SkillControlValue): boolean =>
@@ -164,9 +163,7 @@ export class RegisterPageComponent {
     left: EducationDegreeControlValue,
     right: EducationDegreeControlValue,
   ): boolean => this.getEducationDegreeValue(left) === this.getEducationDegreeValue(right);
-  protected readonly avatarInitials = computed(() =>
-    this.getInitials(this.currentUser()),
-  );
+  protected readonly avatarInitials = computed(() => this.getInitials(this.currentUser()));
   protected readonly form = this.formBuilder.nonNullable.group({
     uniqueName: ['', Validators.required],
     displayName: ['', Validators.required],
@@ -279,7 +276,9 @@ export class RegisterPageComponent {
           yearEnd: this.toNullableNumber(education.yearEnd),
         }))
         .filter(
-          (education): education is {
+          (
+            education,
+          ): education is {
             readonly id: string;
             readonly universityId: string;
             readonly degree: EducationDegree;
@@ -314,9 +313,7 @@ export class RegisterPageComponent {
           void this.router.navigateByUrl('/profile');
         },
         error: (error: unknown) => {
-          this.error.set(
-            getErrorMessage(error, 'Не удалось завершить регистрацию'),
-          );
+          this.error.set(getErrorMessage(error, 'Не удалось завершить регистрацию'));
         },
       });
   }
@@ -331,9 +328,7 @@ export class RegisterPageComponent {
     }).subscribe({
       next: ({ user, dictionaries }) => {
         if (user.id) {
-          void this.router.navigateByUrl(
-            this.resolveRequestedReturnUrl('/profile'),
-          );
+          void this.router.navigateByUrl(this.resolveRequestedReturnUrl('/profile'));
           return;
         }
 
@@ -376,11 +371,7 @@ export class RegisterPageComponent {
       this.form.controls.portfolioLinks,
       user.portfolioLinks.length
         ? user.portfolioLinks.map((link) =>
-            this.createPortfolioLinkForm(
-              link.id,
-              link.url,
-              link.description ?? '',
-            ),
+            this.createPortfolioLinkForm(link.id, link.url, link.description ?? ''),
           )
         : [],
     );
@@ -404,18 +395,13 @@ export class RegisterPageComponent {
     this.form.markAsUntouched();
   }
 
-  private replaceSpecializationControls(
-    count: number,
-    selectedIds: readonly string[],
-  ): void {
+  private replaceSpecializationControls(count: number, selectedIds: readonly string[]): void {
     const selected = new Set(selectedIds);
 
     this.replaceFormArray(
       this.form.controls.specializations,
       Array.from({ length: count }, (_, index) =>
-        this.formBuilder.nonNullable.control(
-          selected.has(this.specializations()[index]?.id ?? ''),
-        ),
+        this.formBuilder.nonNullable.control(selected.has(this.specializations()[index]?.id ?? '')),
       ),
     );
   }
@@ -437,11 +423,7 @@ export class RegisterPageComponent {
     });
   }
 
-  private createPortfolioLinkForm(
-    id = '',
-    url = '',
-    description = '',
-  ): PortfolioLinkForm {
+  private createPortfolioLinkForm(id = '', url = '', description = ''): PortfolioLinkForm {
     return this.formBuilder.nonNullable.group({
       id: [id],
       url: [url],
@@ -611,21 +593,16 @@ export class RegisterPageComponent {
 
     return (
       this.educationDegreeOptions.find(
-        (option) =>
-          option.value === value || option.label.trim().toLowerCase() === normalized,
+        (option) => option.value === value || option.label.trim().toLowerCase() === normalized,
       ) ?? null
     );
   }
 
-  private getEducationDegreeValue(
-    value: EducationDegreeControlValue,
-  ): EducationDegree | null {
+  private getEducationDegreeValue(value: EducationDegreeControlValue): EducationDegree | null {
     return this.resolveEducationDegreeOption(value)?.value ?? null;
   }
 
-  private getInitials(
-    user: Pick<CurrentUserDto, 'displayName' | 'uniqueName'> | null,
-  ): string {
+  private getInitials(user: Pick<CurrentUserDto, 'displayName' | 'uniqueName'> | null): string {
     const source = user?.displayName?.trim() || user?.uniqueName?.trim();
 
     if (!source) {

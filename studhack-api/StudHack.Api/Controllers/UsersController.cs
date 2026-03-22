@@ -29,7 +29,7 @@ public class UsersController(IUserService userService) : ControllerBase
     }
 
     [HttpGet("{userId:guid}")]
-    [Authorize]
+    [AllowAnonymous]
     public async Task<ActionResult<ApiResponseDto<UserInfoDto>>> GetUserInfo(Guid userId, CancellationToken ct)
     {
         var user = await userService.GetUserByIdAsync(userId, ct);
@@ -39,7 +39,7 @@ public class UsersController(IUserService userService) : ControllerBase
     }
 
     [HttpGet]
-    [Authorize]
+    [AllowAnonymous]
     public async Task<ActionResult<ApiResponseDto<IEnumerable<UserInfoDto>>>> GetUsers(Guid userId,
         CancellationToken ct)
     {
@@ -66,7 +66,7 @@ public class UsersController(IUserService userService) : ControllerBase
                 BirthDate = dto.BirthDate,
                 City = dto.City.ToDomain(),
                 PortfolioLinks = dto.PortfolioLinks.Select(PortfolioLinkConverter.ToDomain).ToList(),
-                Skills = dto.Skills.Select(SkillsConverter.ToDomain).ToList(),
+                Skills = dto.Skills.Select(e => e.ToDomain()).ToList(),
                 Specializations = dto.Specializations.Select(SpecializationConverter.ToDomain).ToList(),
                 Educations = dto.Education.Select(EducationConverter.ToDomain).ToList(),
             }, ct);

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using StudHack.DataAccess.Context;
@@ -11,9 +12,11 @@ using StudHack.DataAccess.Context;
 namespace StudHack.DataAccess.Migrations
 {
     [DbContext(typeof(StudHackDbContext))]
-    partial class StudHackDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260322074016_SentMessages")]
+    partial class SentMessages
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -74,6 +74,7 @@ import {
 } from '@shared';
 
 import { ProfileStore } from '../../store/profile.store';
+import { TakePipe } from '@shared/pipes/take.pipe';
 
 type ProfileTabId = 'teams' | 'favorites' | 'hackathons' | 'achievements';
 type RoleBadgeAppearance = 'positive' | 'warning' | 'negative';
@@ -231,6 +232,7 @@ const PROFILE_TAB_LABELS: Record<ProfileTabId, string> = {
     TuiComboBox,
     TuiFilterByInputPipe,
     TuiCalendar,
+    TakePipe,
   ],
   providers: [ProfileStore],
   templateUrl: './profile-page.component.html',
@@ -998,8 +1000,7 @@ export class ProfilePageComponent {
     return (
       this.store
         .cities()
-        .find((city) => city.id === value || city.name.trim().toLowerCase() === normalized) ??
-      null
+        .find((city) => city.id === value || city.name.trim().toLowerCase() === normalized) ?? null
     );
   }
 

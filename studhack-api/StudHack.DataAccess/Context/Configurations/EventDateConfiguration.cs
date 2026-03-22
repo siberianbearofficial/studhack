@@ -8,7 +8,7 @@ public class EventDateConfiguration : IEntityTypeConfiguration<EventDateDb>
 {
     public void Configure(EntityTypeBuilder<EventDateDb> builder)
     {
-        builder.HasKey(ed => new { ed.EventId, ed.StartsAt });
+        builder.HasKey(ed => ed.Id);
 
         builder.HasOne(ed => ed.Event)
             .WithMany(e => e.EventDates)
