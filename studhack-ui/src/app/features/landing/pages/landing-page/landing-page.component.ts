@@ -111,26 +111,26 @@ protected onCarouselWheel(event: WheelEvent): void {
     return [
       {
         value: String(overview.usersCount),
-        label: 'Профилей уже можно листать',
-        detail: 'Страница профилей станет точкой входа для поиска сокомандников.',
+        label: 'Пользователей зарегистрировано',
+        detail: '',
         badge: 'Profiles',
       },
       {
         value: String(overview.eventsCount),
-        label: 'Событий для проверки роутов',
-        detail: 'Список событий готов под проработку карточек хакатонов.',
+        label: 'Событий доступно',
+        detail: '',
         badge: 'Events',
       },
       {
         value: String(overview.teamsCount),
-        label: 'Команд в моковых данных',
-        detail: 'Этого достаточно, чтобы накинуть стартовый контекст страниц.',
+        label: 'Команд зарегистрировано',
+        detail: '',
         badge: 'Teams',
       },
       {
         value: String(overview.openPositionsCount),
         label: 'Открытых ролей',
-        detail: 'Флоу создания команды уже можно увязать с реальными данными.',
+        detail: '',
         badge: 'Flow',
       },
     ];
