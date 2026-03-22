@@ -26,4 +26,27 @@ public static class UserConverter
             UpdatedAt = user.UpdatedAt,
         };
     }
+
+    public static MyProfileDto ToMyProfileDto(this User user)
+    {
+        var dto = user.ToDto();
+        return new MyProfileDto
+        {
+            Id = dto.Id,
+            UniqueName = dto.UniqueName,
+            DisplayName = dto.DisplayName,
+            BirthDate = dto.BirthDate,
+            Available = dto.Available,
+            CityOfResidence = dto.CityOfResidence,
+            AvatarUrl = dto.AvatarUrl,
+            Email = dto.Email,
+            Biography = dto.Biography,
+            Skills = dto.Skills,
+            Specializations = dto.Specializations,
+            PortfolioLinks = dto.PortfolioLinks,
+            Education = dto.Education,
+            CreatedAt = dto.CreatedAt,
+            UpdatedAt = dto.UpdatedAt,
+        };
+    }
 }

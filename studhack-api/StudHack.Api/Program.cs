@@ -38,6 +38,7 @@ builder.Services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITeamService, TeamService>();
 builder.Services.AddScoped<ITeamRequestService, TeamRequestService>();
+builder.Services.AddScoped<IEventService, EventService>();
 
 var authApiUrl =
     builder.Configuration["Auth.ApiUrl"] ??
