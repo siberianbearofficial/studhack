@@ -57,20 +57,15 @@
       {{ user.biography || 'Участник пока не добавил описание.' }}
     </p>
 
-      <div class="user-profile-page__actions">
-        <button tuiButton type="button" appearance="primary" size="m">
-          Пригласить
-        </button>
-        <a
-          tuiButton
-          routerLink="/profile"
-          appearance="secondary"
-          size="m"
-        >
-          В мои команды
-        </a>
-      </div>
-    </section>
+    <div class="user-profile-page__actions">
+      <button tuiButton type="button" appearance="accent" size="m">
+        Пригласить
+      </button>
+      <a tuiButton routerLink="/profile" appearance="secondary" size="m">
+        В мои команды
+      </a>
+    </div>
+  </section>
 
   <section class="user-profile-page__layout">
     <div class="user-profile-page__main">
@@ -176,27 +171,21 @@
           <span tuiTitle>Ссылки</span>
         </header>
 
-          @if (user.portfolioLinks.length) {
-            <div class="user-profile-page__list">
-              @for (link of user.portfolioLinks; track link.id) {
-                <a
-                  tuiLink
-                  [href]="link.url"
-                  target="_blank"
-                  rel="noreferrer"
-                  class="user-profile-page__external-link"
-                >
-                  {{ link.description || link.url }}
-                </a>
-              }
-            </div>
-          } @else {
-            <p class="user-profile-page__muted">
-              Внешние ссылки пока не добавлены.
-            </p>
+        @if (user.portfolioLinks.length) {
+        <div class="user-profile-page__list">
+          @for (link of user.portfolioLinks; track link.id) {
+          <a tuiLink [href]="link.url" target="_blank" rel="noreferrer" class="user-profile-page__external-link">
+            {{ link.description || link.url }}
+          </a>
           }
-        </section>
-      </aside>
-    </section>
+        </div>
+        } @else {
+        <p class="user-profile-page__muted">
+          Внешние ссылки пока не добавлены.
+        </p>
+        }
+      </section>
+    </aside>
+  </section>
   }
 </section>
