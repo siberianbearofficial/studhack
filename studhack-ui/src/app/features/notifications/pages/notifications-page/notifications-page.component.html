@@ -1,15 +1,27 @@
 <section class="notifications-page">
   <section tuiCardLarge class="notifications-page__hero">
-    <header tuiHeader="h3">
-      <span tuiTitle>Уведомления</span>
-      <p tuiSubtitle>
-        Здесь будет полноценная лента событий аккаунта. Сейчас пункт в хедере уже
-        готов под отдельный экран.
-      </p>
-    </header>
-
-    <a tuiButton appearance="secondary" routerLink="/profile" size="m">
-      Перейти в профиль
-    </a>
+    <h2>Приглашения в команды</h2>
+    @for (teamRequest of invitations(); track teamRequest.id) {
+      <div tuiCardLarge tuiAppearance="outline-grayscale" class="team-request-card">
+        <div class="team-request-info-container">
+          <h4>{{ teamRequest.team.name }}</h4>
+          <p>{{ teamRequest.message }}</p>
+          <tui-badge appearance="info" size="m">{{ teamRequest.teamPosition.specialization.name }}</tui-badge>
+        </div>
+        <button tuiIconButton iconStart="@tui.check" appearance="positive" size="m"></button>
+        <button tuiIconButton iconStart="@tui.x" appearance="negative" size="m"></button>
+      </div>
+    }
+    <h2>Заявки в команды</h2>
+    @for (teamRequest of applications(); track teamRequest.id) {
+      <div tuiCardLarge tuiAppearance="outline-grayscale" class="team-request-card">
+        <div class="team-request-info-container">
+          <h4>{{ teamRequest.team.name }}</h4>
+          <p>{{ teamRequest.message }}</p>
+          <tui-badge appearance="info" size="m">{{ teamRequest.teamPosition.specialization.name }}</tui-badge>
+        </div>
+        <button tuiIconButton iconStart="@tui.ban" appearance="negative" size="m"></button>
+      </div>
+    }
   </section>
 </section>

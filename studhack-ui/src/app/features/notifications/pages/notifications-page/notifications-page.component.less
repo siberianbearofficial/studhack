@@ -5,4 +5,23 @@
 .notifications-page__hero {
   display: grid;
   gap: 1rem;
+
+  .team-request-card {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    align-items: center;
+
+    .team-request-info-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      flex-grow: 1;
+    }
+
+    * {
+      margin: 0;
+      margin-block-start: 0 !important;
+    }
+  }
 }

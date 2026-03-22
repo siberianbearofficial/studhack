@@ -19,9 +19,7 @@ import {
 import { MyProfileStore } from '@core/data';
 import { AuthService } from '@core/auth';
 import { CurrentUserService, type CurrentUserDto } from '@core/current-user';
-import { getProfileGrade } from '@shared';
-
-import { AppLogoComponent } from '../app-logo/app-logo.component';
+import { AppLogoComponent, getProfileGrade } from '@shared';
 
 interface HeaderNavItem {
   readonly label: string;
@@ -99,7 +97,8 @@ export class AppShellHeaderComponent {
   });
 
   protected readonly notificationCount = computed(() => {
-    return 4;
+    const teamRequests = this.myProfileStore.teamRequests();
+    return (teamRequests?.inbox?.length ?? 0) + (teamRequests?.outbox?.length ?? 0);
   });
 
   protected readonly progressPercent = computed(() => {
