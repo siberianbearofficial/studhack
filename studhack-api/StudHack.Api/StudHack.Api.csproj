@@ -13,7 +13,7 @@
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2"/>
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
     </ItemGroup>
 
     <ItemGroup>
@@ -21,6 +21,8 @@
       <ProjectReference Include="..\StudHack.Application\StudHack.Application.csproj" />
       <ProjectReference Include="..\StudHack.DataAccess\StudHack.DataAccess.csproj" />
       <ProjectReference Include="..\StudHack.Domain\StudHack.Domain.csproj" />
+      <ProjectReference Include="..\StudHack.MessageSenderService\StudHack.MessageSenderService.csproj" />
+      <ProjectReference Include="..\StudHack.MessageSender\StudHack.EmailMessageSender.csproj" />
     </ItemGroup>
 
 </Project>

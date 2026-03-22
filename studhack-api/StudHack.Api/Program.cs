@@ -9,6 +9,9 @@ using StudHack.DataAccess.Repositories;
 using StudHack.Domain.Abstractions;
 using StudHack.Domain.Abstractions.Repositories;
 using StudHack.Domain.Interfaces.Repositories;
+using StudHack.MessageSenderService;
+using Studhack.MessageSender;
+using StudHack.Core.Abstractions;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddEnvironmentVariables();
@@ -23,6 +26,31 @@ builder.Services.AddScoped<IRegionRepository, RegionRepository>();
 builder.Services.AddScoped<ISkillRepository, SkillRepository>();
 builder.Services.AddScoped<ISpecializationRepository, SpecializationRepository>();
 builder.Services.AddScoped<IUniversityRepository, UniversityRepository>();
+
+/*
+TODO в EmailMessageSender нужно перекинуть переменные SMTP из среды или хз откуда, формат такой:
+
+"Smtp": {
+    "Host": "smtp.yandex.com",
+    "Port": "587",
+    "User": "studhack-no-reply@yandex.ru",
+    "Email": "studhack-no-reply@yandex.ru",
+    "Password": "There could be your password",
+    "UseDefaultCredentials": false,
+    "EnableSsl": true,
+  }
+ */
+
+builder.Services.AddScoped<IMessageSender, EmailMessageSender>();
+builder.Services.Configure<BackgroundServiceOptions>(options =>
+{
+    options.Interval = TimeSpan.FromMinutes(60);
+    options.ErrorDelay = TimeSpan.FromMinutes(1);
+    options.Enabled = true;
+    options.MaxRetryCount = 3;
+});
+builder.Services.AddHostedService<MessageSenderService>();
+
 
 builder.Services.AddScoped<IUserService, UserService>();
 
