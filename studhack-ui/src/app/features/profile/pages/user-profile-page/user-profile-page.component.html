@@ -58,49 +58,19 @@
     </p>
 
       <div class="user-profile-page__actions">
-        <button
-          tuiButton
-          type="button"
-          appearance="primary"
-          size="m"
-          (click)="openInviteDialog()"
-        >
+        <button tuiButton type="button" appearance="primary" size="m">
           Пригласить
         </button>
         <a
           tuiButton
-          routerLink="/teams/create"
+          routerLink="/profile"
           appearance="secondary"
           size="m"
         >
-          Собрать команду
+          В мои команды
         </a>
       </div>
-
-      @if (inviteSuccess()) {
-        <p class="user-profile-page__success">{{ inviteSuccess() }}</p>
-      }
     </section>
-
-  <section tuiCardLarge="compact" class="user-profile-page__section">
-    <header tuiHeader="h5">
-      <span tuiTitle>Ссылки</span>
-    </header>
-
-    @if (user.portfolioLinks.length) {
-    <div class="user-profile-page__list">
-      @for (link of user.portfolioLinks; track link.id) {
-      <a tuiLink [href]="link.url" target="_blank" rel="noreferrer" class="user-profile-page__external-link">
-        {{ link.description || link.url }}
-      </a>
-      }
-    </div>
-    } @else {
-    <p class="user-profile-page__muted">
-      Внешние ссылки пока не добавлены.
-    </p>
-    }
-  </section>
 
   <section class="user-profile-page__layout">
     <div class="user-profile-page__main">

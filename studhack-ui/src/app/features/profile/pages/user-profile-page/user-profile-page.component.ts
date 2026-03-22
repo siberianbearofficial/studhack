@@ -10,12 +10,10 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { TuiButton, TuiLink, TuiTitle } from '@taiga-ui/core';
-import { TuiDialog } from '@taiga-ui/core/components/dialog';
 import { TuiBadge, TuiChip, TuiProgress } from '@taiga-ui/kit';
 import { TuiCard, TuiHeader } from '@taiga-ui/layout';
 
 import { type TeamRequestDto } from '@core/api';
-import { TeamRequestDialogComponent } from '@features/team-requests';
 import {
   getPrimarySpecializationName,
   getProfileExperienceLabel,
@@ -30,7 +28,6 @@ import { PublicProfileStore } from '../../store/public-profile.store';
   imports: [
     DatePipe,
     RouterLink,
-    TuiDialog,
     TuiBadge,
     TuiButton,
     TuiCard,
@@ -38,8 +35,7 @@ import { PublicProfileStore } from '../../store/public-profile.store';
     TuiHeader,
     TuiLink,
     TuiProgress,
-    TuiTitle,
-    TeamRequestDialogComponent,
+    TuiTitle
   ],
   providers: [PublicProfileStore],
   templateUrl: './user-profile-page.component.html',
