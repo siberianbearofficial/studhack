@@ -67,55 +67,8 @@
     </section>
 
     <section class="landing__grid">
-      <article tuiCardLarge class="landing__panel">
-        <header tuiHeader="h5">
-          <span tuiTitle>Следующее событие</span>
-          <p tuiSubtitle>Отсюда удобно прыгать в проработку event screens.</p>
-        </header>
+      
 
-        @if (overview.nextEvent; as nextEvent) {
-          <div class="landing__event">
-            <div class="landing__event-main">
-              <strong>{{ nextEvent.name }}</strong>
-              <span>
-                {{ nextEvent.startsAt | date: 'd MMM y, HH:mm' }} -
-                {{ nextEvent.endsAt | date: 'd MMM y, HH:mm' }}
-              </span>
-            </div>
-
-            <div class="landing__event-meta">
-              <span tuiBadge appearance="warning">{{ nextEvent.type }}</span>
-              <span tuiBadge appearance="neutral">{{
-                nextEvent.location.format
-              }}</span>
-              <span tuiBadge appearance="primary">
-                {{ nextEvent.teams.length }} команд
-              </span>
-            </div>
-
-            <p>
-              {{
-                nextEvent.description ||
-                  'Описание будет детализировано отдельной задачей.'
-              }}
-            </p>
-          </div>
-        } @else {
-          <p class="landing__muted">
-            В моках пока нет активного события, но сам роут и структура уже
-            готовы.
-          </p>
-        }
-      </article>
-
-      <article tuiCardLarge class="landing__panel">
-        <header tuiHeader="h5">
-          <span tuiTitle>Что уже доступно</span>
-          <p tuiSubtitle>
-            Эти страницы можно детализировать независимо, не трогая базовый
-            routing.
-          </p>
-        </header>
 
         <div class="landing__checklist">
           <div class="landing__checklist-item">
@@ -135,7 +88,6 @@
             <span>Рабочий флоу с выбором события и позициями команды.</span>
           </div>
         </div>
-      </article>
     </section>
   } @else if (store.isLoading()) {
     <section tuiCardLarge class="landing__status">
