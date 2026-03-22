@@ -6,7 +6,7 @@ public class UpdateUserInfoDto
     public required string DisplayName { get; init; }
     public DateTime? BirthDate { get; init; }
     public bool Available { get; init; }
-    public required CityDto City { get; init; }
+    public CityDto? City { get; init; }
     public string? AvatarUrl { get; init; }
     public required string Email { get; init; }
     public string? Biography { get; init; }
