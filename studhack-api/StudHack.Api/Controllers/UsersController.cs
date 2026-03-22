@@ -66,7 +66,7 @@ public class UsersController(IUserService userService) : ControllerBase
                 BirthDate = dto.BirthDate,
                 City = dto.City.ToDomain(),
                 PortfolioLinks = dto.PortfolioLinks.Select(PortfolioLinkConverter.ToDomain).ToList(),
-                Skills = dto.Skills.Select(SkillsConverter.ToDomain).ToList(),
+                Skills = dto.Skills.Select(e => e.ToDomain()).ToList(),
                 Specializations = dto.Specializations.Select(SpecializationConverter.ToDomain).ToList(),
                 Educations = dto.Education.Select(EducationConverter.ToDomain).ToList(),
             }, ct);

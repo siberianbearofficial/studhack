@@ -11,7 +11,7 @@ public class UserInfoDto
     public string? AvatarUrl { get; init; }
     public string? Email { get; init; }
     public string? Biography { get; init; }
-    public IEnumerable<SkillDto> Skills { get; init; } = [];
+    public IEnumerable<UserSkillDto> Skills { get; init; } = [];
     public IEnumerable<SpecializationDto> Specializations { get; init; } = [];
     public IEnumerable<PortfolioLinkDto> PortfolioLinks { get; init; } = [];
     public IEnumerable<EducationDto> Education { get; init; } = [];

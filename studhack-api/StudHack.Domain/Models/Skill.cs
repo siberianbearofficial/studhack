@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using StudHack.Domain.Enums;
 
 namespace StudHack.Domain.Models;
 

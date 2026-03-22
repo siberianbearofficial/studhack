@@ -62,7 +62,7 @@ public class User
     public City? City { get; init; }
 
     [Required]
-    public IEnumerable<Skill> Skills { get; init; }
+    public IEnumerable<UserSkill> Skills { get; init; }
     
     [Required]
     public IEnumerable<Specialization> Specializations { get; init; }
