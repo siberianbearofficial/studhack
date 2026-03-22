@@ -7,16 +7,8 @@ import {
   signal,
 } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
-<<<<<<< HEAD
+
 import { TuiButton, TuiDataList, TuiDropdown } from '@taiga-ui/core';
-import { TuiAvatar, TuiBadgeNotification, TuiBadgedContent, TuiProgressBar, TuiProgressSegmented } from '@taiga-ui/kit';
-import { catchError, finalize, of, switchMap, tap } from 'rxjs';
-=======
-import {
-  TuiButton,
-  TuiDataList,
-  TuiDropdown,
-} from '@taiga-ui/core';
 import {
   TuiAvatar,
   TuiBadgeNotification,
@@ -24,9 +16,7 @@ import {
   TuiProgressBar,
   TuiProgressSegmented,
 } from '@taiga-ui/kit';
-import { TuiCard } from '@taiga-ui/layout';
-import { catchError, forkJoin, of } from 'rxjs';
->>>>>>> 439482de (fix footer padding)
+import { catchError, finalize, of, switchMap, tap } from 'rxjs';
 
 import { injectStudhackApiClient, type MyProfileDto } from '@core/api';
 import { AuthService } from '@core/auth';
@@ -83,12 +73,14 @@ export class AppShellHeaderComponent {
       exact: true,
     },
   ];
+
   protected readonly isAuthenticated = this.auth.isAuthenticated;
   protected readonly currentUser = this.currentUserService.currentUser;
   protected readonly hasAccount = this.currentUserService.hasAccount;
   protected readonly menuOpen = signal(false);
   protected readonly isCurrentUserLoading = signal(false);
   protected readonly profile = signal<MyProfileDto | null>(null);
+
   protected readonly navItems = computed<readonly HeaderNavItem[]>(() => [
     ...this.publicNavItems,
     ...(this.hasAccount()
@@ -101,19 +93,21 @@ export class AppShellHeaderComponent {
         ]
       : []),
   ]);
+
   protected readonly profileGrade = computed(() => {
     const profile = this.profile();
-
     return profile ? getProfileGrade(profile) : null;
   });
+
   protected readonly notificationCount = computed(() => {
     return 4;
   });
+
   protected readonly progressPercent = computed(() => {
     const grade = this.profileGrade();
-
     return grade ? Math.round((grade.value / grade.max) * 100) : 0;
   });
+
   protected readonly notificationBadge = computed(() => {
     const count = this.notificationCount();
 
@@ -123,6 +117,7 @@ export class AppShellHeaderComponent {
 
     return count > 99 ? '99+' : String(count);
   });
+
   protected readonly avatarInitials = computed(() =>
     this.getInitials(this.currentUser()),
   );
@@ -133,7 +128,6 @@ export class AppShellHeaderComponent {
         this.menuOpen.set(false);
         this.isCurrentUserLoading.set(false);
         this.profile.set(null);
-
         return;
       }
 
