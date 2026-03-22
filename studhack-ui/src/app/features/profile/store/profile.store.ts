@@ -1,5 +1,5 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { forkJoin } from 'rxjs';
+import { catchError, forkJoin, of } from 'rxjs';
 
 import {
   type BootstrapDto,
@@ -40,9 +40,11 @@ export class ProfileStore {
 
     forkJoin({
       bootstrap: this.service.getBootstrap(),
-      events: this.service.getEvents(),
-      users: this.service.getUsers(),
-      teamRequests: this.service.getTeamRequests(),
+      events: this.service.getEvents().pipe(catchError(() => of([]))),
+      users: this.service.getUsers().pipe(catchError(() => of([]))),
+      teamRequests: this.service
+        .getTeamRequests()
+        .pipe(catchError(() => of(null))),
     }).subscribe({
       next: ({ bootstrap, events, users, teamRequests }) => {
         this.bootstrap.set(bootstrap);

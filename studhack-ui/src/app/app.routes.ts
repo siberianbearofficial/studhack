@@ -1,5 +1,7 @@
 import { Routes } from '@angular/router';
 
+import { registeredUserGuard, unregisteredUserGuard } from '@core/auth';
+
 export const routes: Routes = [
   {
     path: '',
@@ -20,8 +22,16 @@ export const routes: Routes = [
       import('@features/login').then((module) => module.LoginPageComponent),
   },
   {
+    path: 'register',
+    title: 'Регистрация',
+    canActivate: [unregisteredUserGuard],
+    loadComponent: () =>
+      import('@features/register').then((module) => module.RegisterPageComponent),
+  },
+  {
     path: 'notifications',
     title: 'Уведомления',
+    canActivate: [registeredUserGuard],
     loadComponent: () =>
       import('@features/notifications').then(
         (module) => module.NotificationsPageComponent,
@@ -48,12 +58,14 @@ export const routes: Routes = [
   {
     path: 'profile',
     title: 'Мой профиль',
+    canActivate: [registeredUserGuard],
     loadComponent: () =>
       import('@features/profile').then((module) => module.ProfilePageComponent),
   },
   {
     path: 'teams/create',
     title: 'Создание команды',
+    canActivate: [registeredUserGuard],
     loadComponent: () =>
       import('@features/team-creation').then(
         (module) => module.CreateTeamPageComponent,

@@ -1,10 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { TuiRoot } from '@taiga-ui/core';
 import { filter, map, startWith } from 'rxjs';
 
 import { AppFooterComponent, AppShellHeaderComponent } from '@shared/ui';
+import { AuthService } from '@core/auth';
 
 const FOOTER_ROUTES = new Set([
   '/',
@@ -23,6 +24,7 @@ const FOOTER_ROUTE_PREFIXES = ['/events/'];
   styleUrl: './app.less',
 })
 export class App {
+  private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
   private readonly currentUrl = toSignal(
     this.router.events.pipe(
@@ -38,6 +40,25 @@ export class App {
       this.normalizeUrl(this.currentUrl()).startsWith(prefix),
     ),
   );
+
+  constructor() {
+    effect(() => {
+      const currentUrl = this.normalizeUrl(this.currentUrl());
+
+      if (
+        !this.auth.isAuthenticated() ||
+        !this.auth.hasPendingLoginFlow() ||
+        currentUrl === '/login' ||
+        currentUrl === '/register'
+      ) {
+        return;
+      }
+
+      queueMicrotask(() => {
+        void this.router.navigate(['/login']);
+      });
+    });
+  }
 
   private normalizeUrl(url: string): string {
     const [path] = url.split(/[?#]/);

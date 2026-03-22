@@ -1,0 +1,310 @@
+<section class="register-page">
+  <nav class="register-page__nav" aria-label="Назад">
+    <button tuiLink type="button" iconStart="@tui.chevron-left" (click)="goBack()">Назад</button>
+  </nav>
+
+  <header tuiHeader="h1" class="register-page__header">
+    <span class="register-page__heading">Регистрация</span>
+  </header>
+
+  @if (isLoading()) {
+    <section tuiCardLarge class="register-page__status">
+      <tui-loader />
+      <span>Подтягиваем данные пользователя и справочную информацию...</span>
+    </section>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="submit()" class="register-page__content">
+      @if (error()) {
+        <section class="register-page__message register-page__message_error">
+          {{ error() }}
+        </section>
+      }
+
+      <section class="register-page__grid">
+        <section tuiCardLarge tuiSurface="floating" class="register-page__section">
+          <header tuiHeader="h5">
+            <span tuiTitle>Личные данные</span>
+          </header>
+
+          <tui-avatar
+            size="xxl"
+            [round]="true"
+            [src]="currentUser()?.avatarUrl ?? null"
+            tuiHint="Аватар пока изменить нельзя"
+            tuiHintDirection="right"
+          >
+            {{ avatarInitials() }}
+          </tui-avatar>
+
+          <div class="register-page__fields">
+            <label tuiLabel>
+              Имя
+              <tui-textfield>
+                <input tuiTextfield formControlName="displayName" placeholder="Егор Смирнов" />
+              </tui-textfield>
+            </label>
+
+            <label tuiLabel>
+              Username
+              <tui-textfield>
+                <input tuiTextfield formControlName="uniqueName" placeholder="egor.smirnov" />
+              </tui-textfield>
+            </label>
+
+            <label tuiLabel>
+              Email
+              <tui-textfield>
+                <input tuiTextfield type="email" formControlName="email" placeholder="name@example.com" />
+              </tui-textfield>
+            </label>
+
+            <label tuiLabel>
+              Город
+              <tui-textfield>
+                <select tuiTextfield formControlName="cityOfResidenceId">
+                  <option value="">Выберите город</option>
+
+                  @for (city of cities(); track city.id) {
+                    <option [value]="city.id">{{ city.name }}</option>
+                  }
+                </select>
+              </tui-textfield>
+            </label>
+
+            <label tuiLabel>
+              Дата рождения
+              <tui-textfield>
+                <input tuiInputDate formControlName="birthDate" />
+                <tui-calendar *tuiTextfieldDropdown />
+              </tui-textfield>
+            </label>
+
+            <label tuiLabel class="register-page__checkbox">
+              <input tuiCheckbox type="checkbox" formControlName="available" />
+              Показывать профиль в подборе команд
+            </label>
+          </div>
+        </section>
+
+        <section tuiCardLarge tuiSurface="floating" class="register-page__section">
+          <header tuiHeader="h5">
+            <span tuiTitle>О себе</span>
+          </header>
+
+          <div class="register-page__fields">
+            <tui-textfield>
+              <label tuiLabel>Краткое био</label>
+              <textarea
+                tuiTextarea
+                formControlName="biography"
+                [limit]="300"
+                [max]="6"
+                [min]="3"
+                placeholder="Расскажите, в каких ролях и проектах вы полезны команде"
+              ></textarea>
+            </tui-textfield>
+          </div>
+
+          <div class="register-page__subsection">
+            <div class="register-page__subhead">Специализации</div>
+
+            <div formArrayName="specializations" class="register-page__specializations">
+              @for (specialization of specializations(); track specialization.id; let index = $index) {
+                <label tuiLabel class="register-page__specialization">
+                  <input tuiCheckbox type="checkbox" [formControlName]="index" />
+                  {{ specialization.name }}
+                </label>
+              }
+            </div>
+          </div>
+
+          <div class="register-page__subsection">
+            <div class="register-page__subhead register-page__subhead_actions">
+              <span>Навыки</span>
+              <button tuiButton type="button" appearance="secondary" size="xs" (click)="addSkill()">
+                Добавить навык
+              </button>
+            </div>
+
+            <div formArrayName="skills" class="register-page__list">
+              @for (control of skillControls; track $index) {
+                <div [formGroupName]="$index" class="register-page__list-row">
+                  <label tuiLabel>
+                    Навык
+                    <tui-textfield tuiChevron [stringify]="stringifySkill" [identityMatcher]="matchSkill">
+                      <input
+                        tuiComboBox
+                        formControlName="skill"
+                        placeholder="Выберите навык"
+                      />
+
+                      <tui-data-list-wrapper
+                        *tuiTextfieldDropdown
+                        new
+                        [items]="skills() | tuiFilterByInput"
+                      />
+                    </tui-textfield>
+                  </label>
+
+                  <button
+                    tuiIconButton
+                    type="button"
+                    appearance="secondary-destructive"
+                    size="xs"
+                    iconStart="@tui.trash"
+                    (click)="removeSkill($index)"
+                  >
+                  </button>
+                </div>
+              }
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <section class="register-page__grid">
+        <section tuiCardLarge tuiSurface="floating" class="register-page__section">
+          <div class="register-page__subhead register-page__subhead_actions">
+            <span>Портфолио</span>
+            <button tuiButton type="button" appearance="secondary" size="xs" (click)="addPortfolioLink()">
+              Добавить ссылку
+            </button>
+          </div>
+
+          <div formArrayName="portfolioLinks" class="register-page__list">
+            @for (control of portfolioLinkControls; track $index) {
+              <div [formGroupName]="$index" class="register-page__list-row register-page__list-row_wide">
+                <label tuiLabel>
+                  URL
+                  <tui-textfield>
+                    <input tuiTextfield formControlName="url" placeholder="https://..." />
+                  </tui-textfield>
+                </label>
+
+                <label tuiLabel>
+                  Описание
+                  <tui-textfield>
+                    <input tuiTextfield formControlName="description" placeholder="Что находится по ссылке" />
+                  </tui-textfield>
+                </label>
+
+                <button
+                  tuiIconButton
+                  type="button"
+                  appearance="secondary-destructive"
+                  size="xs"
+                  iconStart="@tui.trash"
+                  (click)="removePortfolioLink($index)"
+                >
+                </button>
+              </div>
+            }
+          </div>
+        </section>
+
+        <section tuiCardLarge tuiSurface="floating" class="register-page__section">
+          <div class="register-page__subhead register-page__subhead_actions">
+            <span>Образование</span>
+            <button tuiButton type="button" appearance="secondary" size="xs" (click)="addEducation()">
+              Добавить образование
+            </button>
+          </div>
+
+          <div formArrayName="educations" class="register-page__list">
+            @for (control of educationControls; track $index) {
+              <div [formGroupName]="$index" class="register-page__education-card">
+                <div class="register-page__education-card__row">
+                  <label tuiLabel>
+                    Университет
+                    <tui-textfield
+                      tuiChevron
+                      [stringify]="stringifyUniversity"
+                      [identityMatcher]="matchUniversity"
+                    >
+                      <input
+                        tuiComboBox
+                        formControlName="university"
+                        placeholder="Выберите университет"
+                      />
+
+                      <tui-data-list-wrapper
+                        *tuiTextfieldDropdown
+                        new
+                        [items]="universities() | tuiFilterByInput"
+                      />
+                    </tui-textfield>
+                  </label>
+
+                  <button
+                    tuiIconButton
+                    type="button"
+                    appearance="secondary-destructive"
+                    size="xs"
+                    iconStart="@tui.trash"
+                    (click)="removeEducation($index)"
+                  >
+                  </button>
+                </div>
+
+                <label tuiLabel>
+                  Ступень
+                  <tui-textfield
+                    tuiChevron
+                    [stringify]="stringifyEducationDegree"
+                    [identityMatcher]="matchEducationDegree"
+                  >
+                    <input
+                      tuiComboBox
+                      formControlName="degree"
+                      placeholder="Выберите ступень"
+                    />
+
+                    <tui-data-list-wrapper
+                      *tuiTextfieldDropdown
+                      new
+                      [items]="educationDegreeOptions | tuiFilterByInput"
+                    />
+                  </tui-textfield>
+                </label>
+
+                <label tuiLabel>
+                  Факультет
+                  <tui-textfield>
+                    <input tuiTextfield formControlName="faculty" placeholder="Факультет или направление" />
+                  </tui-textfield>
+                </label>
+
+                <label tuiLabel>
+                  Год начала
+                  <tui-textfield>
+                    <input tuiTextfield type="number" formControlName="yearStart" placeholder="2023" />
+                  </tui-textfield>
+                </label>
+
+                <label tuiLabel>
+                  Год окончания
+                  <tui-textfield>
+                    <input tuiTextfield type="number" formControlName="yearEnd" placeholder="2027" />
+                  </tui-textfield>
+                </label>
+              </div>
+            }
+          </div>
+        </section>
+      </section>
+
+      <section class="register-page__hero">
+        <button
+          tuiButton
+          type="submit"
+          appearance="primary"
+          size="l"
+          [disabled]="form.invalid || isSaving()"
+          [loading]="isSaving()"
+        >
+          Зарегистрироваться
+        </button>
+      </section>
+    </form>
+  }
+</section>

@@ -9,6 +9,12 @@ import {
   timer,
 } from 'rxjs';
 
+import {
+  type CurrentUserApiAdapter,
+  type CurrentUserDto,
+  type SaveCurrentUserInput,
+} from '@core/current-user/current-user.models';
+
 import { type StudhackApiClient } from '../api.client';
 import {
   type ApiErrorCode,
@@ -17,6 +23,7 @@ import {
   type CityDto,
   type CreateTeamRequestInput,
   type DeleteResultDto,
+  type DictionariesDto,
   type EventFullDto,
   type EventShortDto,
   type EventSubscriptionDto,
@@ -57,6 +64,7 @@ import {
   type MockDatabaseState,
   type MockEventEntity,
   type MockMandatoryPositionEntity,
+  type MockPendingCurrentUserEntity,
   type MockTeamEntity,
   type MockTeamPositionEntity,
   type MockTeamRequestEntity,
@@ -77,16 +85,22 @@ class MockApiClientError extends Error {
 }
 
 @Injectable()
-export class MockStudhackApiClient implements StudhackApiClient {
+export class MockStudhackApiClient
+  implements StudhackApiClient, CurrentUserApiAdapter
+{
   private readonly latencyMs = inject(API_MOCK_LATENCY_MS);
   private readonly state: MockDatabaseState = createMockDatabaseState();
   private idCounter = 0;
 
   getBootstrap(): Observable<BootstrapDto> {
     return this.respond(() => ({
-      me: this.buildMyProfile(),
+      me: this.state.currentUserId ? this.buildMyProfile() : null,
       dictionaries: this.clone(this.state.dictionaries),
     }));
+  }
+
+  getDictionaries(): Observable<DictionariesDto> {
+    return this.respond(() => this.clone(this.state.dictionaries));
   }
 
   getEvents(): Observable<readonly EventFullDto[]> {
@@ -184,14 +198,15 @@ export class MockStudhackApiClient implements StudhackApiClient {
     payload: SetEventSubscriptionRequest,
   ): Observable<EventSubscriptionDto> {
     return this.respond(() => {
+      const currentUserId = this.requireCurrentUserId();
       const event = this.requireEvent(eventId);
       const existingIndex = event.subscriptions.findIndex(
-        (subscription) => subscription.userId === this.state.meUserId,
+        (subscription) => subscription.userId === currentUserId,
       );
 
       if (payload.subscribed && existingIndex === -1) {
         event.subscriptions.push({
-          userId: this.state.meUserId,
+          userId: currentUserId,
           subscribedAt: this.now(),
         });
       }
@@ -221,6 +236,7 @@ export class MockStudhackApiClient implements StudhackApiClient {
 
   upsertTeam(payload: UpsertTeamRequest): Observable<TeamFullDto> {
     return this.respond(() => {
+      const currentUserId = this.requireCurrentUserId();
       const event = this.requireEvent(payload.eventId);
       const existingTeam = payload.id ? this.requireTeam(payload.id) : undefined;
       const team: MockTeamEntity =
@@ -230,8 +246,8 @@ export class MockStudhackApiClient implements StudhackApiClient {
           eventId: payload.eventId,
           name: '',
           description: null,
-          creatorUserId: this.state.meUserId,
-          captainUserId: this.state.meUserId,
+          creatorUserId: currentUserId,
+          captainUserId: currentUserId,
           createdAt: this.now(),
           updatedAt: this.now(),
           positions: [],
@@ -239,7 +255,7 @@ export class MockStudhackApiClient implements StudhackApiClient {
 
       const nextCaptainId =
         payload.captainUserId === undefined
-          ? (existingTeam?.captainUserId ?? this.state.meUserId)
+          ? (existingTeam?.captainUserId ?? currentUserId)
           : (payload.captainUserId ?? null);
 
       if (nextCaptainId) {
@@ -332,10 +348,9 @@ export class MockStudhackApiClient implements StudhackApiClient {
     return this.respond(() => {
       this.validateProfilePayload(payload);
 
-      const me = this.requireUser(this.state.meUserId);
+      const me = this.requireUser(this.requireCurrentUserId());
       const duplicateUser = this.state.users.find(
-        (user) =>
-          user.uniqueName === payload.uniqueName.trim() && user.id !== this.state.meUserId,
+        (user) => user.uniqueName === payload.uniqueName.trim() && user.id !== me.id,
       );
 
       if (duplicateUser) {
@@ -366,22 +381,103 @@ export class MockStudhackApiClient implements StudhackApiClient {
     });
   }
 
+  getCurrentUser(): Observable<CurrentUserDto> {
+    return this.respond(() => this.buildCurrentUser());
+  }
+
+  saveCurrentUser(payload: SaveCurrentUserInput): Observable<CurrentUserDto> {
+    return this.respond(() => {
+      this.validateCurrentUserPayload(payload);
+
+      const now = this.now();
+      const currentUserId = this.state.currentUserId;
+      const duplicateUser = this.state.users.find(
+        (user) =>
+          user.uniqueName === payload.uniqueName.trim() && user.id !== currentUserId,
+      );
+
+      if (duplicateUser) {
+        throw this.conflict('uniqueName уже занят', {
+          uniqueName: 'Это имя уже используется другим пользователем',
+        });
+      }
+
+      if (currentUserId) {
+        const me = this.requireUser(currentUserId);
+
+        me.uniqueName = payload.uniqueName.trim();
+        me.displayName = payload.displayName.trim();
+        me.birthDate = payload.birthDate ?? null;
+        me.available = payload.available;
+        me.cityOfResidenceId = payload.cityOfResidenceId;
+        me.email = payload.email.trim();
+        me.biography = payload.biography ?? null;
+        me.avatarUrl = payload.avatarUrl ?? null;
+        me.specializationIds = [...payload.specializationIds];
+        me.skills = payload.skillIds.map((skillId) => ({
+          skillId,
+          experienceLevel: 'junior',
+        }));
+        me.portfolioLinks = payload.portfolioLinks.map((item) =>
+          this.toPortfolioLinkEntity(item),
+        );
+        me.educations = payload.educations.map((item) =>
+          this.toEducationEntity(item),
+        );
+        me.updatedAt = now;
+      } else {
+        const userId = this.nextId('user');
+        const newUser: MockUserEntity = {
+          id: userId,
+          uniqueName: payload.uniqueName.trim(),
+          displayName: payload.displayName.trim(),
+          birthDate: payload.birthDate ?? null,
+          available: payload.available,
+          cityOfResidenceId: payload.cityOfResidenceId,
+          email: payload.email.trim(),
+          biography: payload.biography ?? null,
+          avatarUrl: payload.avatarUrl ?? this.state.pendingCurrentUser.avatarUrl ?? null,
+          specializationIds: [...payload.specializationIds],
+          skills: payload.skillIds.map((skillId) => ({
+            skillId,
+            experienceLevel: 'junior',
+          })),
+          portfolioLinks: payload.portfolioLinks.map((item) =>
+            this.toPortfolioLinkEntity(item),
+          ),
+          educations: payload.educations.map((item) => this.toEducationEntity(item)),
+          createdAt: now,
+          updatedAt: now,
+        };
+
+        this.state.users.push(newUser);
+        this.state.currentUserId = userId;
+        this.state.meUserId = userId;
+      }
+
+      this.state.pendingCurrentUser = this.toPendingCurrentUserEntity(payload);
+
+      return this.buildCurrentUser();
+    });
+  }
+
   getTeamRequests(): Observable<TeamRequestsFeedDto> {
     return this.respond(() => this.buildTeamRequestsFeed());
   }
 
   createTeamRequest(payload: CreateTeamRequestInput): Observable<TeamRequestDto> {
     return this.respond(() => {
+      const currentUserId = this.requireCurrentUserId();
       const { team, position } = this.requireTeamPosition(payload.teamPositionId);
       const now = this.now();
       const userId =
         payload.type === 'application'
-          ? this.state.meUserId
+          ? currentUserId
           : payload.invitedUserId ?? this.validation('Для invitation нужен invitedUserId');
 
       this.requireUser(userId);
 
-      if (payload.type === 'invitation' && !this.canManageTeam(team, this.state.meUserId)) {
+      if (payload.type === 'invitation' && !this.canManageTeam(team, currentUserId)) {
         throw this.forbidden('Приглашения может создавать только captain или creator команды');
       }
 
@@ -401,7 +497,7 @@ export class MockStudhackApiClient implements StudhackApiClient {
       }
 
       if (payload.type === 'application') {
-        this.assertUserCanJoinEvent(team.eventId, this.state.meUserId, team.id);
+        this.assertUserCanJoinEvent(team.eventId, currentUserId, team.id);
       }
 
       const request: MockTeamRequestEntity = {
@@ -410,7 +506,7 @@ export class MockStudhackApiClient implements StudhackApiClient {
         status: 'pending',
         message: payload.message ?? null,
         userId,
-        createdByUserId: this.state.meUserId,
+        createdByUserId: currentUserId,
         teamId: team.id,
         teamPositionId: position.id,
         createdAt: now,
@@ -428,13 +524,14 @@ export class MockStudhackApiClient implements StudhackApiClient {
     payload: ResolveTeamRequestInput,
   ): Observable<TeamRequestDto> {
     return this.respond(() => {
+      const currentUserId = this.requireCurrentUserId();
       const request = this.requireTeamRequest(requestId);
       const team = this.requireTeam(request.teamId);
 
       if (
-        !this.canManageTeam(team, this.state.meUserId) &&
-        request.userId !== this.state.meUserId &&
-        request.createdByUserId !== this.state.meUserId
+        !this.canManageTeam(team, currentUserId) &&
+        request.userId !== currentUserId &&
+        request.createdByUserId !== currentUserId
       ) {
         throw this.forbidden('Недостаточно прав для изменения этого запроса');
       }
@@ -495,7 +592,85 @@ export class MockStudhackApiClient implements StudhackApiClient {
   }
 
   private buildMyProfile(): MyProfileDto {
-    return this.buildUserFull(this.state.meUserId);
+    return this.buildUserFull(this.requireCurrentUserId());
+  }
+
+  private buildCurrentUser(): CurrentUserDto {
+    if (!this.state.currentUserId) {
+      return this.toCurrentUserFromPending(this.state.pendingCurrentUser);
+    }
+
+    const user = this.requireUser(this.state.currentUserId);
+
+    return {
+      id: user.id,
+      uniqueName: user.uniqueName,
+      displayName: user.displayName,
+      birthDate: user.birthDate ?? null,
+      available: user.available,
+      cityOfResidence: user.cityOfResidenceId
+        ? this.requireCity(user.cityOfResidenceId)
+        : null,
+      avatarUrl: user.avatarUrl ?? null,
+      email: user.email ?? null,
+      biography: user.biography ?? null,
+      skills: user.skills.map((skill) => this.requireSkill(skill.skillId)),
+      specializations: user.specializationIds.map((id) =>
+        this.requireSpecialization(id),
+      ),
+      portfolioLinks: user.portfolioLinks.map((item) => ({
+        id: item.id,
+        url: item.url,
+        description: item.description ?? null,
+      })),
+      educations: user.educations.map((item) => ({
+        id: item.id,
+        university: this.requireUniversity(item.universityId),
+        degree: item.degree,
+        faculty: item.faculty ?? null,
+        yearStart: item.yearStart ?? null,
+        yearEnd: item.yearEnd ?? null,
+      })),
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    };
+  }
+
+  private toCurrentUserFromPending(
+    pending: MockPendingCurrentUserEntity,
+  ): CurrentUserDto {
+    return {
+      id: pending.id,
+      uniqueName: pending.uniqueName ?? null,
+      displayName: pending.displayName ?? null,
+      birthDate: pending.birthDate ?? null,
+      available: pending.available,
+      cityOfResidence: pending.cityOfResidenceId
+        ? this.requireCity(pending.cityOfResidenceId)
+        : null,
+      avatarUrl: pending.avatarUrl ?? null,
+      email: pending.email ?? null,
+      biography: pending.biography ?? null,
+      skills: pending.skillIds.map((skillId) => this.requireSkill(skillId)),
+      specializations: pending.specializationIds.map((specializationId) =>
+        this.requireSpecialization(specializationId),
+      ),
+      portfolioLinks: pending.portfolioLinks.map((item) => ({
+        id: item.id,
+        url: item.url,
+        description: item.description ?? null,
+      })),
+      educations: pending.educations.map((item) => ({
+        id: item.id,
+        university: this.requireUniversity(item.universityId),
+        degree: item.degree,
+        faculty: item.faculty ?? null,
+        yearStart: item.yearStart ?? null,
+        yearEnd: item.yearEnd ?? null,
+      })),
+      createdAt: null,
+      updatedAt: null,
+    };
   }
 
   private buildUserFull(userId: UUID): UserFullDto {
@@ -655,8 +830,9 @@ export class MockStudhackApiClient implements StudhackApiClient {
   }
 
   private buildEventSubscription(event: MockEventEntity): EventSubscriptionDto {
+    const currentUserId = this.state.currentUserId;
     const current = event.subscriptions.find(
-      (subscription) => subscription.userId === this.state.meUserId,
+      (subscription) => subscription.userId === currentUserId,
     );
 
     return {
@@ -837,9 +1013,10 @@ export class MockStudhackApiClient implements StudhackApiClient {
   }
 
   private buildTeamRequestsFeed(): TeamRequestsFeedDto {
+    const currentUserId = this.requireCurrentUserId();
     const managedTeamIds = new Set(
       this.state.teams
-        .filter((team) => this.canManageTeam(team, this.state.meUserId))
+        .filter((team) => this.canManageTeam(team, currentUserId))
         .map((team) => team.id),
     );
 
@@ -847,13 +1024,13 @@ export class MockStudhackApiClient implements StudhackApiClient {
       inbox: this.state.teamRequests
         .filter(
           (request) =>
-            request.userId === this.state.meUserId &&
+            request.userId === currentUserId &&
             request.type === 'invitation',
         )
         .sort((left, right) => right.createdAt.localeCompare(left.createdAt))
         .map((request) => this.buildTeamRequest(request.id)),
       outbox: this.state.teamRequests
-        .filter((request) => request.createdByUserId === this.state.meUserId)
+        .filter((request) => request.createdByUserId === currentUserId)
         .sort((left, right) => right.createdAt.localeCompare(left.createdAt))
         .map((request) => this.buildTeamRequest(request.id)),
       managedTeams: this.state.teamRequests
@@ -1000,6 +1177,63 @@ export class MockStudhackApiClient implements StudhackApiClient {
     );
   }
 
+  private validateCurrentUserPayload(payload: SaveCurrentUserInput): void {
+    if (!payload.uniqueName.trim()) {
+      this.validation('uniqueName обязателен', {
+        uniqueName: 'Поле не должно быть пустым',
+      });
+    }
+
+    if (!payload.displayName.trim()) {
+      this.validation('displayName обязателен', {
+        displayName: 'Поле не должно быть пустым',
+      });
+    }
+
+    if (!payload.email.trim()) {
+      this.validation('email обязателен', {
+        email: 'Поле не должно быть пустым',
+      });
+    }
+
+    this.requireCity(payload.cityOfResidenceId);
+    payload.specializationIds.forEach((specializationId) =>
+      this.requireSpecialization(specializationId),
+    );
+    payload.skillIds.forEach((skillId) => this.requireSkill(skillId));
+    payload.educations.forEach((education) => {
+      this.requireUniversity(education.universityId);
+
+      if (!education.yearStart || !education.yearEnd) {
+        this.validation('Для образования нужно указать годы обучения', {
+          educations: 'Проверьте годы начала и окончания',
+        });
+      }
+    });
+  }
+
+  private toPendingCurrentUserEntity(
+    payload: SaveCurrentUserInput,
+  ): MockPendingCurrentUserEntity {
+    return {
+      id: this.state.currentUserId,
+      uniqueName: payload.uniqueName.trim(),
+      displayName: payload.displayName.trim(),
+      birthDate: payload.birthDate ?? null,
+      available: payload.available,
+      cityOfResidenceId: payload.cityOfResidenceId,
+      email: payload.email.trim(),
+      biography: payload.biography ?? null,
+      avatarUrl: payload.avatarUrl ?? null,
+      specializationIds: [...payload.specializationIds],
+      skillIds: [...payload.skillIds],
+      portfolioLinks: payload.portfolioLinks.map((item) =>
+        this.toPortfolioLinkEntity(item),
+      ),
+      educations: payload.educations.map((item) => this.toEducationEntity(item)),
+    };
+  }
+
   private assertUserCanJoinEvent(
     eventId: UUID,
     userId: UUID,
@@ -1126,6 +1360,14 @@ export class MockStudhackApiClient implements StudhackApiClient {
     }
 
     return user;
+  }
+
+  private requireCurrentUserId(): UUID {
+    if (!this.state.currentUserId) {
+      throw this.forbidden('Профиль пользователя ещё не зарегистрирован');
+    }
+
+    return this.state.currentUserId;
   }
 
   private requireTeamRequest(requestId: UUID): MockTeamRequestEntity {

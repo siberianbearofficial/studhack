@@ -12,20 +12,30 @@ import {
   switchMap,
 } from 'rxjs';
 
+import { AUTH_STORAGE } from './auth.storage';
 import { AUTH_RUNTIME_CONFIG, OAUTH_CONFIG } from './auth.config';
+
+const PENDING_LOGIN_RETURN_URL_KEY = 'studhack.auth.pendingReturnUrl';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly authRuntimeConfig = inject(AUTH_RUNTIME_CONFIG);
   private readonly oauthConfig = inject(OAUTH_CONFIG);
   private readonly oauthService = inject(OAuthService);
+  private readonly storage = inject(AUTH_STORAGE);
   private readonly accessTokenState = signal<string | null>(null);
+  private readonly pendingLoginReturnUrlState = signal<string | null>(
+    this.readPendingLoginReturnUrl(),
+  );
 
   private refreshing$?: Observable<string | null>;
   private configured = false;
 
   readonly accessToken = computed(() => this.accessTokenState());
   readonly isAuthenticated = computed(() => this.accessTokenState() !== null);
+  readonly hasPendingLoginFlow = computed(
+    () => this.pendingLoginReturnUrlState() !== null,
+  );
 
   constructor() {
     this.oauthService.events.subscribe(() => {
@@ -43,12 +53,17 @@ export class AuthService {
     );
   }
 
-  startOrContinueLogin$(provider?: string): Observable<string | null> {
+  startOrContinueLogin$(
+    provider?: string,
+    returnUrl?: string,
+  ): Observable<string | null> {
     this.configure();
 
     return this.ensureDiscoveryDocumentLoaded$().pipe(
       switchMap(() => this.completeLoginFromRedirect$()),
-      switchMap((token) => (token ? of(token) : this.refreshOrLogin$(provider))),
+      switchMap((token) =>
+        token ? of(token) : this.refreshOrLogin$(provider, returnUrl),
+      ),
     );
   }
 
@@ -59,9 +74,10 @@ export class AuthService {
   logout(): void {
     this.oauthService.logOut();
     this.accessTokenState.set(null);
+    this.clearPendingLoginFlow();
   }
 
-  refreshOrLogin$(provider?: string): Observable<string | null> {
+  refreshOrLogin$(provider?: string, returnUrl?: string): Observable<string | null> {
     const existingToken = this.token();
 
     if (existingToken) {
@@ -69,11 +85,22 @@ export class AuthService {
     }
 
     return this.refresh$().pipe(
-      switchMap((newToken) => (newToken ? of(newToken) : this.login$(provider))),
+      switchMap((newToken) =>
+        newToken ? of(newToken) : this.login$(provider, returnUrl),
+      ),
     );
   }
 
-  private login$(provider?: string): Observable<never> {
+  pendingLoginReturnUrl(defaultUrl = '/profile'): string {
+    return this.normalizeReturnUrl(this.pendingLoginReturnUrlState()) ?? defaultUrl;
+  }
+
+  completePendingLoginFlow(): void {
+    this.clearPendingLoginFlow();
+  }
+
+  private login$(provider?: string, returnUrl?: string): Observable<never> {
+    this.storePendingLoginReturnUrl(returnUrl);
     this.oauthService.initLoginFlow('', provider ? { provider } : undefined);
 
     return EMPTY;
@@ -158,5 +185,39 @@ export class AuthService {
       disableNonceCheck: this.authRuntimeConfig.disableNonceCheck,
       disableOAuth2StateCheck: this.authRuntimeConfig.disableOAuth2StateCheck,
     };
+  }
+
+  private storePendingLoginReturnUrl(returnUrl?: string): void {
+    const nextUrl = this.normalizeReturnUrl(returnUrl) ?? this.getCurrentLocationUrl();
+
+    this.pendingLoginReturnUrlState.set(nextUrl);
+    this.storage.setItem(PENDING_LOGIN_RETURN_URL_KEY, nextUrl);
+  }
+
+  private clearPendingLoginFlow(): void {
+    this.pendingLoginReturnUrlState.set(null);
+    this.storage.removeItem(PENDING_LOGIN_RETURN_URL_KEY);
+  }
+
+  private readPendingLoginReturnUrl(): string | null {
+    return this.normalizeReturnUrl(
+      this.storage.getItem(PENDING_LOGIN_RETURN_URL_KEY),
+    );
+  }
+
+  private normalizeReturnUrl(returnUrl: string | null | undefined): string | null {
+    if (!returnUrl?.startsWith('/')) {
+      return null;
+    }
+
+    return returnUrl === '/login' ? '/profile' : returnUrl;
+  }
+
+  private getCurrentLocationUrl(): string {
+    if (!globalThis.location) {
+      return '/profile';
+    }
+
+    return `${globalThis.location.pathname}${globalThis.location.search}${globalThis.location.hash}`;
   }
 }

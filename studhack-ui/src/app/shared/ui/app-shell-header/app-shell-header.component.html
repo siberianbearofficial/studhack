@@ -4,7 +4,7 @@
 
     <div class="app-shell-header__right">
       <nav class="app-shell-header__nav" aria-label="Основная навигация">
-        @for (item of navItems; track item.path) {
+        @for (item of navItems(); track item.path) {
           <a
             routerLinkActive="app-shell-header__nav-link_active"
             [routerLinkActiveOptions]="{ exact: item.exact }"
@@ -18,33 +18,50 @@
 
       <div class="app-shell-header__actions">
         @if (isAuthenticated()) {
-          <tui-badged-content
-            [tuiDropdown]="userMenu"
-            [tuiDropdownOpen]="menuOpen()"
-            tuiDropdownAlign="right"
-            tuiDropdownDirection="bottom"
-            (tuiDropdownOpenChange)="menuOpen.set($event)"
-          >
-            <tui-avatar
-              size="m"
-              [round]="true"
-              [src]="me()?.avatarUrl ?? null"
+          @if (isCurrentUserLoading()) {
+            <button tuiButton appearance="flat" size="s" type="button" [disabled]="true">
+              Проверяем аккаунт
+            </button>
+          } @else if (hasAccount()) {
+            <tui-badged-content
+              [tuiDropdown]="userMenu"
+              [tuiDropdownOpen]="menuOpen()"
+              tuiDropdownAlign="right"
+              tuiDropdownDirection="bottom"
+              (tuiDropdownOpenChange)="menuOpen.set($event)"
             >
-              {{ avatarInitials() }}
-            </tui-avatar>
+              <tui-avatar
+                size="m"
+                [round]="true"
+                [src]="currentUser()?.avatarUrl ?? null"
+              >
+                {{ avatarInitials() }}
+              </tui-avatar>
 
-            @if (notificationCount()) {
-              <tui-badge-notification size="s" tuiSlot="top">
-                {{ notificationBadge() }}
-              </tui-badge-notification>
-            }
-          </tui-badged-content>
+              @if (notificationCount()) {
+                <tui-badge-notification size="s" tuiSlot="top">
+                  {{ notificationBadge() }}
+                </tui-badge-notification>
+              }
+            </tui-badged-content>
+          } @else {
+            <button
+              tuiButton
+              appearance="primary"
+              size="s"
+              type="button"
+              (click)="openRegistration()"
+            >
+              Завершить регистрацию
+            </button>
+          }
         } @else {
           <a
             tuiButton
             appearance="secondary"
             size="s"
             routerLink="/login"
+            [queryParams]="{ returnUrl: '/profile' }"
           >
             Войти
           </a>
@@ -79,7 +96,7 @@
         Уведомления
 
         @if (notificationCount()) {
-          <tui-badge-notification size="m" tuiSlot="top">
+          <tui-badge-notification size="m">
             {{ notificationBadge() }}
           </tui-badge-notification>
         }
@@ -104,7 +121,7 @@
         <div class="app-shell-header__level-subheading">Прогресс</div>
         <div class="app-shell-header__level-head">
           <span>Уровень {{ grade.level }}</span>
-          <span>{{ grade.value / grade.max * 100 }}%</span>
+          <span>{{ progressPercent() }}%</span>
         </div>
 
         <progress
