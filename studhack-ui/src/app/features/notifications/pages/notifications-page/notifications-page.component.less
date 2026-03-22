@@ -58,17 +58,26 @@
 
 .team-request-card {
   display: flex;
+  flex-direction: row;
   gap: 0.75rem;
   align-items: center;
-}
 
-.team-request-info-container {
-  display: grid;
-  gap: 0.5rem;
-  flex: 1 1 auto;
+  .team-request-info-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex: 1 1 auto;
 
-  * {
-    margin: 0;
+    .team-request-header {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    * {
+      margin: 0;
+    }
   }
 }
 
@@ -83,13 +92,3 @@
   gap: 0.5rem;
 }
 
-@media (max-width: 767px) {
-  .team-request-card {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .team-request-card__actions {
-    justify-content: stretch;
-  }
-}

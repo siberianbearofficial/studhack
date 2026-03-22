@@ -15,50 +15,44 @@
         <p class="notifications-page__error">{{ error }}</p>
       }
 
-      @if (!hasPendingRequests()) {
-        <div class="notifications-page__state notifications-page__state_empty">
-          <p>Активных запросов сейчас нет.</p>
-        </div>
-      }
-
       <section class="notifications-page__section">
         <div class="notifications-page__section-header">
           <h2>Входящие приглашения</h2>
-          <tui-badge appearance="neutral" size="m">{{ incomingInvitations().length }}</tui-badge>
+          <tui-badge-notification size="m">{{ incomingInvitations().length }}</tui-badge-notification>
         </div>
         @if (incomingInvitations().length) {
           @for (teamRequest of incomingInvitations(); track teamRequest.id) {
-            <article tuiCardLarge tuiAppearance="outline-grayscale" class="team-request-card">
-              <div class="team-request-info-container">
-                <h3>{{ getRequestHeadline(teamRequest) }}</h3>
-                <p>{{ getIncomingInvitationDescription() }}</p>
-                <p class="team-request-card__message">{{ getRequestMessage(teamRequest) }}</p>
-                <tui-badge appearance="info" size="m">
-                  {{ teamRequest.teamPosition.specialization.name }}
-                </tui-badge>
-              </div>
+            <article tuiCardLarge tuiAppearance="outline-grayscale">
+              <div class="team-request-card">
+                <div class="team-request-info-container">
+                  <div class="team-request-header">
+                    <h3>{{ teamRequest.team.name }}</h3>
+                    <h3>•</h3>
+                    <h3>{{ teamRequest.teamPosition.title }}</h3>
+                    <tui-badge appearance="info" size="m">
+                      {{ teamRequest.teamPosition.specialization.name }}
+                    </tui-badge>
+                  </div>
+                  <p class="team-request-card__message">{{ getRequestMessage(teamRequest) }}</p>
+                </div>
 
-              <div class="team-request-card__actions">
-                <button
-                  tuiButton
-                  appearance="positive"
-                  size="s"
-                  type="button"
-                  [disabled]="isResolving(teamRequest.id)"
-                  (click)="approve(teamRequest.id)"
-                >
-                  Принять
-                </button>
-                <button
-                  tuiButton
-                  appearance="secondary"
-                  size="s"
-                  type="button"
-                  [disabled]="isResolving(teamRequest.id)"
-                  (click)="reject(teamRequest.id)"
-                >
-                  Отклонить
-                </button>
+                <div class="team-request-card__actions">
+                  <button
+                    tuiIconButton appearance="positive"
+                    size="m"
+                    iconStart="@tui.check"
+                    [disabled]="isResolving(teamRequest.id)"
+                    (click)="approve(teamRequest.id)"
+                  ></button>
+                  <button
+                    tuiButton
+                    appearance="negative"
+                    size="m"
+                    iconStart="@tui.x"
+                    [disabled]="isResolving(teamRequest.id)"
+                    (click)="reject(teamRequest.id)"
+                  ></button>
+                </div>
               </div>
             </article>
           }
@@ -70,41 +64,44 @@
       <section class="notifications-page__section">
         <div class="notifications-page__section-header">
           <h2>Заявки в мои команды</h2>
-          <tui-badge appearance="warning" size="m">{{ managedApplications().length }}</tui-badge>
+          <tui-badge-notification size="m">{{ managedApplications().length }}</tui-badge-notification>
         </div>
         @if (managedApplications().length) {
           @for (teamRequest of managedApplications(); track teamRequest.id) {
-            <article tuiCardLarge tuiAppearance="outline-grayscale" class="team-request-card">
-              <div class="team-request-info-container">
-                <h3>{{ getRequestHeadline(teamRequest) }}</h3>
-                <p>{{ getManagedApplicationDescription(teamRequest) }}</p>
-                <p class="team-request-card__message">{{ getRequestMessage(teamRequest) }}</p>
-                <tui-badge appearance="info" size="m">
-                  {{ teamRequest.teamPosition.specialization.name }}
-                </tui-badge>
-              </div>
+            <article tuiCardLarge tuiAppearance="outline-grayscale">
+              <div class="team-request-card">
+                <div class="team-request-info-container">
+                  <div class="team-request-header">
+                    <h3>{{ teamRequest.team.name }}</h3>
+                    <h3>•</h3>
+                    <h3>{{ teamRequest.teamPosition.title }}</h3>
+                    <tui-badge appearance="info" size="m">
+                      {{ teamRequest.teamPosition.specialization.name }}
+                    </tui-badge>
+                    <h3>•</h3>
+                    <tui-avatar size="s" [src]="teamRequest.user.avatarUrl" />
+                    <h4>{{ teamRequest.user.displayName }}</h4>
+                  </div>
+                  <p class="team-request-card__message">{{ getRequestMessage(teamRequest) }}</p>
+                </div>
 
-              <div class="team-request-card__actions">
-                <button
-                  tuiButton
-                  appearance="positive"
-                  size="s"
-                  type="button"
-                  [disabled]="isResolving(teamRequest.id)"
-                  (click)="approve(teamRequest.id)"
-                >
-                  Одобрить
-                </button>
-                <button
-                  tuiButton
-                  appearance="secondary"
-                  size="s"
-                  type="button"
-                  [disabled]="isResolving(teamRequest.id)"
-                  (click)="reject(teamRequest.id)"
-                >
-                  Отклонить
-                </button>
+                <div class="team-request-card__actions">
+                  <button
+                    tuiIconButton appearance="positive"
+                    size="m"
+                    iconStart="@tui.check"
+                    [disabled]="isResolving(teamRequest.id)"
+                    (click)="approve(teamRequest.id)"
+                  ></button>
+                  <button
+                    tuiButton
+                    appearance="negative"
+                    size="m"
+                    iconStart="@tui.x"
+                    [disabled]="isResolving(teamRequest.id)"
+                    (click)="reject(teamRequest.id)"
+                  ></button>
+                </div>
               </div>
             </article>
           }
@@ -118,31 +115,33 @@
       <section class="notifications-page__section">
         <div class="notifications-page__section-header">
           <h2>Мои заявки</h2>
-          <tui-badge appearance="primary" size="m">{{ outgoingApplications().length }}</tui-badge>
+          <tui-badge-notification size="m">{{ outgoingApplications().length }}</tui-badge-notification>
         </div>
         @if (outgoingApplications().length) {
           @for (teamRequest of outgoingApplications(); track teamRequest.id) {
-            <article tuiCardLarge tuiAppearance="outline-grayscale" class="team-request-card">
-              <div class="team-request-info-container">
-                <h3>{{ getRequestHeadline(teamRequest) }}</h3>
-                <p>{{ getOutgoingApplicationDescription() }}</p>
-                <p class="team-request-card__message">{{ getRequestMessage(teamRequest) }}</p>
-                <tui-badge appearance="info" size="m">
-                  {{ teamRequest.teamPosition.specialization.name }}
-                </tui-badge>
-              </div>
+            <article tuiCardLarge tuiAppearance="outline-grayscale">
+              <div class="team-request-card">
+                <div class="team-request-info-container">
+                  <div class="team-request-header">
+                    <h3>{{ teamRequest.team.name }}</h3>
+                    <h3>•</h3>
+                    <h3>{{ teamRequest.teamPosition.title }}</h3>
+                    <tui-badge appearance="info" size="m">
+                      {{ teamRequest.teamPosition.specialization.name }}
+                    </tui-badge>
+                  </div>
+                  <p class="team-request-card__message">{{ getRequestMessage(teamRequest) }}</p>
+                </div>
 
-              <div class="team-request-card__actions">
-                <button
-                  tuiButton
-                  appearance="secondary"
-                  size="s"
-                  type="button"
-                  [disabled]="isResolving(teamRequest.id)"
-                  (click)="cancel(teamRequest.id)"
-                >
-                  Отменить
-                </button>
+                <div class="team-request-card__actions">
+                  <button
+                    tuiIconButton appearance="negative"
+                    size="m"
+                    iconStart="@tui.ban"
+                    [disabled]="isResolving(teamRequest.id)"
+                    (click)="cancel(teamRequest.id)"
+                  ></button>
+                </div>
               </div>
             </article>
           }
@@ -154,31 +153,36 @@
       <section class="notifications-page__section">
         <div class="notifications-page__section-header">
           <h2>Отправленные приглашения</h2>
-          <tui-badge appearance="primary" size="m">{{ sentInvitations().length }}</tui-badge>
+          <tui-badge-notification size="m">{{ sentInvitations().length }}</tui-badge-notification>
         </div>
         @if (sentInvitations().length) {
           @for (teamRequest of sentInvitations(); track teamRequest.id) {
-            <article tuiCardLarge tuiAppearance="outline-grayscale" class="team-request-card">
-              <div class="team-request-info-container">
-                <h3>{{ getRequestHeadline(teamRequest) }}</h3>
-                <p>{{ getSentInvitationDescription(teamRequest) }}</p>
-                <p class="team-request-card__message">{{ getRequestMessage(teamRequest) }}</p>
-                <tui-badge appearance="info" size="m">
-                  {{ teamRequest.teamPosition.specialization.name }}
-                </tui-badge>
-              </div>
+            <article tuiCardLarge tuiAppearance="outline-grayscale">
+              <div class="team-request-card">
+                <div class="team-request-info-container">
+                  <div class="team-request-header">
+                    <h3>{{ teamRequest.team.name }}</h3>
+                    <h3>•</h3>
+                    <h3>{{ teamRequest.teamPosition.title }}</h3>
+                    <tui-badge appearance="info" size="m">
+                      {{ teamRequest.teamPosition.specialization.name }}
+                    </tui-badge>
+                    <h3>•</h3>
+                    <tui-avatar size="s" [src]="teamRequest.user.avatarUrl" />
+                    <h4>{{ teamRequest.user.displayName }}</h4>
+                  </div>
+                  <p class="team-request-card__message">{{ getRequestMessage(teamRequest) }}</p>
+                </div>
 
-              <div class="team-request-card__actions">
-                <button
-                  tuiButton
-                  appearance="secondary"
-                  size="s"
-                  type="button"
-                  [disabled]="isResolving(teamRequest.id)"
-                  (click)="cancel(teamRequest.id)"
-                >
-                  Отозвать
-                </button>
+                <div class="team-request-card__actions">
+                  <button
+                    tuiIconButton appearance="negative"
+                    size="m"
+                    iconStart="@tui.ban"
+                    [disabled]="isResolving(teamRequest.id)"
+                    (click)="cancel(teamRequest.id)"
+                  ></button>
+                </div>
               </div>
             </article>
           }
