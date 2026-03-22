@@ -17,7 +17,6 @@ public class TeamRequestService(
     {
         var currentUser = await userRepository.GetUserByAuthAsync(authId, ct)
             ?? throw new UnauthorizedAccessException("User is not registered");
-        Console.WriteLine(currentUser.Id);
 
         var requests = (await teamRequestRepository.GetAllAsync(ct)).ToList();
         var allPositions = (await teamPositionRepository.GetAllAsync(ct)).ToDictionary(x => x.Id, x => x);
@@ -66,13 +65,24 @@ public class TeamRequestService(
         var team = await teamRepository.GetByIdAsync(teamPosition.TeamId, ct)
             ?? throw new KeyNotFoundException("Team not found");
 
+        EnsurePositionIsOpen(teamPosition);
+
+        var isCaptain = team.CaptainId == currentUser.Id;
         var targetUserId = request.Type switch
         {
             TeamRequestType.Application => currentUser.Id,
-            TeamRequestType.Invitation => request.InvitedUserId
-                ?? throw new InvalidOperationException("InvitedUserId is required for invitation"),
+            TeamRequestType.Invitation => ResolveInvitationTargetUserId(request, isCaptain),
             _ => throw new InvalidOperationException("Unsupported request type")
         };
+
+        if (
+            request.Type == TeamRequestType.Invitation
+            && await userRepository.GetUserByIdAsync(targetUserId, ct) == null
+        )
+            throw new KeyNotFoundException("Invited user not found");
+
+        if (team.TeamPositions.Any(position => position.UserId == targetUserId))
+            throw new InvalidOperationException("User is already a member of this team");
 
         var allRequests = await teamRequestRepository.GetAllAsync(ct);
         var hasPending = allRequests.Any(x => x.TeamPositionId == request.TeamPositionId &&
@@ -113,16 +123,17 @@ public class TeamRequestService(
         var team = await teamRepository.GetByIdAsync(teamPosition.TeamId, ct)
             ?? throw new KeyNotFoundException("Team not found");
 
-        var isManager = team.CreatorId == currentUser.Id || team.CaptainId == currentUser.Id;
-        var isOwner = teamRequest.UserId == currentUser.Id;
+        if (teamRequest.Status != TeamRequestStatus.Pending)
+            throw new InvalidOperationException("Team request is already resolved");
 
-        if (!isManager && !(status == TeamRequestStatus.Cancelled && isOwner))
+        if (!CanResolveRequest(teamRequest, team, currentUser.Id, status))
             throw new UnauthorizedAccessException("You cannot resolve this request");
 
+        var resolvedAt = DateTime.UtcNow;
+        var positionForResponse = teamPosition;
         if (status == TeamRequestStatus.Approved)
         {
-            if (teamPosition.UserId.HasValue)
-                throw new InvalidOperationException("Position is already filled");
+            EnsurePositionIsOpen(teamPosition);
 
             var updatedPosition = new TeamPosition(
                 teamPosition.Id,
@@ -134,6 +145,7 @@ public class TeamRequestService(
                 teamPosition.MandPositionData);
 
             await teamPositionRepository.UpdateAsync(updatedPosition, ct);
+            positionForResponse = updatedPosition;
         }
 
         var updatedRequest = new TeamRequest(
@@ -144,12 +156,38 @@ public class TeamRequestService(
             status,
             teamRequest.Message,
             teamRequest.CreatedAt,
-            DateTime.UtcNow);
+            resolvedAt);
 
         var saved = await teamRequestRepository.UpdateAsync(updatedRequest, ct);
-        var positionMap = new Dictionary<Guid, TeamPosition> { [teamPosition.Id] = teamPosition };
+
+        if (status == TeamRequestStatus.Approved)
+            await RejectSiblingRequestsAsync(teamRequest, resolvedAt, ct);
+
+        var positionMap = new Dictionary<Guid, TeamPosition> { [teamPosition.Id] = positionForResponse };
         var teamMap = new Dictionary<Guid, Team> { [team.Id] = team };
         return await BuildDetailsAsync(saved, positionMap, teamMap, ct);
+    }
+
+    private async Task RejectSiblingRequestsAsync(TeamRequest approvedRequest, DateTime resolvedAt, CancellationToken ct)
+    {
+        var siblingRequests = (await teamRequestRepository.GetAllAsync(ct))
+            .Where(request => request.Id != approvedRequest.Id &&
+                              request.TeamPositionId == approvedRequest.TeamPositionId &&
+                              request.Status == TeamRequestStatus.Pending)
+            .ToList();
+
+        foreach (var siblingRequest in siblingRequests)
+        {
+            await teamRequestRepository.UpdateAsync(new TeamRequest(
+                siblingRequest.Id,
+                siblingRequest.TeamPositionId,
+                siblingRequest.UserId,
+                siblingRequest.Type,
+                TeamRequestStatus.Rejected,
+                siblingRequest.Message,
+                siblingRequest.CreatedAt,
+                resolvedAt), ct);
+        }
     }
 
     private async Task<TeamRequestFullModel> BuildDetailsAsync(TeamRequest request,
@@ -186,5 +224,30 @@ public class TeamRequestService(
             TeamPosition = position,
             PositionSpecialization = specialization,
         };
+    }
+
+    private static Guid ResolveInvitationTargetUserId(CreateTeamRequestModel request, bool isCaptain)
+    {
+        if (!isCaptain)
+            throw new UnauthorizedAccessException("Only captain can invite users to this team");
+
+        return request.InvitedUserId
+            ?? throw new InvalidOperationException("InvitedUserId is required for invitation");
+    }
+
+    private static bool CanResolveRequest(TeamRequest request, Team team, Guid currentUserId, TeamRequestStatus status)
+    {
+        return request.Type switch
+        {
+            TeamRequestType.Application => (status == TeamRequestStatus.Cancelled ? request.UserId : team.CaptainId) == currentUserId,
+            TeamRequestType.Invitation => (status == TeamRequestStatus.Cancelled ? team.CaptainId : request.UserId) == currentUserId,
+            _ => throw new InvalidOperationException("Resolve denied. Unknown team request type")
+        };
+    }
+
+    private static void EnsurePositionIsOpen(TeamPosition teamPosition)
+    {
+        if (teamPosition.UserId.HasValue || teamPosition.FilledByExternal)
+            throw new InvalidOperationException("Position is already filled");
     }
 }

@@ -56,9 +56,11 @@ export class TeamRequestsStore {
   );
   readonly sentInvitations = computed(() =>
     this.sortRequests(
-      this.outbox().filter(
+      this.managedTeams().filter(
         (request) =>
-          request.type === 'invitation' && request.status === 'pending',
+          request.type === 'invitation' &&
+          request.status === 'pending' &&
+          request.user.id !== this.myProfileStore.me()?.id,
       ),
     ),
   );
@@ -243,7 +245,10 @@ export class TeamRequestsStore {
 
     return {
       inbox: currentFeed.inbox,
-      outbox: this.upsertRequest(currentFeed.outbox, request),
+      outbox:
+        request.type === 'application'
+          ? this.upsertRequest(currentFeed.outbox, request)
+          : currentFeed.outbox,
       managedTeams:
         request.type === 'invitation'
           ? this.upsertRequest(currentFeed.managedTeams, request)

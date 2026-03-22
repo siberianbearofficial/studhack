@@ -29,15 +29,15 @@ public class TeamRequestsController(ITeamRequestService teamRequestService) : Co
         }
         catch (UnauthorizedAccessException e)
         {
-            return Forbid(e.Message);
+            return Error(StatusCodes.Status403Forbidden, e.Message);
         }
         catch (KeyNotFoundException e)
         {
-            return NotFound(e.Message);
+            return Error(StatusCodes.Status404NotFound, e.Message);
         }
         catch (InvalidOperationException e)
         {
-            return Conflict(e.Message);
+            return Error(StatusCodes.Status409Conflict, e.Message);
         }
     }
 
@@ -52,15 +52,20 @@ public class TeamRequestsController(ITeamRequestService teamRequestService) : Co
         }
         catch (UnauthorizedAccessException e)
         {
-            return Forbid(e.Message);
+            return Error(StatusCodes.Status403Forbidden, e.Message);
         }
         catch (KeyNotFoundException e)
         {
-            return NotFound(e.Message);
+            return Error(StatusCodes.Status404NotFound, e.Message);
         }
         catch (InvalidOperationException e)
         {
-            return Conflict(e.Message);
+            return Error(StatusCodes.Status409Conflict, e.Message);
         }
+    }
+
+    private ObjectResult Error(int statusCode, string message)
+    {
+        return StatusCode(statusCode, new { message });
     }
 }
