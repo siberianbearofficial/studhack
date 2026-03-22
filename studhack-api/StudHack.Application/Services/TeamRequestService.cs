@@ -17,6 +17,7 @@ public class TeamRequestService(
     {
         var currentUser = await userRepository.GetUserByAuthAsync(authId, ct)
             ?? throw new UnauthorizedAccessException("User is not registered");
+        Console.WriteLine(currentUser.Id);
 
         var requests = (await teamRequestRepository.GetAllAsync(ct)).ToList();
         var allPositions = (await teamPositionRepository.GetAllAsync(ct)).ToDictionary(x => x.Id, x => x);

@@ -60,6 +60,7 @@ public static class UserConverter
             BirthDate = db.BirthDate,
             Biography =  db.Biography,
             City =  db.CityOfResidence?.ToDomain(),
+            CityOfResidenceId = db.CityOfResidenceId,
             PortfolioLinks = db.PortfolioLinks.Select(PortfolioLinkConverter.ToDomain).ToList(),
             Skills = db.UserSkills.Select(e => e.ToDomain()).ToList(),
             Specializations = db.UserSpecializations.Select(e => e.Specialization.ToDomain()).ToList(),
