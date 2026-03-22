@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace StudHack.Domain.Models;
+﻿namespace StudHack.Domain.Models;
 
 public class SentMessage
 {

@@ -10,7 +10,7 @@ public class NotificationsRepository(StudHackDbContext dbContext): INotification
 {
     private StudHackDbContext _dbContext { get; } = dbContext;
 
-    public async Task<List<MessageToSend>> GetMessagesToSend()
+    public async Task<List<MessageToSend>> GetMessagesToSend(CancellationToken ct = default)
     {
         // военные преступления
         var potentialMessages = await _dbContext.Subscriptions
@@ -19,7 +19,7 @@ public class NotificationsRepository(StudHackDbContext dbContext): INotification
                 .ThenInclude(e => e.EventDates.Where(ed =>
                     DateTime.UtcNow.AddDays(1) > ed.StartsAt && ed.StartsAt > DateTime.UtcNow))
                     .ThenInclude(ed => ed.SentMessages)
-            .ToListAsync();
+            .ToListAsync(ct);
 
         foreach (var pm in potentialMessages)
         {
@@ -37,7 +37,7 @@ public class NotificationsRepository(StudHackDbContext dbContext): INotification
                 // Проверяем еще раз, не отправлено ли
                 var alreadySent = await _dbContext.SentMessages
                     .AnyAsync(sm => sm.IdSubscription == subscription.Id &&
-                                   sm.IdEventDate == eventDate.Id);
+                                   sm.IdEventDate == eventDate.Id, ct);
                 if (!alreadySent)
                 {
                     var message = string.Format("Привет, {0}!\n Напоминаем про " +
@@ -61,10 +61,25 @@ public class NotificationsRepository(StudHackDbContext dbContext): INotification
         return messagesToSend;
     }
 
-    public async Task MarkSent(List<MessageToSend> messages)
+    public async Task MarkSent(List<MessageToSend> messages, CancellationToken ct = default)
     {
         foreach (var message in messages)
             _dbContext.SentMessages.Add(new SentMessageDb(message.EventDateId, message.SubscriptionId, message.Message));
-        await _dbContext.SaveChangesAsync();
+        await _dbContext.SaveChangesAsync(ct);
+    }
+
+    public async Task<List<SentMessage>> GetSentMessages(Guid userId, CancellationToken ct = default)
+    {
+        var user = await _dbContext.Users
+            .Include(u => u.Subscriptions)
+                .ThenInclude(s => s.SentMessages)
+            .FirstOrDefaultAsync(u => u.Id == userId, ct);
+        if (user == null)
+            return [];
+        List<SentMessage> ans = [];
+        foreach (var sub in user.Subscriptions)
+            foreach (var m in sub.SentMessages)
+                ans.Add(new SentMessage(m.IdEventDate, m.IdSubscription, m.Message));
+        return ans;
     }
 }

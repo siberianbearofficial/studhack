@@ -5,8 +5,8 @@ namespace StudHack.DataAccess.Converters;
 
 public static class SentMessageConverter
 {
-    public static SentMessage ToDomain(this SentMessageDb db)
+    public static SentMessages ToDomain(this SentMessageDb db)
     {
-        return new SentMessage(db.IdEventDate, db.IdSubscription, db.Message);
+        return new SentMessages(db.IdEventDate, db.IdSubscription, db.Message);
     }
 }
