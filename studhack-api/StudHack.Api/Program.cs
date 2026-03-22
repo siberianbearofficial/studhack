@@ -30,15 +30,14 @@ builder.Services.AddScoped<IUniversityRepository, UniversityRepository>();
 /*
 TODO в EmailMessageSender нужно перекинуть переменные SMTP из среды или хз откуда, формат такой:
 
-"Smtp": {
-    "Host": "smtp.yandex.com",
-    "Port": "587",
-    "User": "studhack-no-reply@yandex.ru",
-    "Email": "studhack-no-reply@yandex.ru",
-    "Password": "There could be your password",
-    "UseDefaultCredentials": false,
-    "EnableSsl": true,
-  }
+set Smtp__Host=smtp.yandex.com
+set Smtp__Port=587
+set Smtp__User=studhack-no-reply@yandex.ru
+set Smtp__Password=your-password
+set Smtp__Email=studhack-no-reply@yandex.ru
+set Smtp__Password=<secret_password>
+set Smtp__UseDefaultCredentials=false
+set Smtp__EnableSsl=true
  */
 
 builder.Services.AddScoped<IMessageSender, EmailMessageSender>();

@@ -7,21 +7,18 @@ namespace Studhack.MessageSender;
 
 public class EmailMessageSender(IConfiguration config) : IMessageSender
 {
-    private readonly IConfigurationSection _config = config.GetSection("Smtp");
     public async Task Send(string address, string subject, string message)
     {
         using var client = new SmtpClient();
-        client.Host = _config["Host"]!;
-        client.Port = int.Parse(_config["Port"]!);
-        client.UseDefaultCredentials = _config.GetValue<bool>("UseDefaultCredentials");
-        client.EnableSsl = _config.GetValue<bool>("EnableSsl");
+        client.Host = config["Smtp:Host"]!;
+        client.Port = int.Parse(config["Smtp:Port"]!);
+        client.UseDefaultCredentials = config.GetValue<bool>("Smtp:UseDefaultCredentials");
+        client.EnableSsl = config.GetValue<bool>("Smtp:EnableSsl");
         client.DeliveryMethod = SmtpDeliveryMethod.Network;
         client.Credentials = client.UseDefaultCredentials ? null :
-            new NetworkCredential(_config["User"]!, _config["Password"]!);
-
-        var mail = new MailMessage(_config["SmtpEmail"]!, address, subject, message)
+            new NetworkCredential(config["Smtp:User"]!, config["Smtp:Password"]!);
+        var mail = new MailMessage(config["Smtp:Email"]!, address, subject, message)
         { IsBodyHtml = false };
-
         await client.SendMailAsync(mail).ConfigureAwait(false);
         mail.Dispose();
     }
