@@ -1,0 +1,46 @@
+.team-request-dialog {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: min(100%, 32rem);
+}
+
+.team-request-dialog__header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.team-request-dialog__context {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.team-request-dialog__status {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--tui-text-secondary);
+}
+
+.team-request-dialog__error {
+  margin: 0;
+  color: var(--tui-status-negative);
+}
+
+.team-request-dialog__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+@media (max-width: 640px) {
+  .team-request-dialog {
+    min-width: 0;
+  }
+
+  .team-request-dialog__actions {
+    flex-direction: column-reverse;
+  }
+}

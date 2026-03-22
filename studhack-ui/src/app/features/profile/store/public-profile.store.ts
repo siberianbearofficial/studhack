@@ -1,39 +1,34 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { computed, Injectable, signal, inject } from '@angular/core';
 
-import { type UserFullDto } from '@core/api';
-import { getErrorMessage } from '@shared';
-
-import { ProfileService } from '../services/profile.service';
+import { PublicDataStore } from '@core/data';
 
 @Injectable()
 export class PublicProfileStore {
-  private readonly service = inject(ProfileService);
+  private readonly publicDataStore = inject(PublicDataStore);
+  private readonly userId = signal<string | null>(null);
 
-  readonly user = signal<UserFullDto | null>(null);
-  readonly isLoading = signal(true);
-  readonly error = signal<string | null>(null);
+  readonly user = computed(() =>
+    this.publicDataStore
+      .users()
+      .find((user) => user.id === this.userId()) ?? null,
+  );
+  readonly isLoading = computed(() => this.publicDataStore.isLoading());
+  readonly error = computed(() => {
+    const userId = this.userId();
 
-  load(userId: string | null): void {
     if (!userId) {
-      this.user.set(null);
-      this.error.set('Профиль пользователя не найден');
-      this.isLoading.set(false);
-
-      return;
+      return 'Профиль пользователя не найден';
     }
 
-    this.isLoading.set(true);
-    this.error.set(null);
+    return (
+      this.publicDataStore.error() ??
+      (!this.publicDataStore.isLoading() && !this.user()
+        ? 'Профиль пользователя не найден'
+        : null)
+    );
+  });
 
-    this.service.getUser(userId).subscribe({
-      next: (user) => {
-        this.user.set(user);
-        this.isLoading.set(false);
-      },
-      error: (error: unknown) => {
-        this.error.set(getErrorMessage(error, 'Не удалось загрузить профиль'));
-        this.isLoading.set(false);
-      },
-    });
+  load(userId: string | null): void {
+    this.userId.set(userId?.trim() || null);
   }
 }

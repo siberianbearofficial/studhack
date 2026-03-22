@@ -2,7 +2,6 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  effect,
   inject,
   signal,
 } from '@angular/core';
@@ -16,9 +15,8 @@ import {
   TuiProgressBar,
   TuiProgressSegmented,
 } from '@taiga-ui/kit';
-import { catchError, finalize, of, switchMap, tap } from 'rxjs';
 
-import { injectStudhackApiClient, type MyProfileDto } from '@core/api';
+import { MyProfileStore } from '@core/data';
 import { AuthService } from '@core/auth';
 import { CurrentUserService, type CurrentUserDto } from '@core/current-user';
 import { getProfileGrade } from '@shared';
@@ -51,8 +49,8 @@ interface HeaderNavItem {
   styleUrl: './app-shell-header.component.less',
 })
 export class AppShellHeaderComponent {
-  private readonly api = injectStudhackApiClient();
   private readonly auth = inject(AuthService);
+  private readonly myProfileStore = inject(MyProfileStore);
   private readonly currentUserService = inject(CurrentUserService);
   private readonly router = inject(Router);
 
@@ -76,10 +74,11 @@ export class AppShellHeaderComponent {
 
   protected readonly isAuthenticated = this.auth.isAuthenticated;
   protected readonly currentUser = this.currentUserService.currentUser;
-  protected readonly hasAccount = this.currentUserService.hasAccount;
+  protected readonly hasAccount = computed(
+    () => this.currentUserService.hasAccount() || this.myProfileStore.hasProfile(),
+  );
   protected readonly menuOpen = signal(false);
-  protected readonly isCurrentUserLoading = signal(false);
-  protected readonly profile = signal<MyProfileDto | null>(null);
+  protected readonly isCurrentUserLoading = this.myProfileStore.isLoading;
 
   protected readonly navItems = computed<readonly HeaderNavItem[]>(() => [
     ...this.publicNavItems,
@@ -95,7 +94,7 @@ export class AppShellHeaderComponent {
   ]);
 
   protected readonly profileGrade = computed(() => {
-    const profile = this.profile();
+    const profile = this.myProfileStore.me();
     return profile ? getProfileGrade(profile) : null;
   });
 
@@ -119,37 +118,8 @@ export class AppShellHeaderComponent {
   });
 
   protected readonly avatarInitials = computed(() =>
-    this.getInitials(this.currentUser()),
+    this.getInitials(this.myProfileStore.me() ?? this.currentUser()),
   );
-
-  constructor() {
-    effect((onCleanup) => {
-      if (!this.isAuthenticated()) {
-        this.menuOpen.set(false);
-        this.isCurrentUserLoading.set(false);
-        this.profile.set(null);
-        return;
-      }
-
-      this.isCurrentUserLoading.set(true);
-
-      const subscription = this.currentUserService
-        .load()
-        .pipe(
-          switchMap((user) => (user.id ? this.api.getMe() : of(null))),
-          catchError(() => of(null)),
-          tap((profile) => {
-            this.profile.set(profile);
-          }),
-          finalize(() => {
-            this.isCurrentUserLoading.set(false);
-          }),
-        )
-        .subscribe();
-
-      onCleanup(() => subscription.unsubscribe());
-    });
-  }
 
   protected closeMenu(): void {
     this.menuOpen.set(false);

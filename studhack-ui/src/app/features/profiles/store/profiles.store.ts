@@ -1,9 +1,9 @@
 import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import Fuse, { type IFuseOptions } from 'fuse.js';
 
+import { PublicDataStore } from '@core/data';
 import { type SkillExperienceLevel, type UserFullDto } from '@core/api';
 import {
-  getErrorMessage,
   getExperienceLabel,
   getParticipationFormat,
   getProfileExperienceLevel,
@@ -11,8 +11,6 @@ import {
   PROFILE_PARTICIPATION_OPTIONS,
   type ProfileParticipationFormat,
 } from '@shared';
-
-import { ProfilesService } from '../services/profiles.service';
 
 interface FilterOption<T extends string> {
   readonly value: T;
@@ -40,9 +38,9 @@ const SEARCH_OPTIONS = {
 
 @Injectable()
 export class ProfilesStore {
-  private readonly service = inject(ProfilesService);
+  private readonly publicDataStore = inject(PublicDataStore);
 
-  readonly users = signal<readonly UserFullDto[]>([]);
+  readonly users = computed(() => this.publicDataStore.users());
   readonly query = signal('');
   readonly selectedSpecializationIds = signal<readonly string[]>([]);
   readonly selectedSkillIds = signal<readonly string[]>([]);
@@ -51,8 +49,8 @@ export class ProfilesStore {
   readonly onlyAvailable = signal(false);
   readonly favoriteUserIds = signal<readonly string[]>([]);
   readonly currentPage = signal(0);
-  readonly isLoading = signal(true);
-  readonly error = signal<string | null>(null);
+  readonly isLoading = computed(() => this.publicDataStore.isLoading());
+  readonly error = computed(() => this.publicDataStore.error());
   readonly specializationOptions = computed(() =>
     this.buildOptions(
       this.users(),
@@ -174,8 +172,6 @@ export class ProfilesStore {
   });
 
   constructor() {
-    this.load();
-
     effect(() => {
       this.users();
       this.query();
@@ -201,19 +197,7 @@ export class ProfilesStore {
   }
 
   load(): void {
-    this.isLoading.set(true);
-    this.error.set(null);
-
-    this.service.getUsers().subscribe({
-      next: (users) => {
-        this.users.set(users);
-        this.isLoading.set(false);
-      },
-      error: (error: unknown) => {
-        this.error.set(getErrorMessage(error, 'Не удалось загрузить профили'));
-        this.isLoading.set(false);
-      },
-    });
+    this.publicDataStore.load();
   }
 
   setQuery(query: string): void {

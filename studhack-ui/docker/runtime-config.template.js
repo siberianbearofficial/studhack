@@ -7,4 +7,5 @@ window.__STUDHACK_RUNTIME_CONFIG__ = {
   postLogoutRedirectUri: '${STUDHACK_AUTH_POST_LOGOUT_REDIRECT_URI}' || undefined,
   disableNonceCheck: '${STUDHACK_AUTH_DISABLE_NONCE_CHECK}' === 'true',
   disableOAuth2StateCheck: '${STUDHACK_AUTH_DISABLE_OAUTH2_STATE_CHECK}' === 'true',
+  apiMode: '${STUDHACK_API_MODE}' || 'mock',
 };

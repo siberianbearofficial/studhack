@@ -1,38 +1,75 @@
-import { computed, inject, Injectable, signal } from '@angular/core';
-
-import { getErrorMessage } from '@shared';
+import { computed, inject, Injectable } from '@angular/core';
 
 import {
-  LandingService,
-  type LandingOverview,
-} from '../services/landing.service';
+  DictionariesStore,
+  MyProfileStore,
+  PublicDataStore,
+} from '@core/data';
+import { type EventFullDto, type MyProfileDto } from '@core/api';
+
+export interface LandingOverview {
+  readonly me: MyProfileDto | null;
+  readonly usersCount: number;
+  readonly eventsCount: number;
+  readonly teamsCount: number;
+  readonly openPositionsCount: number;
+  readonly nextEvent: EventFullDto | null;
+  readonly topSpecializations: readonly string[];
+}
 
 @Injectable()
 export class LandingStore {
-  private readonly service = inject(LandingService);
+  private readonly dictionariesStore = inject(DictionariesStore);
+  private readonly myProfileStore = inject(MyProfileStore);
+  private readonly publicDataStore = inject(PublicDataStore);
 
-  readonly overview = signal<LandingOverview | null>(null);
-  readonly isLoading = signal(true);
-  readonly error = signal<string | null>(null);
+  readonly overview = computed<LandingOverview | null>(() => {
+    const dictionaries = this.dictionariesStore.data();
+
+    if (!dictionaries) {
+      return null;
+    }
+
+    const users = this.publicDataStore.users();
+    const events = this.publicDataStore.events();
+    const teams = this.publicDataStore.teams();
+    const nextEvent =
+      events.find((event) => new Date(event.endsAt).getTime() >= Date.now()) ??
+      events[0] ??
+      null;
+
+    return {
+      me: this.myProfileStore.me(),
+      usersCount: users.length,
+      eventsCount: events.length,
+      teamsCount: teams.length,
+      openPositionsCount: teams.reduce(
+        (total, team) => total + team.openPositionsCount,
+        0,
+      ),
+      nextEvent,
+      topSpecializations: dictionaries.specializations
+        .slice(0, 4)
+        .map((specialization) => specialization.name),
+    };
+  });
+  readonly isLoading = computed(
+    () =>
+      this.dictionariesStore.isLoading() ||
+      this.publicDataStore.isLoading() ||
+      this.myProfileStore.isLoading(),
+  );
+  readonly error = computed(
+    () =>
+      this.dictionariesStore.error() ??
+      this.publicDataStore.error() ??
+      this.myProfileStore.error(),
+  );
   readonly hasOverview = computed(() => this.overview() !== null);
 
-  constructor() {
-    this.load();
-  }
-
   load(): void {
-    this.isLoading.set(true);
-    this.error.set(null);
-
-    this.service.getOverview().subscribe({
-      next: (overview) => {
-        this.overview.set(overview);
-        this.isLoading.set(false);
-      },
-      error: (error: unknown) => {
-        this.error.set(getErrorMessage(error, 'Не удалось загрузить лендинг'));
-        this.isLoading.set(false);
-      },
-    });
+    this.dictionariesStore.load();
+    this.publicDataStore.load();
+    this.myProfileStore.load();
   }
 }

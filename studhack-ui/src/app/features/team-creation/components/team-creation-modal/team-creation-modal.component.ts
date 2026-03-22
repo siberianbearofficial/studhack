@@ -331,6 +331,7 @@ export class TeamCreationModalComponent {
 
         if (navigateToCandidates) {
           const queryParams = this.buildCandidateQueryParams(
+            result.team.id,
             result.event?.name ?? result.team.event.name,
           );
 
@@ -411,7 +412,10 @@ export class TeamCreationModalComponent {
     };
   }
 
-  private buildCandidateQueryParams(eventName: string): Record<string, string | readonly string[] | boolean> {
+  private buildCandidateQueryParams(
+    teamId: string,
+    eventName: string,
+  ): Record<string, string | readonly string[] | boolean> {
     const value = this.form.getRawValue();
     const openPositions = value.positions.filter((position) => !position.filledByExternal);
     const specializations = [
@@ -430,6 +434,7 @@ export class TeamCreationModalComponent {
     ];
 
     return {
+      teamId,
       teamName: value.name.trim(),
       eventName,
       specializations,

@@ -1,9 +1,19 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink, ActivatedRoute } from '@angular/router';
 import { TuiButton, TuiLink, TuiTitle } from '@taiga-ui/core';
+import { TuiDialog } from '@taiga-ui/core/components/dialog';
 import { TuiBadge, TuiChip, TuiProgress } from '@taiga-ui/kit';
 import { TuiCard, TuiHeader } from '@taiga-ui/layout';
 
+import { type TeamRequestDto } from '@core/api';
+import { TeamRequestDialogComponent } from '@features/team-requests';
 import {
   getPrimarySpecializationName,
   getProfileExperienceLabel,
@@ -19,6 +29,7 @@ import { PublicProfileStore } from '../../store/public-profile.store';
   imports: [
     ProfileMetaCardComponent,
     RouterLink,
+    TuiDialog,
     TuiBadge,
     TuiButton,
     TuiCard,
@@ -27,6 +38,7 @@ import { PublicProfileStore } from '../../store/public-profile.store';
     TuiLink,
     TuiProgress,
     TuiTitle,
+    TeamRequestDialogComponent,
   ],
   providers: [PublicProfileStore],
   templateUrl: './user-profile-page.component.html',
@@ -35,6 +47,9 @@ import { PublicProfileStore } from '../../store/public-profile.store';
 export class UserProfilePageComponent {
   private readonly route = inject(ActivatedRoute);
   protected readonly store = inject(PublicProfileStore);
+  protected readonly inviteDialogOpen = signal(false);
+  protected readonly inviteSuccess = signal<string | null>(null);
+  protected readonly preferredTeamId = signal<string | null>(null);
 
   protected readonly primarySpecialization = computed(() => {
     const user = this.store.user();
@@ -53,6 +68,31 @@ export class UserProfilePageComponent {
   });
 
   constructor() {
+    this.route.queryParamMap.pipe(takeUntilDestroyed()).subscribe((params) => {
+      this.preferredTeamId.set(this.normalizeParam(params.get('teamId')));
+    });
     this.store.load(this.route.snapshot.paramMap.get('userId'));
+  }
+
+  protected openInviteDialog(): void {
+    this.inviteSuccess.set(null);
+    this.inviteDialogOpen.set(true);
+  }
+
+  protected closeInviteDialog(): void {
+    this.inviteDialogOpen.set(false);
+  }
+
+  protected handleInviteCreated(request: TeamRequestDto): void {
+    this.inviteSuccess.set(
+      `Приглашение отправлено в «${request.team.name}» на роль «${request.teamPosition.title}»`,
+    );
+    this.closeInviteDialog();
+  }
+
+  private normalizeParam(value: string | null): string | null {
+    const normalizedValue = value?.trim();
+
+    return normalizedValue ? normalizedValue : null;
   }
 }

@@ -2,6 +2,7 @@ import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { TuiDay, TuiDayRange } from '@taiga-ui/cdk/date-time';
 import Fuse, { type IFuseOptions } from 'fuse.js';
 
+import { PublicDataStore } from '@core/data';
 import { type EventFullDto } from '@core/api';
 import {
   EVENT_TEAM_SIZE_MAX,
@@ -28,8 +29,10 @@ const SEARCH_OPTIONS = {
 @Injectable()
 export class EventsStore {
   private readonly service = inject(EventsService);
+  private readonly publicDataStore = inject(PublicDataStore);
+  private readonly localError = signal<string | null>(null);
 
-  readonly events = signal<readonly EventFullDto[]>([]);
+  readonly events = computed(() => this.publicDataStore.events());
   readonly query = signal('');
   readonly dateRange = signal<TuiDayRange | null>(null);
   readonly teamSizeRange = signal<readonly [number, number]>([
@@ -39,10 +42,12 @@ export class EventsStore {
   readonly recommendedOnly = signal(false);
   readonly inPersonOnly = signal(false);
   readonly multiDayOnly = signal(false);
-  readonly subscribedEventIds = signal<readonly string[]>([]);
   readonly currentPage = signal(0);
-  readonly isLoading = signal(true);
-  readonly error = signal<string | null>(null);
+  readonly isLoading = computed(() => this.publicDataStore.isLoading());
+  readonly error = computed(
+    () => this.localError() ?? this.publicDataStore.error(),
+  );
+  readonly subscriptionPendingIds = signal<readonly string[]>([]);
   readonly recommendedEventIds = computed(() =>
     [...this.events()]
       .sort(
@@ -139,9 +144,8 @@ export class EventsStore {
   });
 
   constructor() {
-    this.load();
-
     effect(() => {
+      this.events();
       this.query();
       this.dateRange();
       this.teamSizeRange();
@@ -165,24 +169,8 @@ export class EventsStore {
   }
 
   load(): void {
-    this.isLoading.set(true);
-    this.error.set(null);
-
-    this.service.getEvents().subscribe({
-      next: (events) => {
-        this.events.set(events);
-        this.subscribedEventIds.set(
-          events
-            .filter((event) => event.subscription.isSubscribed)
-            .map((event) => event.id),
-        );
-        this.isLoading.set(false);
-      },
-      error: (error: unknown) => {
-        this.error.set(getErrorMessage(error, 'Не удалось загрузить события'));
-        this.isLoading.set(false);
-      },
-    });
+    this.localError.set(null);
+    this.publicDataStore.load();
   }
 
   setQuery(query: string): void {
@@ -210,15 +198,43 @@ export class EventsStore {
   }
 
   toggleSubscription(eventId: string): void {
-    this.subscribedEventIds.update((eventIds) =>
-      eventIds.includes(eventId)
-        ? eventIds.filter((id) => id !== eventId)
-        : [...eventIds, eventId],
-    );
+    const event = this.events().find((item) => item.id === eventId);
+
+    if (!event || this.subscriptionPendingIds().includes(eventId)) {
+      return;
+    }
+
+    this.subscriptionPendingIds.update((ids) => [...ids, eventId]);
+    this.localError.set(null);
+
+    this.service
+      .setSubscription(eventId, !event.subscription.isSubscribed)
+      .subscribe({
+        next: (subscription) => {
+          this.publicDataStore.upsertEvent({
+            ...event,
+            subscription,
+          });
+          this.subscriptionPendingIds.update((ids) =>
+            ids.filter((id) => id !== eventId),
+          );
+        },
+        error: (error: unknown) => {
+          this.localError.set(
+            getErrorMessage(error, 'Не удалось обновить подписку'),
+          );
+          this.subscriptionPendingIds.update((ids) =>
+            ids.filter((id) => id !== eventId),
+          );
+        },
+      });
   }
 
   isSubscribed(eventId: string): boolean {
-    return this.subscribedEventIds().includes(eventId);
+    return (
+      this.events().find((event) => event.id === eventId)?.subscription
+        .isSubscribed ?? false
+    );
   }
 
   isRecommended(eventId: string): boolean {
@@ -265,8 +281,10 @@ export class EventsStore {
   }
 
   private isDefaultTeamSizeRange(
-    [min, max]: readonly [number, number],
+    range: readonly [number, number],
   ): boolean {
-    return min === EVENT_TEAM_SIZE_MIN && max === EVENT_TEAM_SIZE_MAX;
+    return (
+      range[0] === EVENT_TEAM_SIZE_MIN && range[1] === EVENT_TEAM_SIZE_MAX
+    );
   }
 }

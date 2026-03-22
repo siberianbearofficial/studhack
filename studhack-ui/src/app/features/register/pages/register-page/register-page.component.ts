@@ -6,6 +6,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { TuiDay } from '@taiga-ui/cdk/date-time';
 import {
   FormArray,
@@ -40,11 +41,13 @@ import {
   TuiTextareaLimit,
 } from '@taiga-ui/kit';
 import { TuiCard, TuiHeader } from '@taiga-ui/layout';
-import { forkJoin, finalize } from 'rxjs';
+import { combineLatest, filter, finalize, map, take } from 'rxjs';
 
+import { DictionariesStore } from '@core/data';
 import { AuthService } from '@core/auth';
 import {
   type CityDto,
+  type DictionariesDto,
   type EducationDegree,
   type SkillDto,
   type UniversityDto,
@@ -128,6 +131,7 @@ const EDUCATION_DEGREE_OPTIONS: readonly EducationDegreeOption[] = [
 export class RegisterPageComponent {
   private readonly formBuilder = inject(FormBuilder);
   private readonly currentUserService = inject(CurrentUserService);
+  private readonly dictionariesStore = inject(DictionariesStore);
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
@@ -138,7 +142,7 @@ export class RegisterPageComponent {
   protected readonly isSaving = signal(false);
   protected readonly error = signal<string | null>(null);
   protected readonly educationDegreeOptions = EDUCATION_DEGREE_OPTIONS;
-  protected readonly dictionaries = this.currentUserService.dictionaries;
+  protected readonly dictionaries = this.dictionariesStore.data;
   protected readonly cities = computed(() => this.dictionaries()?.cities ?? []);
   protected readonly universities = computed(() => this.dictionaries()?.universities ?? []);
   protected readonly skills = computed(() => this.dictionaries()?.skills ?? []);
@@ -322,11 +326,37 @@ export class RegisterPageComponent {
     this.isLoading.set(true);
     this.error.set(null);
 
-    forkJoin({
+    combineLatest({
       user: this.currentUserService.load(),
-      dictionaries: this.currentUserService.loadDictionaries(),
+      dictionariesState: toObservable(
+        computed(() => ({
+          data: this.dictionaries(),
+          error: this.dictionariesStore.error(),
+          isLoading: this.dictionariesStore.isLoading(),
+        })),
+      ).pipe(
+        filter(
+          (
+            state,
+          ): state is {
+            readonly data: DictionariesDto | null;
+            readonly error: string | null;
+            readonly isLoading: boolean;
+          } => Boolean(state.data) || Boolean(state.error && !state.isLoading),
+        ),
+        take(1),
+      ),
     }).subscribe({
-      next: ({ user, dictionaries }) => {
+      next: ({ user, dictionariesState }) => {
+        if (!dictionariesState.data) {
+          this.error.set(
+            dictionariesState.error ?? 'Не удалось загрузить словари для регистрации',
+          );
+          this.isLoading.set(false);
+
+          return;
+        }
+
         if (user.id) {
           void this.router.navigateByUrl(this.resolveRequestedReturnUrl('/profile'));
           return;
@@ -334,7 +364,7 @@ export class RegisterPageComponent {
 
         this.currentUser.set(user);
         this.replaceSpecializationControls(
-          dictionaries.specializations.length,
+          dictionariesState.data.specializations.length,
           user.specializations.map((item) => item.id),
         );
         this.applyCurrentUser(user);

@@ -2,6 +2,11 @@ import { computed, inject, Injectable, signal } from '@angular/core';
 import { map, switchMap } from 'rxjs';
 
 import {
+  DictionariesStore,
+  MyProfileStore,
+  PublicDataStore,
+} from '@core/data';
+import {
   type EventFullDto,
   type TeamFullDto,
   type UpsertEventRequest,
@@ -9,7 +14,7 @@ import {
 } from '@core/api';
 import { getErrorMessage } from '@shared';
 
-import { TeamCreationService, type TeamCreationData } from '../services/team-creation.service';
+import { TeamCreationService } from '../services/team-creation.service';
 
 export interface TeamCreationSaveResult {
   readonly team: TeamFullDto;
@@ -19,40 +24,35 @@ export interface TeamCreationSaveResult {
 @Injectable()
 export class TeamCreationStore {
   private readonly service = inject(TeamCreationService);
+  private readonly dictionariesStore = inject(DictionariesStore);
+  private readonly myProfileStore = inject(MyProfileStore);
+  private readonly publicDataStore = inject(PublicDataStore);
+  private readonly localError = signal<string | null>(null);
 
-  readonly data = signal<TeamCreationData | null>(null);
   readonly createdTeam = signal<TeamFullDto | null>(null);
-  readonly isLoading = signal(true);
-  readonly isSaving = signal(false);
-  readonly error = signal<string | null>(null);
-  readonly success = signal<string | null>(null);
-  readonly events = computed(() => this.data()?.events ?? []);
-  readonly me = computed(() => this.data()?.bootstrap.me ?? null);
-  readonly specializations = computed(
-    () => this.data()?.bootstrap.dictionaries.specializations ?? [],
+  readonly isLoading = computed(
+    () =>
+      this.publicDataStore.isLoading() || this.dictionariesStore.isLoading(),
   );
-  readonly skills = computed(() => this.data()?.bootstrap.dictionaries.skills ?? []);
-
-  constructor() {
-    this.load();
-  }
+  readonly isSaving = signal(false);
+  readonly error = computed(
+    () =>
+      this.localError() ??
+      this.publicDataStore.error() ??
+      this.dictionariesStore.error(),
+  );
+  readonly success = signal<string | null>(null);
+  readonly events = computed(() => this.publicDataStore.events());
+  readonly me = computed(() => this.myProfileStore.me());
+  readonly specializations = computed(
+    () => this.dictionariesStore.data()?.specializations ?? [],
+  );
+  readonly skills = computed(() => this.dictionariesStore.data()?.skills ?? []);
 
   load(): void {
-    this.isLoading.set(true);
-    this.error.set(null);
-
-    this.service.getData().subscribe({
-      next: (data) => {
-        this.data.set(data);
-        this.isLoading.set(false);
-      },
-      error: (error: unknown) => {
-        this.error.set(
-          getErrorMessage(error, 'Не удалось загрузить данные для создания команды'),
-        );
-        this.isLoading.set(false);
-      },
-    });
+    this.localError.set(null);
+    this.dictionariesStore.load();
+    this.publicDataStore.load();
   }
 
   save(
@@ -63,7 +63,7 @@ export class TeamCreationStore {
     },
   ): void {
     this.isSaving.set(true);
-    this.error.set(null);
+    this.localError.set(null);
     this.success.set(null);
 
     const save$ = options?.customEvent
@@ -85,29 +85,13 @@ export class TeamCreationStore {
       next: (result) => {
         this.createdTeam.set(result.team);
         this.success.set(`Команда «${result.team.name}» сохранена`);
-        this.data.update((data) => {
-          if (!data || !result.event) {
-            return data;
-          }
-
-          const hasEvent = data.events.some((event) => event.id === result.event!.id);
-
-          if (hasEvent) {
-            return data;
-          }
-
-          return {
-            ...data,
-            events: [...data.events, result.event].sort((left, right) =>
-              left.startsAt.localeCompare(right.startsAt),
-            ),
-          };
-        });
+        this.publicDataStore.load();
+        this.myProfileStore.load();
         this.isSaving.set(false);
         options?.onSuccess?.(result);
       },
       error: (error: unknown) => {
-        this.error.set(
+        this.localError.set(
           getErrorMessage(error, 'Не удалось сохранить команду'),
         );
         this.isSaving.set(false);

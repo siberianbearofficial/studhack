@@ -64,7 +64,13 @@
       </p>
 
       <div class="user-profile-page__actions">
-        <button tuiButton type="button" appearance="primary" size="m">
+        <button
+          tuiButton
+          type="button"
+          appearance="primary"
+          size="m"
+          (click)="openInviteDialog()"
+        >
           Пригласить
         </button>
         <a
@@ -76,6 +82,10 @@
           В мои команды
         </a>
       </div>
+
+      @if (inviteSuccess()) {
+        <p class="user-profile-page__success">{{ inviteSuccess() }}</p>
+      }
     </section>
 
     <section class="user-profile-page__layout">
@@ -182,5 +192,20 @@
         </section>
       </aside>
     </section>
+
+    <ng-template
+      [tuiDialog]="inviteDialogOpen()"
+      (tuiDialogChange)="!$event && closeInviteDialog()"
+      [tuiDialogOptions]="{size: 'm'}"
+    >
+      <app-team-request-dialog
+        kind="invitation"
+        [invitedUserId]="user.id"
+        [invitedUserName]="user.displayName"
+        [preferredTeamId]="preferredTeamId()"
+        (dismissed)="closeInviteDialog()"
+        (completed)="handleInviteCreated($event)"
+      />
+    </ng-template>
   }
 </section>

@@ -314,11 +314,6 @@ export interface DictionariesDto {
   readonly skills: readonly SkillDto[];
 }
 
-export interface BootstrapDto {
-  readonly me: Nullable<MyProfileDto>;
-  readonly dictionaries: DictionariesDto;
-}
-
 export interface UpsertUserSkillInput {
   readonly skillId: UUID;
   readonly experienceLevel: SkillExperienceLevel;

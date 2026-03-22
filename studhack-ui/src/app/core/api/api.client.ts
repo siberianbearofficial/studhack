@@ -2,9 +2,9 @@ import { inject, InjectionToken } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import {
-  type BootstrapDto,
   type CreateTeamRequestInput,
   type DeleteResultDto,
+  type DictionariesDto,
   type EventFullDto,
   type EventSubscriptionDto,
   type MyProfileDto,
@@ -21,7 +21,9 @@ import {
 } from './api.models';
 
 export interface StudhackApiClient {
-  getBootstrap(): Observable<BootstrapDto>;
+  getDictionaries(
+    options?: { readonly force?: boolean },
+  ): Observable<DictionariesDto>;
   getEvents(): Observable<readonly EventFullDto[]>;
   getEvent(eventId: UUID): Observable<EventFullDto>;
   upsertEvent(payload: UpsertEventRequest): Observable<EventFullDto>;
