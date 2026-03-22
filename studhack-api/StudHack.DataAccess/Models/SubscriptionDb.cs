@@ -27,4 +27,5 @@ public class SubscriptionDb
 
     public virtual EventDb Event { get; set; }
     public virtual UserDb User { get; set; }
+    public virtual ICollection<SentMessageDb> SentMessages { get; set; } = [];
 }

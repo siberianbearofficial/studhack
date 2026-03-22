@@ -7,6 +7,6 @@ public static class SentMessageConverter
 {
     public static SentMessage ToDomain(this SentMessageDb db)
     {
-        return new SentMessage(db.IdEventDate, db.IdSubscription);
+        return new SentMessage(db.IdEventDate, db.IdSubscription, db.Message);
     }
 }

@@ -25,15 +25,8 @@ public class MessageSenderService(
 
             foreach (var email in emails)
             {
-                try
-                {
-                    await emailSender.Send(email.UserEmail, "Уведомление", email.Message);
-                    sent_emails.Add(email);
-                }
-                catch (Exception ex)
-                {
-
-                }
+                await emailSender.Send(email.UserEmail, "Уведомление", email.Message);
+                sent_emails.Add(email);
             }
             await notificationsRepo.MarkSent(sent_emails);
         }, stoppingToken);
