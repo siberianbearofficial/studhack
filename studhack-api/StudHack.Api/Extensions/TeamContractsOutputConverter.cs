@@ -86,7 +86,7 @@ public static class TeamContractsOutputConverter
         return new TeamShortDto
         {
             Id = team.Id,
-            EventId = team.HackatonId,
+            HackatonId = team.HackatonId,
             Name = team.Name,
             Description = team.Description,
             Captain = null,

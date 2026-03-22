@@ -10,21 +10,21 @@ public static class TeamContractsInputConverter
     {
         return new UpsertTeamModel
         {
-            Id = dto.Id,
-            EventId = dto.EventId,
+            Id = NormalizeNullableGuid(dto.Id),
+            HackatonId = dto.HackatonId,
             Name = dto.Name,
             Description = dto.Description,
-            CaptainUserId = dto.CaptainUserId,
+            CaptainUserId = NormalizeNullableGuid(dto.CaptainUserId),
             Positions = dto.Positions.Select(p => new UpsertTeamPositionModel
             {
-                Id = p.Id,
+                Id = NormalizeNullableGuid(p.Id),
                 Title = p.Title,
                 Description = p.Description,
-                MandatoryPositionId = p.MandatoryPositionId,
-                SpecializationId = p.SpecializationId,
+                MandatoryPositionId = NormalizeNullableGuid(p.MandatoryPositionId),
+                SpecializationId = NormalizeNullableGuid(p.SpecializationId),
                 RequiredSkillIds = p.RequiredSkillIds?.ToArray() ?? [],
                 FilledByExternal = p.FilledByExternal ?? false,
-                UserId = p.UserId,
+                UserId = NormalizeNullableGuid(p.UserId),
             }).ToList(),
         };
     }
@@ -43,5 +43,10 @@ public static class TeamContractsInputConverter
     public static TeamRequestStatus ToDomain(this ResolveTeamRequestRequest dto)
     {
         return (TeamRequestStatus)dto.Status;
+    }
+
+    private static Guid? NormalizeNullableGuid(Guid? id)
+    {
+        return id.HasValue && id.Value != Guid.Empty ? id : null;
     }
 }
