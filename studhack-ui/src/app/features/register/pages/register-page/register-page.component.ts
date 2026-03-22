@@ -44,6 +44,7 @@ import { forkJoin, finalize } from 'rxjs';
 
 import { AuthService } from '@core/auth';
 import {
+  type CityDto,
   type EducationDegree,
   type SkillDto,
   type UniversityDto,
@@ -56,8 +57,10 @@ import {
 import { getErrorMessage } from '@shared';
 
 type BirthDateControlValue = TuiDay | null;
+type CityOption = CityDto;
 type SkillOption = SkillDto;
 type UniversityOption = UniversityDto;
+type CityControlValue = CityOption | string | null;
 type SkillControlValue = SkillOption | string | null;
 type SkillForm = FormGroup<{
   skill: FormControl<SkillControlValue>;
@@ -140,6 +143,8 @@ export class RegisterPageComponent {
   protected readonly specializations = computed(
     () => this.dictionaries()?.specializations ?? [],
   );
+  protected readonly stringifyCity = (item: CityControlValue): string =>
+    typeof item === 'string' ? item : (item?.name ?? '');
   protected readonly stringifySkill = (item: SkillControlValue): string =>
     typeof item === 'string' ? item : (item?.name ?? '');
   protected readonly stringifyUniversity = (item: UniversityControlValue): string =>
@@ -147,6 +152,8 @@ export class RegisterPageComponent {
   protected readonly stringifyEducationDegree = (
     item: EducationDegreeControlValue,
   ): string => (typeof item === 'string' ? item : (item?.label ?? ''));
+  protected readonly matchCity = (left: CityControlValue, right: CityControlValue): boolean =>
+    this.getCityId(left) === this.getCityId(right);
   protected readonly matchSkill = (left: SkillControlValue, right: SkillControlValue): boolean =>
     this.getSkillId(left) === this.getSkillId(right);
   protected readonly matchUniversity = (
@@ -164,7 +171,7 @@ export class RegisterPageComponent {
     uniqueName: ['', Validators.required],
     displayName: ['', Validators.required],
     email: ['', [Validators.required, Validators.email]],
-    cityOfResidenceId: ['', Validators.required],
+    cityOfResidenceId: this.formBuilder.control<CityControlValue>(null),
     birthDate: this.formBuilder.control<BirthDateControlValue>(null),
     available: [true],
     biography: [''],
@@ -236,7 +243,7 @@ export class RegisterPageComponent {
       displayName: value.displayName.trim(),
       birthDate: this.serializeBirthDate(value.birthDate),
       available: value.available,
-      cityOfResidenceId: value.cityOfResidenceId,
+      cityOfResidenceId: this.getCityId(value.cityOfResidenceId),
       avatarUrl: user.avatarUrl ?? null,
       email: value.email.trim(),
       biography: this.toNullable(value.biography),
@@ -351,7 +358,7 @@ export class RegisterPageComponent {
         uniqueName: user.uniqueName ?? '',
         displayName: user.displayName ?? '',
         email: user.email ?? '',
-        cityOfResidenceId: user.cityOfResidence?.id ?? '',
+        cityOfResidenceId: user.cityOfResidence ?? null,
         birthDate: this.parseBirthDate(user.birthDate),
         available: user.available,
         biography: user.biography ?? '',
@@ -502,6 +509,32 @@ export class RegisterPageComponent {
     const normalized = value.trim();
 
     return normalized ? Number(normalized) : null;
+  }
+
+  private resolveCityOption(value: CityOption | string | null): CityOption | null {
+    if (!value) {
+      return null;
+    }
+
+    if (typeof value !== 'string') {
+      return this.cities().find((city) => city.id === value.id) ?? value;
+    }
+
+    const normalized = value.trim().toLowerCase();
+
+    if (!normalized) {
+      return null;
+    }
+
+    return (
+      this.cities().find(
+        (city) => city.id === value || city.name.trim().toLowerCase() === normalized,
+      ) ?? null
+    );
+  }
+
+  private getCityId(value: CityControlValue): string | null {
+    return this.resolveCityOption(value)?.id ?? null;
   }
 
   private resolveSkillOption(value: SkillOption | string | null): SkillOption | null {

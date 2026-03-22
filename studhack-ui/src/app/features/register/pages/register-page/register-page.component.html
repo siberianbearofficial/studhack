@@ -60,14 +60,18 @@
 
             <label tuiLabel>
               Город
-              <tui-textfield>
-                <select tuiTextfield formControlName="cityOfResidenceId">
-                  <option value="">Выберите город</option>
+              <tui-textfield tuiChevron [stringify]="stringifyCity" [identityMatcher]="matchCity">
+                <input
+                  tuiComboBox
+                  formControlName="cityOfResidenceId"
+                  placeholder="Выберите город"
+                />
 
-                  @for (city of cities(); track city.id) {
-                    <option [value]="city.id">{{ city.name }}</option>
-                  }
-                </select>
+                <tui-data-list-wrapper
+                  *tuiTextfieldDropdown
+                  [items]="cities() | tuiFilterByInput"
+                  new
+                />
               </tui-textfield>
             </label>
 

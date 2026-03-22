@@ -47,6 +47,7 @@ import {
 import { TuiCard, TuiHeader } from '@taiga-ui/layout';
 
 import {
+  type CityDto,
   type EventFullDto,
   type MyProfileDto,
   type SkillDto,
@@ -78,9 +79,11 @@ type ProfileTabId = 'teams' | 'favorites' | 'hackathons' | 'achievements';
 type RoleBadgeAppearance = 'positive' | 'warning' | 'negative';
 type FavoriteBadgeAppearance = 'primary' | 'info' | 'positive' | 'warning';
 type AchievementAppearance = 'neutral' | 'positive' | 'warning';
+type CityOption = CityDto;
 type SkillOption = SkillDto;
 type SkillLevelOption = (typeof PROFILE_EXPERIENCE_OPTIONS)[number];
 type BirthDateControlValue = TuiDay | null;
+type CityControlValue = CityOption | string | null;
 type SkillControlValue = SkillOption | string | null;
 type SkillLevelControlValue = SkillLevelOption | string | null;
 
@@ -243,10 +246,14 @@ export class ProfilePageComponent {
   protected readonly editMode = signal(false);
   protected readonly activeTabIndex = signal(0);
   protected readonly skillLevelOptions = PROFILE_EXPERIENCE_OPTIONS;
+  protected readonly stringifyCity = (item: CityControlValue): string =>
+    typeof item === 'string' ? item : (item?.name ?? '');
   protected readonly stringifySkill = (item: SkillControlValue): string =>
     typeof item === 'string' ? item : (item?.name ?? '');
   protected readonly stringifySkillLevel = (item: SkillLevelControlValue): string =>
     typeof item === 'string' ? item : (item?.label ?? '');
+  protected readonly matchCity = (left: CityControlValue, right: CityControlValue): boolean =>
+    this.getCityId(left) === this.getCityId(right);
   protected readonly matchSkill = (left: SkillControlValue, right: SkillControlValue): boolean =>
     this.getSkillId(left) === this.getSkillId(right);
   protected readonly matchSkillLevel = (
@@ -258,7 +265,7 @@ export class ProfilePageComponent {
     displayName: ['', Validators.required],
     birthDate: this.formBuilder.control<BirthDateControlValue>(null),
     email: ['', Validators.email],
-    cityOfResidenceId: [''],
+    cityOfResidenceId: this.formBuilder.control<CityControlValue>(null),
     available: [true],
     biography: [''],
     specializations: this.formBuilder.array<FormControl<boolean>>([]),
@@ -796,7 +803,7 @@ export class ProfilePageComponent {
       displayName: value.displayName.trim(),
       birthDate: this.serializeBirthDate(value.birthDate),
       available: value.available,
-      cityOfResidenceId: this.toNullable(value.cityOfResidenceId),
+      cityOfResidenceId: this.getCityId(value.cityOfResidenceId),
       email: this.toNullable(value.email),
       biography: this.toNullable(value.biography),
       specializationIds: this.store
@@ -858,7 +865,7 @@ export class ProfilePageComponent {
         displayName: profile.displayName,
         birthDate: this.parseBirthDate(profile.birthDate),
         email: profile.email ?? '',
-        cityOfResidenceId: profile.cityOfResidence?.id ?? '',
+        cityOfResidenceId: profile.cityOfResidence ?? null,
         available: profile.available,
         biography: profile.biography ?? '',
       },
@@ -971,6 +978,33 @@ export class ProfilePageComponent {
     }
 
     return [...distinct.values()];
+  }
+
+  private resolveCityOption(value: CityOption | string | null): CityOption | null {
+    if (!value) {
+      return null;
+    }
+
+    if (typeof value !== 'string') {
+      return this.store.cities().find((city) => city.id === value.id) ?? value;
+    }
+
+    const normalized = value.trim().toLowerCase();
+
+    if (!normalized) {
+      return null;
+    }
+
+    return (
+      this.store
+        .cities()
+        .find((city) => city.id === value || city.name.trim().toLowerCase() === normalized) ??
+      null
+    );
+  }
+
+  private getCityId(value: CityControlValue): string | null {
+    return this.resolveCityOption(value)?.id ?? null;
   }
 
   private resolveSkillOption(value: SkillOption | string | null): SkillOption | null {

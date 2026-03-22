@@ -45,7 +45,7 @@ const DEFAULT_RUNTIME_CONFIG: Omit<RuntimeConfig, 'redirectUri' | 'postLogoutRed
   // Наш OAuth провайдер пока требует client secret даже для SPA.
   clientSecret: '0f756a3707762ec4d04df5625adcac6a',
   apiBaseUrl: 'https://studhack-api.nachert.art',
-  apiMode: 'mock',
+  apiMode: 'real',
   apiMockLatencyMs: 200,
   disableNonceCheck: false,
   disableOAuth2StateCheck: false,

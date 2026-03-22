@@ -59,7 +59,7 @@ export interface SaveCurrentUserInput {
   readonly displayName: string;
   readonly birthDate?: Nullable<ISODate>;
   readonly available: boolean;
-  readonly cityOfResidenceId: UUID;
+  readonly cityOfResidenceId: Nullable<UUID>;
   readonly avatarUrl?: Nullable<string>;
   readonly email: string;
   readonly biography?: Nullable<string>;
