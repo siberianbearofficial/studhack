@@ -28,6 +28,7 @@ import {
 } from '@taiga-ui/kit';
 import { TuiCard, TuiHeader } from '@taiga-ui/layout';
 
+import { TeamRequestsStore } from '@core/data';
 import { type TeamRequestDto } from '@core/api';
 import { getErrorMessage } from '@shared';
 
@@ -64,6 +65,7 @@ type InviteTargetControlValue = InviteTargetOption | string | null;
 export class TeamRequestDialogComponent {
   private readonly formBuilder = inject(FormBuilder);
   private readonly teamRequestsService = inject(TeamRequestsService);
+  private readonly teamRequestsStore = inject(TeamRequestsStore);
   private readonly destroyRef = inject(DestroyRef);
   private lastInviteTargetsKey: string | null = null;
 
@@ -231,7 +233,7 @@ export class TeamRequestDialogComponent {
     }
 
     this.isSubmitting.set(true);
-    this.teamRequestsService
+    this.teamRequestsStore
       .createApplication(teamPositionId, this.form.controls.message.getRawValue())
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
@@ -267,7 +269,7 @@ export class TeamRequestDialogComponent {
     }
 
     this.isSubmitting.set(true);
-    this.teamRequestsService
+    this.teamRequestsStore
       .createInvitation(
         target.id,
         invitedUserId,

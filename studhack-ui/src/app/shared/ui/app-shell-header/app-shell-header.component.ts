@@ -16,12 +16,10 @@ import {
   TuiProgressSegmented,
 } from '@taiga-ui/kit';
 
-import { MyProfileStore } from '@core/data';
+import { MyProfileStore, TeamRequestsStore } from '@core/data';
 import { AuthService } from '@core/auth';
 import { CurrentUserService, type CurrentUserDto } from '@core/current-user';
-import { getProfileGrade } from '@shared';
-
-import { AppLogoComponent } from '../app-logo/app-logo.component';
+import { AppLogoComponent, getProfileGrade } from '@shared';
 
 interface HeaderNavItem {
   readonly label: string;
@@ -51,6 +49,7 @@ interface HeaderNavItem {
 export class AppShellHeaderComponent {
   private readonly auth = inject(AuthService);
   private readonly myProfileStore = inject(MyProfileStore);
+  private readonly teamRequestsStore = inject(TeamRequestsStore);
   private readonly currentUserService = inject(CurrentUserService);
   private readonly router = inject(Router);
 
@@ -98,9 +97,9 @@ export class AppShellHeaderComponent {
     return profile ? getProfileGrade(profile) : null;
   });
 
-  protected readonly notificationCount = computed(() => {
-    return 4;
-  });
+  protected readonly notificationCount = computed(() =>
+    this.teamRequestsStore.pendingCount(),
+  );
 
   protected readonly progressPercent = computed(() => {
     const grade = this.profileGrade();
