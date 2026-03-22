@@ -29,7 +29,7 @@ public class UsersController(IUserService userService) : ControllerBase
     }
 
     [HttpGet("{userId:guid}")]
-    [Authorize]
+    [AllowAnonymous]
     public async Task<ActionResult<ApiResponseDto<UserInfoDto>>> GetUserInfo(Guid userId, CancellationToken ct)
     {
         var user = await userService.GetUserByIdAsync(userId, ct);
@@ -39,7 +39,7 @@ public class UsersController(IUserService userService) : ControllerBase
     }
 
     [HttpGet]
-    [Authorize]
+    [AllowAnonymous]
     public async Task<ActionResult<ApiResponseDto<IEnumerable<UserInfoDto>>>> GetUsers(Guid userId,
         CancellationToken ct)
     {
