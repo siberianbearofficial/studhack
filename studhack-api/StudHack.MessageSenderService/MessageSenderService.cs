@@ -11,7 +11,8 @@ namespace StudHack.MessageSenderService;
 
 public class MessageSenderService(
     IServiceScopeFactory scopeFactory,
-    IOptions<BackgroundServiceOptions> options) : BaseBackgroundService(scopeFactory, options)
+    IOptions<BackgroundServiceOptions> options,
+    ILogger<BaseBackgroundService> logger) : BaseBackgroundService(scopeFactory, options, logger)
 {
     protected override async Task ProcessAsync(CancellationToken stoppingToken)
     {
@@ -28,6 +29,7 @@ public class MessageSenderService(
                 await emailSender.Send(email.UserEmail, "Уведомление", email.Message);
                 sent_emails.Add(email);
             }
+
             await notificationsRepo.MarkSent(sent_emails);
         }, stoppingToken);
     }

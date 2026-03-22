@@ -17,7 +17,7 @@ public class NotificationsRepository(StudHackDbContext dbContext): INotification
             .Include(s => s.User)
             .Include(s => s.Event)
                 .ThenInclude(e => e.EventDates.Where(ed =>
-                    DateTime.Now.AddDays(1) > ed.StartsAt && ed.StartsAt > DateTime.Now))
+                    DateTime.UtcNow.AddDays(1) > ed.StartsAt && ed.StartsAt > DateTime.UtcNow))
                     .ThenInclude(ed => ed.SentMessages)
             .ToListAsync();
 
@@ -42,7 +42,7 @@ public class NotificationsRepository(StudHackDbContext dbContext): INotification
                 {
                     var message = string.Format("Привет, {0}!\n Напоминаем про " +
                         "дедлайн по событию {1}: {2} в {3}",
-                        subscription.User.UniqueName,
+                        subscription.User.DisplayedName ?? subscription.User.UniqueName,
                         subscription.Event.Title,
                         eventDate.Description,
                         eventDate.StartsAt);

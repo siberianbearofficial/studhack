@@ -17,13 +17,16 @@ public abstract class BaseBackgroundService : BackgroundService
 {
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly BackgroundServiceOptions _options;
+    private readonly ILogger<BaseBackgroundService> _logger;
 
     protected BaseBackgroundService(
         IServiceScopeFactory scopeFactory,
-        IOptions<BackgroundServiceOptions> options)
+        IOptions<BackgroundServiceOptions> options,
+        ILogger<BaseBackgroundService> logger)
     {
         _scopeFactory = scopeFactory;
         _options = options.Value;
+        _logger = logger;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -42,6 +45,7 @@ public abstract class BaseBackgroundService : BackgroundService
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, ex.Message);
                 await Task.Delay(_options.ErrorDelay, stoppingToken);
             }
         }
