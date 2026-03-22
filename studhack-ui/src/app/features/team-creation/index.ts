@@ -1,1 +1,1 @@
-export * from './pages/create-team-page/create-team-page.component';
+export * from './components/team-creation-modal/team-creation-modal.component';

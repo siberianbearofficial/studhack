@@ -1,0 +1,261 @@
+<section class="team-creation-modal">
+  @if (store.error() && !store.events().length) {
+    <section tuiCardLarge class="team-creation-modal__status">
+      <header tuiHeader="h5">
+        <span tuiTitle>Сбор команды недоступен</span>
+        <p tuiSubtitle>{{ store.error() }}</p>
+      </header>
+    </section>
+  } @else if (store.isLoading()) {
+    <section tuiCardLarge class="team-creation-modal__status">
+      <header tuiHeader="h5">
+        <span tuiTitle>Загружаем форму команды</span>
+        <p tuiSubtitle>Подтягиваем мероприятия и справочники ролей.</p>
+      </header>
+    </section>
+  } @else {
+    <section class="team-creation-modal__layout">
+      <form
+        [formGroup]="form"
+        (ngSubmit)="submit()"
+        tuiCardLarge
+        class="team-creation-modal__form"
+      >
+        <header tuiHeader="h4">
+          <span tuiTitle>Параметры команды</span>
+        </header>
+
+        @if (validationError() || store.error()) {
+          <div class="team-creation-modal__message team-creation-modal__message_error">
+            {{ validationError() || store.error() }}
+          </div>
+        }
+
+        @if (!fixedEventId()) {
+          @if (allowCustomEvent()) {
+            <label tuiLabel>
+              Сценарий
+              <tui-textfield
+                tuiChevron
+                [stringify]="stringifyEventSource"
+                [identityMatcher]="matchEventSource"
+              >
+                <input
+                  tuiComboBox
+                  formControlName="eventSource"
+                  placeholder="Выберите сценарий"
+                />
+
+                <tui-data-list-wrapper
+                  *tuiTextfieldDropdown
+                  new
+                  [items]="eventSourceOptions | tuiFilterByInput"
+                />
+              </tui-textfield>
+            </label>
+          }
+
+          @if (usesCustomEvent()) {
+            <section tuiCardLarge="compact" class="team-creation-modal__custom-event">
+              <header tuiHeader="h6">
+                <span tuiTitle>Мероприятие вне системы</span>
+                <p tuiSubtitle>
+                  Создадим техническую карточку события, чтобы сохранить команду и продолжить подбор.
+                </p>
+              </header>
+
+              <div class="team-creation-modal__fields team-creation-modal__fields_two-columns">
+                <label tuiLabel>
+                  Название мероприятия
+                  <tui-textfield>
+                    <input
+                      tuiTextfield
+                      formControlName="customEventName"
+                      placeholder="AI Weekend Sprint"
+                    />
+                  </tui-textfield>
+                </label>
+
+                <label tuiLabel>
+                  Формат участия
+                  <tui-textfield
+                    tuiChevron
+                    [stringify]="stringifyEventFormat"
+                    [identityMatcher]="matchEventFormat"
+                  >
+                    <input
+                      tuiComboBox
+                      formControlName="customEventFormat"
+                      placeholder="Выберите формат"
+                    />
+
+                    <tui-data-list-wrapper
+                      *tuiTextfieldDropdown
+                      new
+                      [items]="eventFormatOptions | tuiFilterByInput"
+                    />
+                  </tui-textfield>
+                </label>
+
+                <label tuiLabel>
+                  Старт
+                  <tui-textfield>
+                    <input tuiTextfield type="datetime-local" formControlName="customEventStartsAt" />
+                  </tui-textfield>
+                </label>
+
+                <label tuiLabel>
+                  Окончание
+                  <tui-textfield>
+                    <input tuiTextfield type="datetime-local" formControlName="customEventEndsAt" />
+                  </tui-textfield>
+                </label>
+              </div>
+            </section>
+          } @else {
+            <label tuiLabel>
+              Мероприятие
+              <tui-textfield
+                tuiChevron
+                [stringify]="stringifyEvent"
+                [identityMatcher]="matchEvent"
+              >
+                <input
+                  tuiComboBox
+                  formControlName="eventId"
+                  placeholder="Выберите мероприятие"
+                />
+
+                <tui-data-list-wrapper
+                  *tuiTextfieldDropdown
+                  new
+                  [items]="store.events() | tuiFilterByInput"
+                />
+              </tui-textfield>
+            </label>
+          }
+        }
+
+        <div class="team-creation-modal__fields team-creation-modal__fields_two-columns">
+          <label tuiLabel>
+            Название команды
+            <tui-textfield>
+              <input tuiTextfield formControlName="name" placeholder="Neon Wave" />
+            </tui-textfield>
+          </label>
+        </div>
+
+        <label tuiLabel>
+          Описание команды
+          <textarea
+            formControlName="description"
+            class="team-creation-modal__textarea"
+            rows="4"
+            placeholder="Какую задачу решаете и каких людей хотите добрать в команду"
+          ></textarea>
+        </label>
+
+        <section class="team-creation-modal__positions">
+          <header tuiHeader="h6">
+            <span tuiTitle>Роли в команде</span>
+          </header>
+
+          <div class="team-creation-modal__position-actions">
+            <button
+              tuiButton
+              type="button"
+              appearance="secondary"
+              size="m"
+              (click)="addPosition()"
+            >
+              Добавить роль
+            </button>
+          </div>
+
+          <div class="team-creation-modal__position-list">
+            @for (position of positions.controls; track $index) {
+              <app-team-position-form
+                [index]="$index"
+                [form]="position"
+                [specializations]="store.specializations()"
+                [skills]="store.skills()"
+                [canRemove]="positions.length > 1"
+                (remove)="removePosition($index)"
+              />
+            }
+          </div>
+        </section>
+
+        <div class="team-creation-modal__footer">
+          <div class="team-creation-modal__footer-actions">
+            <button
+              tuiButton
+              type="button"
+              appearance="outline"
+              size="l"
+              [disabled]="store.isSaving()"
+              (click)="dismissed.emit()"
+            >
+              Отмена
+            </button>
+
+            <button
+              tuiButton
+              type="submit"
+              appearance="secondary"
+              size="l"
+              [disabled]="form.invalid || store.isSaving()"
+            >
+              {{ store.isSaving() ? 'Сохраняем...' : 'Сохранить команду' }}
+            </button>
+
+            <button
+              tuiButton
+              type="button"
+              appearance="accent"
+              size="l"
+              [disabled]="form.invalid || store.isSaving()"
+              (click)="findCandidates()"
+            >
+              {{ store.isSaving() ? 'Сохраняем...' : 'Подбор кандидатов' }}
+            </button>
+          </div>
+        </div>
+      </form>
+
+      <aside class="team-creation-modal__aside">
+        <section tuiCardLarge="compact" class="team-creation-modal__panel">
+          <header tuiHeader="h5">
+            <span tuiTitle>Мероприятие</span>
+          </header>
+
+          @if (selectedEvent(); as event) {
+            <div class="team-creation-modal__summary">
+              <strong>{{ event.name }}</strong>
+              <span>{{ event.location.format }}</span>
+              <span>{{ event.teams.length }} команд уже участвуют</span>
+            </div>
+
+            <div class="team-creation-modal__badges">
+              @for (badge of eventContextBadges(); track badge.label) {
+                <span tuiBadge [appearance]="badge.appearance">{{ badge.label }}</span>
+              }
+            </div>
+          } @else if (usesCustomEvent()) {
+            <div class="team-creation-modal__summary">
+              <strong>{{ form.controls.customEventName.getRawValue() || 'Своё мероприятие' }}</strong>
+              <span>
+                {{ stringifyEventFormat(form.controls.customEventFormat.getRawValue()) }}
+              </span>
+              <span>Сохранится как отдельная карточка события для этой команды</span>
+            </div>
+          } @else {
+            <p class="team-creation-modal__muted">
+              Выберите мероприятие, чтобы сохранить команду в правильном контексте.
+            </p>
+          }
+        </section>
+      </aside>
+    </section>
+  }
+</section>

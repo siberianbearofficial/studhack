@@ -1,9 +1,20 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
+import { map, switchMap } from 'rxjs';
 
-import { type TeamFullDto, type UpsertTeamRequest } from '@core/api';
+import {
+  type EventFullDto,
+  type TeamFullDto,
+  type UpsertEventRequest,
+  type UpsertTeamRequest,
+} from '@core/api';
 import { getErrorMessage } from '@shared';
 
 import { TeamCreationService, type TeamCreationData } from '../services/team-creation.service';
+
+export interface TeamCreationSaveResult {
+  readonly team: TeamFullDto;
+  readonly event: EventFullDto | null;
+}
 
 @Injectable()
 export class TeamCreationStore {
@@ -46,18 +57,54 @@ export class TeamCreationStore {
 
   save(
     payload: UpsertTeamRequest,
-    onSuccess?: (team: TeamFullDto) => void,
+    options?: {
+      readonly customEvent?: UpsertEventRequest;
+      readonly onSuccess?: (result: TeamCreationSaveResult) => void;
+    },
   ): void {
     this.isSaving.set(true);
     this.error.set(null);
     this.success.set(null);
 
-    this.service.createTeam(payload).subscribe({
-      next: (team) => {
-        this.createdTeam.set(team);
-        this.success.set(`Команда «${team.name}» сохранена`);
+    const save$ = options?.customEvent
+      ? this.service.createEvent(options.customEvent).pipe(
+          switchMap((event) =>
+            this.service.createTeam({ ...payload, eventId: event.id }).pipe(
+              map((team) => ({ team, event })),
+            ),
+          ),
+        )
+      : this.service.createTeam(payload).pipe(
+          map((team) => ({
+            team,
+            event: this.events().find((event) => event.id === team.event.id) ?? null,
+          })),
+        );
+
+    save$.subscribe({
+      next: (result) => {
+        this.createdTeam.set(result.team);
+        this.success.set(`Команда «${result.team.name}» сохранена`);
+        this.data.update((data) => {
+          if (!data || !result.event) {
+            return data;
+          }
+
+          const hasEvent = data.events.some((event) => event.id === result.event!.id);
+
+          if (hasEvent) {
+            return data;
+          }
+
+          return {
+            ...data,
+            events: [...data.events, result.event].sort((left, right) =>
+              left.startsAt.localeCompare(right.startsAt),
+            ),
+          };
+        });
         this.isSaving.set(false);
-        onSuccess?.(team);
+        options?.onSuccess?.(result);
       },
       error: (error: unknown) => {
         this.error.set(

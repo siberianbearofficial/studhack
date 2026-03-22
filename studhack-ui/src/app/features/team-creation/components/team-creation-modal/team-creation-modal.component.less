@@ -1,0 +1,95 @@
+.team-creation-modal {
+  display: grid;
+  gap: 1rem;
+}
+
+.team-creation-modal__status,
+.team-creation-modal__form,
+.team-creation-modal__panel,
+.team-creation-modal__positions,
+.team-creation-modal__summary,
+.team-creation-modal__custom-event {
+  display: grid;
+  gap: 1rem;
+}
+
+.team-creation-modal__layout {
+  display: grid;
+  gap: 1rem;
+}
+
+.team-creation-modal__fields,
+.team-creation-modal__position-actions,
+.team-creation-modal__position-list,
+.team-creation-modal__aside,
+.team-creation-modal__badges {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.team-creation-modal__message {
+  padding: 0.875rem 1rem;
+  border-radius: var(--tui-radius-l);
+}
+
+.team-creation-modal__message_error {
+  border: 1px solid color-mix(in srgb, var(--tui-status-negative) 35%, transparent);
+  background: color-mix(in srgb, var(--tui-status-negative-pale) 85%, white);
+  color: var(--tui-status-negative);
+}
+
+.team-creation-modal__textarea {
+  width: 100%;
+  resize: vertical;
+  min-height: 5rem;
+  box-sizing: border-box;
+  padding: 0.875rem 1rem;
+  border: 1px solid var(--tui-border-normal);
+  border-radius: var(--tui-radius-l);
+  background: var(--tui-background-base);
+  color: var(--tui-text-primary);
+  font: inherit;
+}
+
+.team-creation-modal__textarea:focus {
+  outline: 2px solid var(--tui-border-focus);
+  outline-offset: 1px;
+}
+
+.team-creation-modal__footer {
+  display: grid;
+  gap: 1rem;
+}
+
+.team-creation-modal__footer-note,
+.team-creation-modal__muted,
+.team-creation-modal__summary span {
+  color: var(--tui-text-secondary);
+}
+
+.team-creation-modal__footer-note {
+  margin: 0;
+}
+
+.team-creation-modal__footer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
+
+@media (min-width: 960px) {
+  .team-creation-modal__layout {
+    grid-template-columns: minmax(0, 1.65fr) minmax(19rem, 0.95fr);
+    align-items: start;
+  }
+
+  .team-creation-modal__aside {
+    position: sticky;
+    top: 0;
+  }
+
+  .team-creation-modal__fields_two-columns {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

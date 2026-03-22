@@ -1,5 +1,5 @@
 import { Location, ViewportScroller } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import {
@@ -9,6 +9,7 @@ import {
   TuiSurface,
   TuiTitle,
 } from '@taiga-ui/core';
+import { TuiDialog } from '@taiga-ui/core/components/dialog';
 import { TuiBadge, TuiButtonLoading, TuiProgress } from '@taiga-ui/kit';
 import { TuiCard, TuiHeader } from '@taiga-ui/layout';
 import { distinctUntilChanged, map } from 'rxjs';
@@ -18,6 +19,7 @@ import {
   type TeamInEventDto,
   type TeamPositionDto,
 } from '@core/api';
+import { TeamCreationModalComponent } from '@features/team-creation';
 import {
   formatEventDateTimeLabel,
   formatEventTeamSizeRange,
@@ -65,6 +67,7 @@ interface EventOpenRole {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     RouterLink,
+    TuiDialog,
     TuiBadge,
     TuiButton,
     TuiCard,
@@ -75,6 +78,7 @@ interface EventOpenRole {
     TuiSurface,
     TuiTitle,
     TuiButtonLoading,
+    TeamCreationModalComponent,
   ],
   providers: [EventDetailsStore],
   templateUrl: './event-details-page.component.html',
@@ -86,6 +90,7 @@ export class EventDetailsPageComponent {
   private readonly viewportScroller = inject(ViewportScroller);
 
   protected readonly store = inject(EventDetailsStore);
+  protected readonly teamCreationOpen = signal(false);
   protected readonly event = computed(() => this.store.event());
   protected readonly coverBackground = computed(() => {
     const event = this.event();
@@ -265,5 +270,15 @@ export class EventDetailsPageComponent {
 
   protected getStageScheduleLabel(stage: EventStageDto): string {
     return getEventStageScheduleLabel(stage);
+  }
+
+  protected handleTeamCreated(): void {
+    const eventId = this.event()?.id;
+
+    this.teamCreationOpen.set(false);
+
+    if (eventId) {
+      this.store.load(eventId);
+    }
   }
 }

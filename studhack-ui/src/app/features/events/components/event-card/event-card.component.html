@@ -38,8 +38,7 @@
           appearance="accent"
           size="m"
           iconStart="@tui.plus"
-          [routerLink]="['/teams/create']"
-          [queryParams]="{ eventId: event().id }"
+          [routerLink]="detailsRoute()"
         >
           Собрать команду
         </a>

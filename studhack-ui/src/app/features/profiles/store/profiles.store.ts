@@ -20,6 +20,13 @@ interface FilterOption<T extends string> {
   readonly count: number;
 }
 
+interface ProfilesFilterPreset {
+  readonly query?: string;
+  readonly specializationIds?: readonly string[];
+  readonly skillIds?: readonly string[];
+  readonly onlyAvailable?: boolean;
+}
+
 const PAGE_SIZE = 6;
 const SEARCH_OPTIONS = {
   keys: [
@@ -41,6 +48,7 @@ export class ProfilesStore {
   readonly selectedSkillIds = signal<readonly string[]>([]);
   readonly selectedFormats = signal<readonly ProfileParticipationFormat[]>([]);
   readonly selectedExperienceLevels = signal<readonly SkillExperienceLevel[]>([]);
+  readonly onlyAvailable = signal(false);
   readonly favoriteUserIds = signal<readonly string[]>([]);
   readonly currentPage = signal(0);
   readonly isLoading = signal(true);
@@ -100,6 +108,7 @@ export class ProfilesStore {
     const skillIds = this.selectedSkillIds();
     const formats = this.selectedFormats();
     const experienceLevels = this.selectedExperienceLevels();
+    const onlyAvailable = this.onlyAvailable();
 
     return this.searchedUsers().filter((user) => {
       const matchesSpecialization =
@@ -115,12 +124,14 @@ export class ProfilesStore {
       const matchesExperience =
         !experienceLevels.length ||
         experienceLevels.includes(getProfileExperienceLevel(user));
+      const matchesAvailability = !onlyAvailable || user.available;
 
       return (
         matchesSpecialization &&
         matchesSkills &&
         matchesFormat &&
-        matchesExperience
+        matchesExperience &&
+        matchesAvailability
       );
     });
   });
@@ -155,6 +166,10 @@ export class ProfilesStore {
       count += 1;
     }
 
+    if (this.onlyAvailable()) {
+      count += 1;
+    }
+
     return count;
   });
 
@@ -168,6 +183,7 @@ export class ProfilesStore {
       this.selectedSkillIds();
       this.selectedFormats();
       this.selectedExperienceLevels();
+      this.onlyAvailable();
       this.currentPage.set(0);
     });
 
@@ -245,12 +261,25 @@ export class ProfilesStore {
     this.currentPage.set(index);
   }
 
+  setOnlyAvailable(onlyAvailable: boolean): void {
+    this.onlyAvailable.set(onlyAvailable);
+  }
+
+  applyPreset(preset: ProfilesFilterPreset): void {
+    this.query.set(preset.query?.trim() ?? '');
+    this.selectedSpecializationIds.set(this.toUniqueValues(preset.specializationIds ?? []));
+    this.selectedSkillIds.set(this.toUniqueValues(preset.skillIds ?? []));
+    this.onlyAvailable.set(Boolean(preset.onlyAvailable));
+    this.currentPage.set(0);
+  }
+
   clearFilters(): void {
     this.query.set('');
     this.selectedSpecializationIds.set([]);
     this.selectedSkillIds.set([]);
     this.selectedFormats.set([]);
     this.selectedExperienceLevels.set([]);
+    this.onlyAvailable.set(false);
     this.currentPage.set(0);
   }
 
@@ -289,5 +318,9 @@ export class ProfilesStore {
     }
 
     return values.filter((item) => item !== value);
+  }
+
+  private toUniqueValues<T extends string>(values: readonly T[]): readonly T[] {
+    return [...new Set(values)];
   }
 }
