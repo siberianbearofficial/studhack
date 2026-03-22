@@ -32,9 +32,8 @@ TODO в EmailMessageSender нужно перекинуть переменные SMTP из среды или хз откуд
 
 set Smtp__Host=smtp.yandex.com
 set Smtp__Port=587
-set Smtp__User=studhack-no-reply@yandex.ru
-set Smtp__Password=your-password
-set Smtp__Email=studhack-no-reply@yandex.ru
+set Smtp__User=studhackaton@yandex.ru
+set Smtp__Email=studhackaton@yandex.ru
 set Smtp__Password=<secret_password>
 set Smtp__UseDefaultCredentials=false
 set Smtp__EnableSsl=true
