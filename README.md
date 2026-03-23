@@ -198,7 +198,11 @@ docker build -t studhack-api ./studhack-api
 
 ## Архитектура
 
+Схема компонентов системы:
+
 ![Схема компонентов системы](docs/Components.svg)
+
+Схема базы данных:
 
 ![Схема базы данных](docs/DB.svg)
 
