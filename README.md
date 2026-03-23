@@ -3,7 +3,7 @@
   
   <h1>СтудХак</h1>
   
-  <p><em>платформа для поиска команд, разработчиков и карьерных мероприятий в хакатон-экосистеме</em></p>
+  <p><em>Платформа для поиска команд, разработчиков и карьерных мероприятий в хакатон-экосистеме</em></p>
 
   <a href="https://woodpecker.dev.nachert.art/repos/13">
     <img src="https://woodpecker.dev.nachert.art/api/badges/13/status.svg" alt="status-badge">
