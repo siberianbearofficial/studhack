@@ -5,7 +5,7 @@ import { registeredUserGuard, unregisteredUserGuard } from '@core/auth';
 export const routes: Routes = [
   {
     path: '',
-    title: 'StudHack',
+    title: 'СтудХак',
     loadComponent: () =>
       import('@features/landing').then((module) => module.LandingPageComponent),
   },
