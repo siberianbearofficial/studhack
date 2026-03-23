@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { TuiButton, TuiLoader } from '@taiga-ui/core';
-import { TuiBadge } from '@taiga-ui/kit';
+import { TuiAppearance, TuiButton, TuiLoader } from '@taiga-ui/core';
+import { TuiAvatar, TuiBadge, TuiBadgeNotification } from '@taiga-ui/kit';
 import { TuiCard } from '@taiga-ui/layout';
 
 import { type TeamRequestDto } from '@core/api';
@@ -9,7 +9,15 @@ import { TeamRequestsStore } from '@core/data';
 @Component({
   selector: 'app-notifications-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [TuiBadge, TuiButton, TuiCard, TuiLoader],
+  imports: [
+    TuiBadge,
+    TuiButton,
+    TuiCard,
+    TuiLoader,
+    TuiAppearance,
+    TuiAvatar,
+    TuiBadgeNotification,
+  ],
   templateUrl: './notifications-page.component.html',
   styleUrl: './notifications-page.component.less',
 })
@@ -19,9 +27,7 @@ export class NotificationsPageComponent {
   protected readonly managedApplications = this.store.managedApplications;
   protected readonly outgoingApplications = this.store.outgoingApplications;
   protected readonly sentInvitations = this.store.sentInvitations;
-  protected readonly hasPendingRequests = computed(
-    () => this.store.pendingCount() > 0,
-  );
+  protected readonly hasPendingRequests = computed(() => this.store.pendingCount() > 0);
 
   constructor() {
     this.store.load();
