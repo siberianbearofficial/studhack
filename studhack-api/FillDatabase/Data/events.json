@@ -1,0 +1,210 @@
+[
+  {
+    "name": "AI Product Jam 2026",
+    "type": "hackathon",
+    "description": "Двухдневный хакатон про AI-first продукты. Участники собирают решения для рекомендаций, ассистентов и операционных AI-инструментов.",
+    "registrationLink": "https://studhack.dev/events/ai-product-jam-2026",
+    "location": {
+      "format": "offline",
+      "cityNames": ["Москва"],
+      "addressText": "StudHack Hub, ул. Льва Толстого, 16",
+      "latitude": 55.73311,
+      "longitude": 37.58791
+    },
+    "startsAt": "2026-04-18T08:30:00Z",
+    "endsAt": "2026-04-20T17:00:00Z",
+    "stages": [
+      {
+        "title": "Окончание регистрации",
+        "startsAt": "2026-04-12T21:00:00Z",
+        "endsAt": "2026-04-12T21:00:00Z"
+      },
+      {
+        "title": "Формирование команд",
+        "startsAt": "2026-04-13T09:00:00Z",
+        "endsAt": "2026-04-16T21:00:00Z"
+      },
+      {
+        "title": "Старт хакатона",
+        "startsAt": "2026-04-18T08:30:00Z",
+        "endsAt": "2026-04-18T09:00:00Z"
+      },
+      {
+        "title": "Демо и защита",
+        "startsAt": "2026-04-20T13:00:00Z",
+        "endsAt": "2026-04-20T17:00:00Z"
+      }
+    ],
+    "hackathon": {
+      "minTeamSize": 3,
+      "maxTeamSize": 6,
+      "mandatoryPositions": [
+        {
+          "specializationName": "Фронтенд",
+          "requiredSkillNames": ["Angular", "TypeScript", "RxJS"]
+        },
+        {
+          "specializationName": "Бэкенд",
+          "requiredSkillNames": ["Node.js", "PostgreSQL", "Docker"]
+        },
+        {
+          "specializationName": "Машинное обучение",
+          "requiredSkillNames": ["Python", "PyTorch", "MLOps"]
+        }
+      ]
+    },
+    "createdAt": "2026-01-20T08:00:00Z",
+    "updatedAt": "2026-03-18T16:10:00Z"
+  },
+  {
+    "name": "Smart City Sprint 2026",
+    "type": "hackathon",
+    "description": "Хакатон про городские сервисы, навигацию, цифровые двойники и снижение операционных потерь в муниципальных процессах.",
+    "registrationLink": "https://studhack.dev/events/smart-city-sprint-2026",
+    "location": {
+      "format": "offline",
+      "cityNames": ["Иннополис", "Казань", "Москва"],
+      "addressText": "Innopolis Arena, Университет Иннополис, корпус А",
+      "latitude": 55.751244,
+      "longitude": 48.744099
+    },
+    "startsAt": "2026-05-15T07:00:00Z",
+    "endsAt": "2026-05-17T16:00:00Z",
+    "stages": [
+      {
+        "title": "Окончание регистрации",
+        "startsAt": "2026-05-08T20:59:00Z",
+        "endsAt": "2026-05-08T20:59:00Z"
+      },
+      {
+        "title": "Пре-чек идей",
+        "startsAt": "2026-05-10T08:00:00Z",
+        "endsAt": "2026-05-13T18:00:00Z"
+      },
+      {
+        "title": "Старт спринта",
+        "startsAt": "2026-05-15T07:00:00Z",
+        "endsAt": "2026-05-15T07:30:00Z"
+      },
+      {
+        "title": "Финал",
+        "startsAt": "2026-05-17T13:00:00Z",
+        "endsAt": "2026-05-17T16:00:00Z"
+      }
+    ],
+    "hackathon": {
+      "minTeamSize": 4,
+      "maxTeamSize": 7,
+      "mandatoryPositions": [
+        {
+          "specializationName": "Фронтенд",
+          "requiredSkillNames": ["React", "TypeScript", "MapLibre"]
+        },
+        {
+          "specializationName": "Бэкенд",
+          "requiredSkillNames": ["Node.js", "PostgreSQL", "Kafka"]
+        },
+        {
+          "specializationName": "Дизайн",
+          "requiredSkillNames": ["Figma", "UX Research"]
+        },
+        {
+          "specializationName": "Аналитика",
+          "requiredSkillNames": ["SQL", "Power BI"]
+        }
+      ]
+    },
+    "createdAt": "2026-02-02T08:00:00Z",
+    "updatedAt": "2026-03-19T14:40:00Z"
+  },
+  {
+    "name": "Fintech Design Challenge 2026",
+    "type": "hackathon",
+    "description": "Онлайн-челлендж по продуктам для платежей, antifraud и финансового планирования. Упор на сильный UX и воспроизводимые данные.",
+    "registrationLink": "https://studhack.dev/events/fintech-design-challenge-2026",
+    "location": {
+      "format": "online",
+      "cityNames": ["Москва"],
+      "latitude": 0,
+      "longitude": 0
+    },
+    "startsAt": "2026-06-06T09:00:00Z",
+    "endsAt": "2026-06-07T18:00:00Z",
+    "stages": [
+      {
+        "title": "Окончание регистрации",
+        "startsAt": "2026-05-30T20:59:00Z",
+        "endsAt": "2026-05-30T20:59:00Z"
+      },
+      {
+        "title": "Синк с менторами",
+        "startsAt": "2026-06-04T17:00:00Z",
+        "endsAt": "2026-06-04T19:00:00Z"
+      },
+      {
+        "title": "Старт челленджа",
+        "startsAt": "2026-06-06T09:00:00Z",
+        "endsAt": "2026-06-06T09:15:00Z"
+      },
+      {
+        "title": "Финальный питч",
+        "startsAt": "2026-06-07T15:00:00Z",
+        "endsAt": "2026-06-07T18:00:00Z"
+      }
+    ],
+    "hackathon": {
+      "minTeamSize": 3,
+      "maxTeamSize": 6,
+      "mandatoryPositions": [
+        {
+          "specializationName": "Фронтенд",
+          "requiredSkillNames": ["Angular", "TypeScript", "RxJS"]
+        },
+        {
+          "specializationName": "Бэкенд",
+          "requiredSkillNames": ["Go", "PostgreSQL", "Kafka"]
+        },
+        {
+          "specializationName": "Дизайн",
+          "requiredSkillNames": ["Figma", "UX Research"]
+        }
+      ]
+    },
+    "createdAt": "2026-03-01T10:00:00Z",
+    "updatedAt": "2026-03-19T09:50:00Z"
+  },
+  {
+    "name": "Career Night x StudHack",
+    "type": "other",
+    "description": "Вечерний формат с разбором портфолио, карьерных треков и быстрых нетворкинг-сессий между участниками и индустриальными менторами.",
+    "registrationLink": "https://studhack.dev/events/career-night-2026",
+    "location": {
+      "format": "offline",
+      "cityNames": ["Москва"],
+      "addressText": "Digital October Hall, Берсеневская наб., 6 стр. 3",
+      "latitude": 55.74627,
+      "longitude": 37.60678
+    },
+    "startsAt": "2026-03-28T15:00:00Z",
+    "endsAt": "2026-03-28T20:00:00Z",
+    "stages": [
+      {
+        "title": "Регистрация на площадке",
+        "startsAt": "2026-03-28T15:00:00Z",
+        "endsAt": "2026-03-28T15:45:00Z"
+      },
+      {
+        "title": "Треки и выступления",
+        "startsAt": "2026-03-28T16:00:00Z",
+        "endsAt": "2026-03-28T17:30:00Z"
+      },
+      {
+        "title": "Нетворкинг",
+        "startsAt": "2026-03-28T17:45:00Z",
+        "endsAt": "2026-03-28T20:00:00Z"
+      }
+    ],
+    "createdAt": "2026-02-18T08:00:00Z",
+    "updatedAt": "2026-03-17T17:20:00Z"
+  }
+]
