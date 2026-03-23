@@ -1,5 +1,5 @@
 <div align="center">
-  <img width="150" height="150" alt="StudHack Logo" src="studhack-ui/public/assets/brand/rounded_logo_150x150.png" style="border-radius: 50%; padding: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);" />
+  <img width="150" height="150" alt="StudHack Logo" src="studhack-ui/public/assets/brand/rounded_logo_150x150.png" />
   
   <h1>СтудХак</h1>
   
