@@ -206,7 +206,7 @@ docker build -t studhack-api ./studhack-api
 
 ![Схема базы данных](docs/DB.svg)
 
-Исходники диаграмм лежат в репозитории в формате Draw.io:
+Исходники схем лежат в репозитории в формате Draw.io:
 
 - `docs/Components.drawio`
 - `docs/DB.drawio`
